@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-11T14:30:00-03:00
 **Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T08 (auditoria)
 
-**Coleta M2-T07 concluida (2026-08-11):** fila com 52 itens terminais (43 concluidas e 9 falhas), 26 pares C1/C2; auditoria em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`. As falhas permanecem explicitas e as duas retomadas adicionais foram preservadas.
+**Coleta M2-T07 concluida (2026-08-11):** fila com 52 itens terminais (52 concluidas e 0 falhas), 26 pares C1/C2; as nove falhas iniciais de formato Bandit foram corrigidas e reexecutadas. Auditoria em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`.
 
 ### AD-013: Reavaliação do risco do host M2 autorizada (2026-08-11)
 

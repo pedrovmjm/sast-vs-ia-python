@@ -96,7 +96,7 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 **Concluída quando:** 52 itens são terminais; C1/C2 compartilham hash/commit por alvo; manifestos/artefatos conferem; falhas estão explícitas; nenhum resultado de fumaça entrou; não há contêiner/área/parte residual.
 **Commit:** `data(coleta): registrar manifestos C1 C2`.
 
-**Registro de conclusao M2-T07 (2026-08-11):** 52 itens terminais (43 concluidas, 9 falhas), 26 pares C1/C2, 54 manifestos preservados incluindo duas tentativas adicionais de retomada; sem areas ou arquivos `.part` residuais.
+**Registro de conclusao M2-T07 (2026-08-11):** 52 itens terminais (52 concluidas, 0 falhas); as nove falhas iniciais de formato Bandit foram corrigidas e reexecutadas na tentativa 3, com manifestos anteriores preservados. Permanecem 26 pares C1/C2, sem areas ou arquivos `.part` residuais.
 
 ### M2-T08: Auditar e documentar o M2
 

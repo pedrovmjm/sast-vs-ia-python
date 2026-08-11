@@ -6,8 +6,8 @@
   "fila": {
     "itens": 52,
     "terminais": 52,
-    "concluidas": 43,
-    "falhas": 9,
+    "concluidas": 52,
+    "falhas": 0,
     "em_execucao": 0,
     "pendentes": 0
   },
@@ -18,8 +18,8 @@
     "c2": 26,
     "pares_por_alvo": 26,
     "finalidade_coleta": 52,
-    "tentativas_adicionais_preservadas": 2,
-    "manifestos_preservados": 54
+    "tentativas_adicionais_preservadas": 11,
+    "manifestos_preservados": 63
   },
   "integridade": {
     "areas_execucao_residuais": 0,
@@ -27,7 +27,8 @@
     "containers_sast_ativos_ao_final": 0,
     "fumaca_misturada": false,
     "fumaca_pre_m2_arquivada": true,
-    "configuracao_sha256": "798f8182793b96650bfa4e89a7c73df4271f5548cebc5289e0dee00b2664d0bc"
+    "configuracao_sha256": "798f8182793b96650bfa4e89a7c73df4271f5548cebc5289e0dee00b2664d0bc",
+    "imagem_corretiva_sha256": "sha256:fde946f0659e291969b8999849b3573f4c32dda17f5003b358e62628c11d12c4"
   },
-  "observacao": "As nove falhas sao terminais e permanecem nos manifestos; nenhuma foi convertida em sucesso. As duas tentativas adicionais decorrem de retomadas apos timeout do invocador e foram preservadas por identidade de tentativa."
+  "observacao": "As nove falhas de formato Bandit foram reabertas explicitamente, corrigidas no adaptador e concluidas na tentativa 3 com a imagem corretiva. As falhas originais e as transicoes de retomada permanecem preservadas; a fila final tem 52 sucessos e nenhuma falha."
 }
