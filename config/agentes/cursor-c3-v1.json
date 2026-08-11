@@ -21,7 +21,7 @@
     "sem_oracle": true,
     "sem_docker_socket": true,
     "sessao_nova_por_repeticao": true,
-    "mesma_instrução": true
+    "mesma_instrucao": true
   },
   "metadados_obrigatorios": ["produto", "versao_cliente", "modelo_solicitado", "modelo_exibido", "sessao_id", "inicio_utc", "termino_utc", "duracao_segundos", "tokens_entrada", "tokens_saida", "tokens_total", "resposta_bruta_sha256"],
   "estado": "aguarda-piloto"
