@@ -88,7 +88,7 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 | AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Parcial em T03; executor em T07 |
 | AMB-06 | Saída bruta preservada antes da normalização | `07:98-124` | Parcial em T04; persistência em T07 |
 | AMB-07 | Esquema comum sem inferência | `06:126-130`, `07:100-124` | Verificado em T04 |
-| AMB-08 | Adaptador Bandit | `07:134-142` | Em tarefas |
+| AMB-08 | Adaptador Bandit | `07:134-142` | Verificado em T05 |
 | AMB-09 | Adaptador Semgrep com regras locais fixadas | `07:144-153` | Em tarefas |
 | AMB-10 | Testes artificiais externos ao corpus | `06:130`, `07:189-191` | Em tarefas |
 | AMB-11 | Fumaça descartável e regenerável | `07:193` | Em tarefas |

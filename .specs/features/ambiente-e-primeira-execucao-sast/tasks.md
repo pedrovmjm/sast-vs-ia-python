@@ -114,7 +114,7 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Verificar:** `python -m unittest tests.test_modelos`.
 **Commit:** `feat(esquema): definir achado e execução versionados`.
 
-### T05: Implementar adaptador Bandit [P]
+### T05: Implementar adaptador Bandit [P] — ✅ CONCLUÍDA
 
 **O que:** converter JSON Bandit para o esquema comum sem inferência externa.
 **Onde:** `runner/adaptadores/bandit.py`, `tests/fixtures/bandit/`, `tests/test_bandit.py`.
@@ -123,7 +123,7 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Reutiliza:** contrato JSON do Bandit 1.9.4.
 **Ferramentas:** filesystem e Docker.
 
-**Concluída quando:** achado, lista vazia, CWE ausente e documento inválido estão cobertos; pelo menos 4 testes passam; gate quick verde.
+**Concluída quando:** achado, lista vazia, CWE ausente, duplicatas, caminhos sintáticos, hash/proveniência e documento inválido estão cobertos; 14 testes próprios passam; gate quick verde (85 testes acumulados após integração paralela).
 **Testes:** unidade.
 **Gate:** quick.
 **Commit:** `feat(adaptadores): normalizar saída do Bandit`.

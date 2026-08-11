@@ -1,0 +1,36 @@
+{
+  "errors": [],
+  "generated_at": "2026-08-11T02:00:00Z",
+  "metrics": {},
+  "results": [
+    {
+      "code": "10 query = \"SELECT \" + entrada\n",
+      "col_offset": 0,
+      "end_col_offset": 31,
+      "filename": "/entrada/src/banco.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 10,
+      "line_range": [10, 11],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "20 segredo = input()\n",
+      "filename": "src/entrada.py",
+      "issue_confidence": "MEDIUM",
+      "issue_severity": "LOW",
+      "issue_text": "Finding without CWE metadata.",
+      "line_number": 20,
+      "line_range": [20],
+      "test_id": "B999",
+      "test_name": "fixture_without_cwe"
+    }
+  ]
+}

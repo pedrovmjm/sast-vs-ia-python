@@ -77,6 +77,8 @@ Não há código autoral pré-existente para reutilizar. A pontuação oficial s
 - **Interfaces:** `normalizar(documento, proveniencia) -> list[Achado]`.
 - **Restrição:** não acessam `benchmark/ground-truth` nem `oracle/`.
 
+No Bandit, os mapas congelados são `LOW/MEDIUM/HIGH` para `baixa/media/alta`, tanto em severidade quanto em confiança. Somente `issue_cwe.id` inteiro positivo produz `CWE-N`; regra, mensagem ou código nunca são usados para inferir CWE. Duplicatas e a ordem nativa permanecem intactas para a etapa posterior de deduplicação.
+
 ### Executor Docker
 
 - **Finalidade:** criar contêiner efêmero por ferramenta/alvo e preservar comando, tempos, estado e bruto.

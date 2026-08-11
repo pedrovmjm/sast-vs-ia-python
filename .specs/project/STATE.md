@@ -1,7 +1,7 @@
 # Estado
 
-**Última atualização:** 2026-08-10T22:54:12-03:00
-**Trabalho atual:** ambiente-e-primeira-execucao-sast — T05/T06
+**Última atualização:** 2026-08-10T23:12:57-03:00
+**Trabalho atual:** ambiente-e-primeira-execucao-sast — T06
 
 ---
 
@@ -77,6 +77,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 002 | Validar lock de fontes, hash das regras e exceção do host | 2026-08-10 | `feat(fontes): validar manifesto de proveniência` | ✅ Concluída |
 | 003 | Construir e validar a imagem SAST fixada | 2026-08-10 | `build(docker): fixar ambiente SAST reproduzível` | ✅ Concluída |
 | 004 | Definir Achado v1 e ManifestoExecucao v1 | 2026-08-10 | `feat(esquema): definir achado e execução versionados` | ✅ Concluída |
+| 005 | Normalizar saída Bandit 1.9.4 sem inferência | 2026-08-10 | `feat(adaptadores): normalizar saída do Bandit` | ✅ Concluída |
 
 ## Ideias adiadas
 
