@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tcc:schemas:fila-c1-c2:v1",
+  "title": "Fila runtime C1/C2 v1",
+  "type": "object",
+  "additionalProperties": false,
+  "x-tcc-semantic-invariants": [
+    {
+      "id": "ordem-lock-e-unico-ativo",
+      "description": "A ordem deve coincidir integralmente com o lock e no máximo um item pode estar em execução.",
+      "validator": "runner.fila.validar_fila_runtime"
+    },
+    {
+      "id": "historico-tentativa",
+      "description": "Histórico, tentativa, estado e timestamps devem formar uma sequência coerente.",
+      "validator": "runner.fila.validar_fila_runtime"
+    }
+  ],
+  "required": [
+    "schema_version",
+    "tipo",
+    "fila_lock_sha256",
+    "corpus_lock_sha256",
+    "configuracao_sha256",
+    "revision",
+    "criada_em",
+    "atualizada_em",
+    "itens"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "tipo": {"const": "fila-c1-c2-runtime"},
+    "fila_lock_sha256": {"$ref": "#/$defs/sha256"},
+    "corpus_lock_sha256": {"$ref": "#/$defs/sha256"},
+    "configuracao_sha256": {"$ref": "#/$defs/sha256"},
+    "revision": {"type": "integer", "minimum": 0},
+    "criada_em": {"$ref": "#/$defs/timestamp"},
+    "atualizada_em": {"$ref": "#/$defs/timestamp"},
+    "itens": {
+      "type": "array",
+      "minItems": 52,
+      "maxItems": 52,
+      "items": {"$ref": "#/$defs/item"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+    },
+    "manifesto": {
+      "type": "string",
+      "pattern": "^resultados/C[12]-ALVO-[0-9]{4}-R01/tentativa-[0-9]{3}/manifesto\\.json$"
+    },
+    "falha": {
+      "enum": [
+        "proveniencia",
+        "preflight",
+        "timeout",
+        "codigo_saida",
+        "formato",
+        "interrompida",
+        "contaminada",
+        "indisponibilidade",
+        "interna"
+      ]
+    },
+    "historico": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tentativa",
+        "inicio_utc",
+        "termino_utc",
+        "desfecho",
+        "manifesto_relativo",
+        "falha_tipo"
+      ],
+      "properties": {
+        "tentativa": {"type": "integer", "minimum": 1, "maximum": 999},
+        "inicio_utc": {"$ref": "#/$defs/timestamp"},
+        "termino_utc": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]},
+        "desfecho": {"enum": [null, "concluida", "falha", "interrompida"]},
+        "manifesto_relativo": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/manifesto"}]},
+        "falha_tipo": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/falha"}]}
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execucao_id",
+        "alvo",
+        "condicao",
+        "repeticao",
+        "estado",
+        "tentativa",
+        "inicio_utc",
+        "termino_utc",
+        "manifesto_relativo",
+        "falha_tipo",
+        "historico"
+      ],
+      "properties": {
+        "execucao_id": {"type": "string", "pattern": "^C[12]-ALVO-[0-9]{4}-R01$"},
+        "alvo": {"type": "string", "pattern": "^ALVO-[0-9]{4}$"},
+        "condicao": {"enum": ["C1", "C2"]},
+        "repeticao": {"const": 1},
+        "estado": {"enum": ["pendente", "em_execucao", "concluida", "falha"]},
+        "tentativa": {"type": "integer", "minimum": 0, "maximum": 999},
+        "inicio_utc": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]},
+        "termino_utc": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]},
+        "manifesto_relativo": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/manifesto"}]},
+        "falha_tipo": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/falha"}]},
+        "historico": {"type": "array", "items": {"$ref": "#/$defs/historico"}}
+      }
+    }
+  }
+}

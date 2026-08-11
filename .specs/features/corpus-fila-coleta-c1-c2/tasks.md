@@ -50,7 +50,7 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 
 **Evidência:** 26 alvos e suas regenerações idênticos; validador oficial `ALL PASSED` para 817 entradas; 697 vulnerabilidades/120 armadilhas; três espelhos e três links omitidos registrados; 193 testes Python, 15 testes de aquisição, 18 do wrapper, oito integrações Docker e fumaça aprovados no gate build de 2026-08-11.
 
-### M2-T04: Implementar fila retomável
+### M2-T04: Implementar fila retomável — CONCLUÍDA
 
 **O que:** criar modelo/CLI da fila com transições atômicas, revisão, claim exclusivo e retomada de órfã.
 **Onde:** `runner/fila.py`, `tests/test_fila.py`, `runner/schemas/fila-c1-c2-v1.schema.json`.
@@ -59,6 +59,8 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 
 **Concluída quando:** 52 itens exatos; somente uma execução ativa; interrupção incrementa tentativa sem sobrescrever; terminais são imutáveis; corrupção/deriva é recusada; ao menos 20 testes passam; gate quick verde.
 **Commit:** `feat(fila): orquestrar coleta C1 C2 retomável`.
+
+**Evidência:** 30 testes específicos e 223 testes no gate quick, todos aprovados em 2026-08-11; o estado runtime valida hashes dos locks/configuração, revisão derivada do histórico, ordem temporal, claim exclusivo e caminhos de manifesto por tentativa.
 
 ### M2-T05: Implementar orquestrador e auditoria da coleta
 

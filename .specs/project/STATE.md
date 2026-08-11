@@ -1,7 +1,7 @@
 # Estado
 
-**Última atualização:** 2026-08-11T13:50:00-03:00
-**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T04
+**Última atualização:** 2026-08-11T14:20:00-03:00
+**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T05
 
 ---
 
@@ -128,6 +128,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 011 | Congelar manifesto RealVuln v1, política de sanitização e ordem 26×2 | 2026-08-11 | `feat(corpus): congelar manifesto RealVuln v1` | ✅ Concluída |
 | 012 | Sanitizar exportações por política fechada e inventário regenerável | 2026-08-11 | `feat(corpus): sanitizar alvos por política congelada` | ✅ Concluída |
 | 013 | Adquirir 26 commits e validar integralmente corpus/oracle RealVuln v1 | 2026-08-11 | `feat(corpus): adquirir e validar censo RealVuln v1` | ✅ Concluída |
+| 014 | Implementar fila C1/C2 atômica, exclusiva e retomável | 2026-08-11 | `feat(fila): orquestrar coleta C1 C2 retomável` | ✅ Concluída |
 
 ## Ideias adiadas
 
