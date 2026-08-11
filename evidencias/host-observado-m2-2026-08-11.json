@@ -1,0 +1,11 @@
+{
+  "git_for_windows": "2.46.2.windows.1",
+  "wsl": "2.0.14.0",
+  "wsl_kernel": "5.15.133.1-1",
+  "docker_desktop": "4.38.0.181591",
+  "docker_engine": "27.5.1",
+  "docker_context": "desktop-linux",
+  "docker_platform": "linux/amd64",
+  "capturado_em_utc": "2026-08-11T17:35:00Z",
+  "fonte": "observacao local durante gate M2"
+}

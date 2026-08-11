@@ -81,6 +81,20 @@ function Get-CanonicalJsonHash {
     return [string]$resultado.sha256
 }
 
+function Assert-Configuracao {
+    param([string]$ImageId)
+    $validada = Invoke-ImagemPython @(
+        "-m", "runner.configuracao", "validar",
+        "--repo", "/repo",
+        "--configuracao", "/repo/evidencias/coleta-c1-c2/configuracao.json",
+        "--regras", "/repo/docker/regras-semgrep"
+    ) @("type=bind,src=$Repo,dst=/repo,readonly") "validaÃ§Ã£o da configuraÃ§Ã£o congelada" $ImageId
+    if ([string]$validada.tipo -ne "configuracao-coleta-c1-c2" -or
+        [string]$validada.controlador_commit -ne [string]$Config.controlador_commit) {
+        throw "validaÃ§Ã£o semÃ¢ntica da configuraÃ§Ã£o congelada divergiu"
+    }
+}
+
 function Assert-Freeze {
     param($Config)
     $head = (& git -C $Repo rev-parse HEAD).Trim()
@@ -162,6 +176,7 @@ if ([string]$Config.schema_version -ne "1.0" -or
     throw "configuração congelada possui identidade ou valores inválidos"
 }
 $ImageId = [string]$Config.imagem.id
+Assert-Configuracao $ImageId
 Assert-Freeze $Config
 $ConfigHash = Get-CanonicalJsonHash $ConfigPath $ImageId
 
@@ -199,6 +214,7 @@ if ($ativa.Count -gt 0) {
 }
 
 while ($true) {
+    Assert-Configuracao $ImageId
     Assert-Freeze $Config
     $claim = Invoke-Fila @("claim") $ConfigHash $ImageId
     if ($null -eq $claim) { break }
