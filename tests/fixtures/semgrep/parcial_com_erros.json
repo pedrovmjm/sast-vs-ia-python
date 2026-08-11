@@ -1,0 +1,31 @@
+{
+  "version": "1.172.0",
+  "results": [
+    {
+      "path": "pacote/modulo.py",
+      "start": {
+        "line": 7
+      },
+      "end": {},
+      "extra": {
+        "severity": "INFO",
+        "metadata": {}
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 3,
+      "level": "error",
+      "message": "arquivo não pôde ser analisado",
+      "path": "pacote/quebrado.py",
+      "type": "PartialParsing"
+    }
+  ],
+  "paths": {
+    "scanned": [
+      "pacote/modulo.py"
+    ]
+  },
+  "engine_requested": "OSS"
+}

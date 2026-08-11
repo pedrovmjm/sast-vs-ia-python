@@ -123,12 +123,12 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Reutiliza:** contrato JSON do Bandit 1.9.4.
 **Ferramentas:** filesystem e Docker.
 
-**Concluída quando:** achado, lista vazia, CWE ausente, duplicatas, caminhos sintáticos, hash/proveniência e documento inválido estão cobertos; 14 testes próprios passam; gate quick verde (85 testes acumulados após integração paralela).
+**Concluída quando:** achado, lista vazia, CWE ausente, erros parciais, duplicatas, caminhos sintáticos, hash/proveniência e documento inválido estão cobertos; 16 testes próprios passam; gate quick verde (87 testes acumulados após integração paralela).
 **Testes:** unidade.
 **Gate:** quick.
 **Commit:** `feat(adaptadores): normalizar saída do Bandit`.
 
-### T06: Implementar adaptador Semgrep [P]
+### T06: Implementar adaptador Semgrep [P] — ✅ CONCLUÍDA
 
 **O que:** converter JSON Semgrep, preservando erros e campos ausentes, sem registro remoto durante análise.
 **Onde:** `runner/adaptadores/semgrep.py`, `tests/fixtures/semgrep/`, `tests/test_semgrep.py`.
@@ -137,7 +137,7 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Reutiliza:** contrato JSON do Semgrep 1.172.0.
 **Ferramentas:** filesystem e Docker.
 
-**Concluída quando:** achado, lista vazia, erro parcial e documento inválido estão cobertos; pelo menos 4 testes passam; gate quick verde.
+**Concluída quando:** achado, lista vazia, erro parcial tipado, caminhos sintáticos, hash/proveniência e documento inválido estão cobertos; 10 testes próprios passam; gate quick verde com 87 testes acumulados.
 **Testes:** unidade.
 **Gate:** quick.
 **Commit:** `feat(adaptadores): normalizar saída do Semgrep`.

@@ -1,0 +1,42 @@
+{
+  "version": "1.172.0",
+  "results": [
+    {
+      "check_id": "python.django.security.injection.sql.sql-injection",
+      "path": "src\\consulta.py",
+      "start": {
+        "line": 11,
+        "col": 5,
+        "offset": 123
+      },
+      "end": {
+        "line": 13,
+        "col": 22,
+        "offset": 185
+      },
+      "extra": {
+        "message": "Consulta SQL formada com dado não confiável.",
+        "metadata": {
+          "cwe": [
+            "CWE-89: Improper Neutralization of Special Elements used in an SQL Command"
+          ],
+          "confidence": "HIGH",
+          "category": "security"
+        },
+        "severity": "WARNING",
+        "lines": "cursor.execute(\"SELECT * FROM contas WHERE id = \" + usuario)",
+        "fix": "cursor.execute(\"SELECT * FROM contas WHERE id = %s\", (usuario,))",
+        "fingerprint": "fixture-semgrep-1"
+      }
+    }
+  ],
+  "errors": [],
+  "paths": {
+    "scanned": [
+      "src/consulta.py"
+    ]
+  },
+  "engine_requested": "OSS",
+  "skipped_rules": [],
+  "time": {}
+}

@@ -77,7 +77,9 @@ Não há código autoral pré-existente para reutilizar. A pontuação oficial s
 - **Interfaces:** `normalizar(documento, proveniencia) -> list[Achado]`.
 - **Restrição:** não acessam `benchmark/ground-truth` nem `oracle/`.
 
-No Bandit, os mapas congelados são `LOW/MEDIUM/HIGH` para `baixa/media/alta`, tanto em severidade quanto em confiança. Somente `issue_cwe.id` inteiro positivo produz `CWE-N`; regra, mensagem ou código nunca são usados para inferir CWE. Duplicatas e a ordem nativa permanecem intactas para a etapa posterior de deduplicação.
+No Bandit, os mapas congelados são `LOW/MEDIUM/HIGH` para `baixa/media/alta`, tanto em severidade quanto em confiança. Somente `issue_cwe.id` inteiro positivo produz `CWE-N`; regra, mensagem ou código nunca são usados para inferir CWE. Duplicatas e a ordem nativa permanecem intactas para a etapa posterior de deduplicação. Assim como no Semgrep, `errors` não vazio emite aviso tipado ligado ao hash do bruto.
+
+No Semgrep, o mapa congelado é `INFO/WARNING/ERROR` para `baixa/media/alta`. A confiança nativa é preservada, mas permanece sem forma normalizada até existir mapeamento público aprovado. CWE é extraída somente de `extra.metadata.cwe`; quando houver uma lista, a primeira ocorrência sintaticamente válida `CWE-N` é usada e a lista original inteira é mantida. `errors` não vazios emitem aviso tipado com cópia dos erros e hash do bruto; T07 deve persistir esse aviso.
 
 ### Executor Docker
 

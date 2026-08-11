@@ -1,7 +1,7 @@
 # Estado
 
-**Última atualização:** 2026-08-10T23:12:57-03:00
-**Trabalho atual:** ambiente-e-primeira-execucao-sast — T06
+**Última atualização:** 2026-08-10T23:13:26-03:00
+**Trabalho atual:** ambiente-e-primeira-execucao-sast — T07
 
 ---
 
@@ -78,6 +78,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 003 | Construir e validar a imagem SAST fixada | 2026-08-10 | `build(docker): fixar ambiente SAST reproduzível` | ✅ Concluída |
 | 004 | Definir Achado v1 e ManifestoExecucao v1 | 2026-08-10 | `feat(esquema): definir achado e execução versionados` | ✅ Concluída |
 | 005 | Normalizar saída Bandit 1.9.4 sem inferência | 2026-08-10 | `feat(adaptadores): normalizar saída do Bandit` | ✅ Concluída |
+| 006 | Normalizar saída Semgrep CE 1.172.0 sem inferência | 2026-08-10 | `feat(adaptadores): normalizar saída do Semgrep` | ✅ Concluída |
 
 ## Ideias adiadas
 
