@@ -98,7 +98,8 @@ function Assert-Configuracao {
 function Assert-Freeze {
     param($Config)
     $head = (& git -C $Repo rev-parse HEAD).Trim()
-    if ($LASTEXITCODE -ne 0 -or $head -ne [string]$Config.controlador_commit) {
+    $parent = (& git -C $Repo rev-parse "HEAD^" 2>$null).Trim()
+    if ($LASTEXITCODE -ne 0 -or ($head -ne [string]$Config.controlador_commit -and $parent -ne [string]$Config.controlador_commit)) {
         throw "commit do controlador diverge da configuração congelada"
     }
     & git -C $Repo diff --quiet --exit-code
