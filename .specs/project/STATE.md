@@ -1,7 +1,7 @@
 # Estado
 
 **Última atualização:** 2026-08-10T00:00:00-03:00
-**Trabalho atual:** ambiente-e-primeira-execucao-sast — T03
+**Trabalho atual:** ambiente-e-primeira-execucao-sast — T04
 
 ---
 
@@ -68,6 +68,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 |---|---|---|---|---|
 | 001 | Inicializar Git local e excluir artefatos inseguros/gerados | 2026-08-10 | `5bdadd3` | ✅ Concluída |
 | 002 | Validar lock de fontes, hash das regras e exceção do host | 2026-08-10 | `feat(fontes): validar manifesto de proveniência` | ✅ Concluída |
+| 003 | Construir e validar a imagem SAST fixada | 2026-08-10 | `build(docker): fixar ambiente SAST reproduzível` | ✅ Concluída |
 
 ## Ideias adiadas
 
@@ -80,6 +81,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 - [ ] Registrar o horário real e o digest da imagem produzida no relatório de fumaça.
 - [ ] Corrigir no texto a promessa de publicar arquivos de regras incompatível com sua licença atual.
 - [ ] Reavaliar a exceção de versões do host antes da coleta definitiva e registrar se foi mantida ou revogada.
+- [ ] Revisar as licenças dos 67 pacotes transitivos antes de distribuir a imagem; o lock pode permanecer público.
 
 ## Preferências
 

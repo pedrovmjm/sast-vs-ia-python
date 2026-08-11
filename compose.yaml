@@ -1,0 +1,79 @@
+name: tcc-sast
+
+services:
+  controlador:
+    image: tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    network_mode: none
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    user: "10001:10001"
+    working_dir: /workspace
+    init: true
+    pids_limit: 256
+    mem_limit: 3g
+    cpus: 2.0
+    stop_grace_period: 5s
+    environment:
+      HOME: /tmp/tcc-home
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONNOUSERSITE: "1"
+      PYTHONPYCACHEPREFIX: /tmp/pycache
+      PYTHONPATH: /workspace
+      SEMGREP_ENABLE_VERSION_CHECK: "0"
+      SEMGREP_SEND_METRICS: off
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m,uid=10001,gid=10001,mode=1777
+    volumes:
+      - type: bind
+        source: ./.dockerignore
+        target: /workspace/.dockerignore
+        read_only: true
+      - type: bind
+        source: ./compose.yaml
+        target: /workspace/compose.yaml
+        read_only: true
+      - type: bind
+        source: ./docker/Dockerfile
+        target: /workspace/docker/Dockerfile
+        read_only: true
+      - type: bind
+        source: ./docker/requirements.in
+        target: /workspace/docker/requirements.in
+        read_only: true
+      - type: bind
+        source: ./docker/requirements.lock
+        target: /workspace/docker/requirements.lock
+        read_only: true
+      - type: bind
+        source: ./scripts/gate.ps1
+        target: /workspace/scripts/gate.ps1
+        read_only: true
+      - type: bind
+        source: ./runner
+        target: /workspace/runner
+        read_only: true
+      - type: bind
+        source: ./tests
+        target: /workspace/tests
+        read_only: true
+      - type: bind
+        source: ./config
+        target: /workspace/config
+        read_only: true
+    command:
+      - python
+      - -m
+      - unittest
+      - discover
+      - -v
+      - -s
+      - tests
+      - -p
+      - test_*.py

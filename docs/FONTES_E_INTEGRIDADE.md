@@ -10,9 +10,10 @@
 | Git for Windows | [git-for-windows/git](https://github.com/git-for-windows/git/releases) | host `2.46.2.windows.1`; corrente observada `2.55.0.windows.3` | binário do host e release oficial; a versão do host está em intervalos afetados por avisos de segurança | GPL-2.0 e licenças dos componentes | continuar por exceção explícita AD-005; não relaxar URL/commit/hooks |
 | WSL | [documentação Microsoft](https://learn.microsoft.com/windows/wsl/install) | host `2.0.14.0`; Docker atual requer ao menos `2.1.5` | `wsl --version` e requisito oficial do Docker Desktop | componentes Microsoft/Linux conforme distribuição | continuar por exceção explícita AD-005; registrar versão em cada execução |
 | RealVuln | [kolega-ai/Real-Vuln-Benchmark](https://github.com/kolega-ai/Real-Vuln-Benchmark) | tag `v1.0`; commit `d98e9fc91273702c9547663b6906d1fc494d4fcc` | `git ls-remote --tags`; manifesto upstream declara `benchmark_version: 1.0.0` e `ground_truth_content_hash: sha256:a57347fbdf2a` | conflito: `LICENSE` contém MIT; `pyproject.toml` declara Apache-2.0 | adquirir sem alterar; preservar avisos; não usar `main` |
-| Python | [imagem oficial Docker](https://hub.docker.com/_/python) | `3.12.13-slim-bookworm` | índice OCI `sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2`; revisão da imagem `3362634339580d3232e65a66dd5a36c47ae7ff14` | PSF e licenças dos componentes Debian | usar por tag completa + digest |
+| Python | [imagem oficial Docker](https://hub.docker.com/_/python) | `3.12.13-slim-bookworm`; `linux/amd64` | índice OCI `sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2`; manifesto amd64 `sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af`; revisão `3362634339580d3232e65a66dd5a36c47ae7ff14` | PSF e licenças dos componentes Debian | impor plataforma e usar o manifesto por digest |
 | Bandit | [PyPI/PyCQA](https://pypi.org/project/bandit/1.9.4/) e [fonte](https://github.com/PyCQA/bandit/tree/92ae8b82fb422a639f0ed8d99e96cea769594e08) | `1.9.4` | wheel `bandit-1.9.4-py3-none-any.whl`: SHA-256 `f89ffa663767f5a0585ea075f01020207e966a9c0f2b9ef56a57c7963a3f6f8e`; PyPI Trusted Publishing/Sigstore; tag no commit `92ae8b...` | Apache-2.0 | instalar somente por lock completo com hashes |
 | Semgrep CE | [PyPI/Semgrep](https://pypi.org/project/semgrep/1.172.0/) e [releases](https://github.com/semgrep/semgrep/releases/tag/v1.172.0) | `1.172.0`; commit `651f37efa397bf066e1cf627414eeabe40b07e27` | wheel Linux x86-64 manylinux 2.34: SHA-256 `d8b94af4266a575287ad2cd844573743ab4fe58f6bfb6d9229327807937eade3`; PyPI Trusted Publishing/Sigstore | LGPL-2.1-or-later para o engine | instalar somente por lock completo com hashes |
+| Lock Python transitivo | [índice oficial PyPI](https://pypi.org/simple/) | CPython 3.12/linux-amd64; `pip 25.0.1`; 69 pacotes | somente wheels HTTPS de `files.pythonhosted.org`; `requirements.lock` SHA-256 `6acd3885d28a89476b01dac76b8b8c450f287847b1a6c7505191df30471020a4` | revisão de licenças transitivas pendente antes de distribuir a imagem | permitir build local por `--require-hashes`; não publicar a imagem ainda |
 | Regras Semgrep CE | [semgrep/semgrep-rules](https://github.com/semgrep/semgrep-rules) | commit `40b8c63f75dc7c22c8a77482d73bfb864b146f7e`; caminho `python/` | 717 arquivos regulares; árvore canônica `sha256:29eb41850a07fee98955446524423ddd9e9f5040cbf7e301788b791386ee8309` | [Semgrep Rules License v1.0](https://semgrep.dev/legal/rules-license/) | adquirir localmente; não redistribuir no Git remoto |
 | Docker Desktop/Engine | [release notes oficiais](https://docs.docker.com/desktop/release-notes/) | host `4.38.0`/Engine `27.5.1`; recomendado `4.86.0`/`29.7.2` em 2026-08-10 | versões observadas localmente e release notes oficiais | Docker Subscription Service Agreement e licenças dos componentes | continuar por exceção explícita AD-005 e manter isolamento compensatório |
 
@@ -48,7 +49,23 @@ Consequências para o TCC:
 
 Na T02, o commit foi adquirido com hooks, submódulos, conversão de fim de linha e protocolo local desativados. Antes do checkout esparso de `python/`, a árvore foi inspecionada e continha apenas blobs regulares. O hash canônico usa, em ordem de caminho UTF-8, `caminho relativo POSIX`, tamanho e SHA-256 de cada arquivo; assim, independe de mtime e ordem de criação. A cópia permanece em `docker/regras-semgrep/`, ignorada pelo Git.
 
-O lock e a aceitação de risco também são identificados por SHA-256 para inclusão posterior nas evidências: `fontes.lock.json` = `b1323d8f999698fa23554864985b0a346e530d02ef4ff592040806ba681c5173`; `host-risk-waiver.json` = `38e22933c7d7d4a0699ebb7c084a6451f9e586f2f151a350ab790526763a9cf7`.
+Na conclusão da T02, o lock de fontes tinha SHA-256 `b1323d8f999698fa23554864985b0a346e530d02ef4ff592040806ba681c5173`. A T03 acrescentou a resolução transitiva e produziu a revisão atual `8d7329b3ea3325fd31d2b472c9c3391e4d89cc8b24738b735698f97c73212310`. A aceitação de risco permaneceu inalterada: `host-risk-waiver.json` = `38e22933c7d7d4a0699ebb7c084a6451f9e586f2f151a350ab790526763a9cf7`.
+
+## Lock Python e imagem controladora
+
+O lock foi resolvido em contêiner descartável da mesma base e plataforma da imagem final, usando `pip --dry-run --ignore-installed --report --only-binary=:all:`. As 69 URLs observadas usavam HTTPS e o host exato `files.pythonhosted.org`; nenhuma sdist foi aceita. Uma instalação limpa posterior por `--require-hashes` terminou com `pip check: No broken requirements found`. Os hashes de entrada são:
+
+```text
+docker/requirements.in   sha256:a9a929621d5bc5913ad0370bcbd673b3615150361e1d5d862e727cf0b9fbd199
+docker/requirements.lock sha256:6acd3885d28a89476b01dac76b8b8c450f287847b1a6c7505191df30471020a4
+docker/Dockerfile        sha256:b36151d770acd9bfa002780838f928cc7a7e4d8e20a8ed290321af1983e4c9a2
+compose.yaml             sha256:e9337f8562b5e16cfc048397fd5fe4d72cb231d94fc529aad8360f053c0e3fef
+scripts/gate.ps1         sha256:aba4dcbdf9569ea6b941fbf73eaa8f105b3ea5e1344fbc223eb3bbef1aca7f6e
+```
+
+O build local final de 2026-08-10 22:30:30-03:00 gerou `tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0`, identificada por `sha256:34364bcd30dcead82b894173569327126bd0c8e89f73610f57b1fa275edfab43`, com 140.582.622 bytes, `linux/amd64`, usuário `10001:10001` e diretório `/workspace`. O preflight embarcado revalidou o lock sem mounts. Dentro do perfil Compose, foram observados Python 3.12.13, Bandit 1.9.4, Semgrep 1.172.0 e pip 25.0.1.
+
+A sonda de integração comprovou `CapEff=0`, `NoNewPrivs=1`, UID/GID 10001, somente interface `lo`, raiz somente leitura, `/tmp` gravável e ausência de `benchmark`, `alvos`, `oracle`, `execucoes` e `resultados`. O gate oficial `build`, executado por `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 build`, compilou para o `tmpfs`, executou 37 testes, obteve 37 aprovações sem ignorados, rodou a sonda e revalidou dependências/versões/preflight embarcado.
 
 ## Docker: estado atual e gate de segurança
 

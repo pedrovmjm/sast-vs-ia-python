@@ -10,8 +10,8 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 
 ## Metas
 
-- [ ] Inicializar e documentar o ambiente sem instalar Python no host.
-- [ ] Fixar todas as entradas externas por origem oficial, versão/commit/digest e hash.
+- [x] Inicializar e documentar o ambiente sem instalar Python no host.
+- [x] Fixar todas as entradas externas deste marco por origem oficial, versão/commit/digest e hash.
 - [ ] Executar Bandit e Semgrep em contêiner endurecido sobre fixture externa ao corpus.
 - [ ] Executar fumaça descartável em um alvo RealVuln fixado e registrar evidências.
 - [ ] Atualizar o Capítulo 7 apenas com valores observados e verificáveis.
@@ -83,9 +83,9 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 |---|---|---|---|
 | AMB-01 | Git local seguro e transferível | solicitação do usuário; `07:46` | Verificado |
 | AMB-02 | RealVuln v1.0 fixado e validado | `06:64-70`, `07:50-54` | Verificado em T02 |
-| AMB-03 | Proveniência/licença/hash antes do download | `06:70`, `07:46,54,130` | Parcial em T02; lock transitivo em T03 |
-| AMB-04 | Python e ferramentas em imagem imutável | `06:118`, `07:128-132` | Em tarefas |
-| AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Em tarefas |
+| AMB-03 | Proveniência/licença/hash antes do download | `06:70`, `07:46,54,130` | Verificado em T02/T03 |
+| AMB-04 | Python e ferramentas em imagem imutável | `06:118`, `07:128-132` | Verificado em T03 |
+| AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Parcial em T03; executor em T07 |
 | AMB-06 | Saída bruta preservada antes da normalização | `07:98-124` | Em tarefas |
 | AMB-07 | Esquema comum sem inferência | `06:126-130`, `07:100-124` | Em tarefas |
 | AMB-08 | Adaptador Bandit | `07:134-142` | Em tarefas |

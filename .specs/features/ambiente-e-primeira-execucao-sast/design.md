@@ -60,8 +60,8 @@ Não há código autoral pré-existente para reutilizar. A pontuação oficial s
 
 - **Finalidade:** fornecer ambiente único para harness, Bandit e Semgrep.
 - **Localização:** `docker/Dockerfile`, `docker/requirements.in`, `docker/requirements.lock`, `compose.yaml`.
-- **Base:** `python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2`.
-- **Dependências:** Bandit 1.9.4 e Semgrep 1.172.0 com lock/hashes completos.
+- **Base:** índice OCI validado `sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2`; build imposto em `linux/amd64` pelo manifesto `sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af`.
+- **Dependências:** Bandit 1.9.4 e Semgrep 1.172.0 em lock de 69 wheels para CPython 3.12/linux-amd64, todos fixados por SHA-256.
 
 ### Esquema comum
 

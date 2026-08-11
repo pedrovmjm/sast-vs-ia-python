@@ -99,6 +99,22 @@ LICENSE_LOCKS = {
     "semgrep": ["LGPL-2.1-or-later"],
     "regras Semgrep": ["Semgrep Rules License v1.0"],
 }
+PYTHON_PACKAGES_LOCK = {
+    "type": "python-requirements-lock",
+    "python_version": "3.12.13",
+    "platform": "linux/amd64",
+    "resolver": "pip 25.0.1",
+    "index_url": "https://pypi.org/simple",
+    "artifact_host": "files.pythonhosted.org",
+    "only_binary": True,
+    "input_path": "docker/requirements.in",
+    "input_sha256": "a9a929621d5bc5913ad0370bcbd673b3615150361e1d5d862e727cf0b9fbd199",
+    "lock_path": "docker/requirements.lock",
+    "lock_sha256": "6acd3885d28a89476b01dac76b8b8c450f287847b1a6c7505191df30471020a4",
+    "package_count": 69,
+    "wheel_count": 69,
+    "license_review": "pending-before-image-distribution",
+}
 REQUIRED_WAIVER_CONTROLS = frozenset(
     {
         "validar_origem_commit_sha256",
@@ -163,7 +179,14 @@ def validar_manifesto(manifesto: Mapping[str, Any]) -> Mapping[str, Any]:
         _validar_https(item.get("source"), f"host_policy.{ferramenta}.source")
 
     fontes = _exigir_objeto(manifesto.get("sources"), "sources")
-    esperadas = {"realvuln", "python_image", "bandit", "semgrep", "semgrep_rules"}
+    esperadas = {
+        "realvuln",
+        "python_image",
+        "bandit",
+        "semgrep",
+        "python_packages",
+        "semgrep_rules",
+    }
     if set(fontes) != esperadas:
         raise ErroProveniencia("o conjunto de fontes não corresponde ao design aprovado")
 
@@ -176,6 +199,9 @@ def validar_manifesto(manifesto: Mapping[str, Any]) -> Mapping[str, Any]:
     _validar_pypi(
         _exigir_objeto(fontes["semgrep"], "sources.semgrep"),
         nome="semgrep",
+    )
+    _validar_python_packages(
+        _exigir_objeto(fontes["python_packages"], "sources.python_packages")
     )
     _validar_regras(_exigir_objeto(fontes["semgrep_rules"], "sources.semgrep_rules"))
     return manifesto
@@ -260,6 +286,45 @@ def verificar_bundle_regras(
     return observado
 
 
+def verificar_lock_dependencias(
+    raiz_projeto: str | Path, fonte: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Confere os arquivos do lock Python e suas contagens sem instalar pacotes."""
+
+    _validar_python_packages(fonte)
+    raiz = Path(raiz_projeto)
+    input_path = raiz / fonte["input_path"]
+    lock_path = raiz / fonte["lock_path"]
+    input_sha256 = calcular_sha256_arquivo(input_path)
+    lock_sha256 = calcular_sha256_arquivo(lock_path)
+    if input_sha256 != fonte["input_sha256"]:
+        raise ErroProveniencia(
+            f"requirements.in diverge: esperado {fonte['input_sha256']}, observado {input_sha256}"
+        )
+    if lock_sha256 != fonte["lock_sha256"]:
+        raise ErroProveniencia(
+            f"requirements.lock diverge: esperado {fonte['lock_sha256']}, observado {lock_sha256}"
+        )
+
+    try:
+        texto = lock_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ErroProveniencia(f"não foi possível ler {lock_path}: {exc}") from exc
+    pacotes = re.findall(r"(?m)^([A-Za-z0-9_.-]+)==([^\s\\]+)\s*\\$", texto)
+    hashes = re.findall(r"(?m)^\s+--hash=sha256:([0-9a-f]{64})$", texto)
+    nomes = {nome.lower().replace("_", "-").replace(".", "-") for nome, _ in pacotes}
+    if len(pacotes) != fonte["package_count"] or len(nomes) != len(pacotes):
+        raise ErroProveniencia("contagem ou unicidade dos pacotes no lock diverge")
+    if len(hashes) != fonte["wheel_count"] or len(set(hashes)) != len(hashes):
+        raise ErroProveniencia("contagem ou unicidade dos wheels no lock diverge")
+    return {
+        "input_sha256": input_sha256,
+        "lock_sha256": lock_sha256,
+        "package_count": len(pacotes),
+        "wheel_count": len(hashes),
+    }
+
+
 def verificar_fontes(
     caminho_manifesto: str | Path,
     *,
@@ -271,6 +336,11 @@ def verificar_fontes(
 
     manifesto = carregar_json(caminho_manifesto)
     validar_manifesto(manifesto)
+    caminho_manifesto = Path(caminho_manifesto)
+    raiz_projeto = caminho_manifesto.resolve().parent.parent
+    lock_python = verificar_lock_dependencias(
+        raiz_projeto, manifesto["sources"]["python_packages"]
+    )
     avisos: list[str] = []
     waiver_sha256: str | None = None
     if observadas is not None:
@@ -284,6 +354,7 @@ def verificar_fontes(
         "schema_version": SCHEMA_VERSION,
         "manifest_sha256": calcular_sha256_arquivo(caminho_manifesto),
         "waiver_sha256": waiver_sha256,
+        "requirements_lock_sha256": lock_python["lock_sha256"],
         "warnings": avisos,
     }
 
@@ -500,6 +571,21 @@ def _validar_pypi(fonte: Mapping[str, Any], *, nome: str) -> None:
     if fonte.get("source_commit") != esperado["source_commit"]:
         raise ErroProveniencia(f"commit de {nome} diverge da fonte validada")
     _validar_licencas(fonte, nome)
+
+
+def _validar_python_packages(fonte: Mapping[str, Any]) -> None:
+    _exigir_chaves(fonte, set(PYTHON_PACKAGES_LOCK), "sources.python_packages")
+    _validar_url_exata(
+        fonte.get("index_url"),
+        PYTHON_PACKAGES_LOCK["index_url"],
+        "índice do lock Python",
+    )
+    _validar_sha256(fonte.get("input_sha256"), "python_packages.input_sha256")
+    _validar_sha256(fonte.get("lock_sha256"), "python_packages.lock_sha256")
+    if dict(fonte) != PYTHON_PACKAGES_LOCK:
+        if fonte.get("lock_sha256") != PYTHON_PACKAGES_LOCK["lock_sha256"]:
+            raise ErroProveniencia("SHA-256 do requirements.lock diverge da resolução validada")
+        raise ErroProveniencia("metadados do lock Python divergem da resolução validada")
 
 
 def _validar_regras(fonte: Mapping[str, Any]) -> None:

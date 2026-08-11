@@ -1,0 +1,11 @@
+**
+
+!.dockerignore
+!docker/
+!docker/Dockerfile
+!docker/requirements.in
+!docker/requirements.lock
+!runner/
+!runner/**
+!config/
+!config/*.json

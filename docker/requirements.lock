@@ -1,0 +1,284 @@
+#
+# Generated mechanically from docker/requirements.in.
+# Resolver: pip 25.0.1 in CPython 3.12.13, linux/amd64.
+# Only the wheels selected from https://files.pythonhosted.org are hashed.
+# Regenerate when the target Python/platform or either direct requirement changes.
+#
+--index-url https://pypi.org/simple
+--only-binary=:all:
+
+# wheel: annotated_types-0.8.0-py3-none-any.whl
+annotated-types==0.8.0 \
+    --hash=sha256:f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0
+
+# wheel: anyio-4.14.2-py3-none-any.whl
+anyio==4.14.2 \
+    --hash=sha256:9f505dda5ac9f0c8309b5e8bd445a8c2bf7246f3ce950121e45ea15bc41d1494
+
+# wheel: attrs-26.1.0-py3-none-any.whl
+attrs==26.1.0 \
+    --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309
+
+# wheel: bandit-1.9.4-py3-none-any.whl
+bandit==1.9.4 \
+    --hash=sha256:f89ffa663767f5a0585ea075f01020207e966a9c0f2b9ef56a57c7963a3f6f8e
+
+# wheel: boltons-21.0.0-py2.py3-none-any.whl
+boltons==21.0.0 \
+    --hash=sha256:b9bb7b58b2b420bbe11a6025fdef6d3e5edc9f76a42fb467afe7ca212ef9948b
+
+# wheel: bracex-3.0.1-py3-none-any.whl
+bracex==3.0.1 \
+    --hash=sha256:6523ad83aeb5098a4ee597cff0f964442ff74e460bd3fafaffab6a013ff2288c
+
+# wheel: certifi-2026.7.22-py3-none-any.whl
+certifi==2026.7.22 \
+    --hash=sha256:62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775
+
+# wheel: cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+cffi==2.1.1 \
+    --hash=sha256:c1453022f490d2459a11819d83ad1d586e9ff65a12ac3e705ffebd46d3685dcf
+
+# wheel: charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+charset-normalizer==3.4.9 \
+    --hash=sha256:5e226f6218febc71f6c1fc2fafb91c226f75bdc1d8fb12d66823716e891608fd
+
+# wheel: click-8.4.2-py3-none-any.whl
+click==8.4.2 \
+    --hash=sha256:e6f9f66136c816745b9d65817da91d61d957fb16e02e4dcd0552553c5a197b76
+
+# wheel: click_option_group-0.5.9-py3-none-any.whl
+click-option-group==0.5.9 \
+    --hash=sha256:ad2599248bd373e2e19bec5407967c3eec1d0d4fc4a5e77b08a0481e75991080
+
+# wheel: colorama-0.4.6-py2.py3-none-any.whl
+colorama==0.4.6 \
+    --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
+
+# wheel: cryptography-50.0.0-cp311-abi3-manylinux_2_34_x86_64.whl
+cryptography==50.0.0 \
+    --hash=sha256:82148ec5bddac30b51a5b3c1945075f896fa022cb93f8e4a01e9f6ee95292c5f
+
+# wheel: exceptiongroup-1.2.2-py3-none-any.whl
+exceptiongroup==1.2.2 \
+    --hash=sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b
+
+# wheel: face-26.0.1-py3-none-any.whl
+face==26.0.1 \
+    --hash=sha256:ab0a83c37c9789dce658a67a9a80eafaa113c9ec37c5a9d950ff5480542a062d
+
+# wheel: glom-25.12.0-py3-none-any.whl
+glom==25.12.0 \
+    --hash=sha256:b9f21e77f71a6576a43864e85066b8cc3f0f778d0d50961563f8981377a6dcb1
+
+# wheel: googleapis_common_protos-1.75.1-py3-none-any.whl
+googleapis-common-protos==1.75.1 \
+    --hash=sha256:28a1934bcd33b9c9da66ac301a0a4227e3367f095a17d0375cb98f0a09d93b79
+
+# wheel: h11-0.16.0-py3-none-any.whl
+h11==0.16.0 \
+    --hash=sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86
+
+# wheel: httpcore-1.0.9-py3-none-any.whl
+httpcore==1.0.9 \
+    --hash=sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55
+
+# wheel: httpx-0.28.1-py3-none-any.whl
+httpx==0.28.1 \
+    --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
+
+# wheel: httpx_sse-0.4.3-py3-none-any.whl
+httpx-sse==0.4.3 \
+    --hash=sha256:0ac1c9fe3c0afad2e0ebb25a934a59f4c7823b60792691f779fad2c5568830fc
+
+# wheel: idna-3.18-py3-none-any.whl
+idna==3.18 \
+    --hash=sha256:7f952cbe720b688055e3f87de14f5c3e5fdaa8bc3928985c4077ca689de849a2
+
+# wheel: importlib_metadata-8.7.1-py3-none-any.whl
+importlib-metadata==8.7.1 \
+    --hash=sha256:5a1f80bf1daa489495071efbb095d75a634cf28a8bc299581244063b53176151
+
+# wheel: jsonschema-4.25.1-py3-none-any.whl
+jsonschema==4.25.1 \
+    --hash=sha256:3fba0169e345c7175110351d456342c364814cfcf3b964ba4587f22915230a63
+
+# wheel: jsonschema_specifications-2025.9.1-py3-none-any.whl
+jsonschema-specifications==2025.9.1 \
+    --hash=sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe
+
+# wheel: markdown_it_py-4.2.0-py3-none-any.whl
+markdown-it-py==4.2.0 \
+    --hash=sha256:9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a
+
+# wheel: mcp-1.23.3-py3-none-any.whl
+mcp==1.23.3 \
+    --hash=sha256:32768af4b46a1b4f7df34e2bfdf5c6011e7b63d7f1b0e321d0fdef4cd6082031
+
+# wheel: mdurl-0.1.2-py3-none-any.whl
+mdurl==0.1.2 \
+    --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8
+
+# wheel: opentelemetry_api-1.37.0-py3-none-any.whl
+opentelemetry-api==1.37.0 \
+    --hash=sha256:accf2024d3e89faec14302213bc39550ec0f4095d1cf5ca688e1bfb1c8612f47
+
+# wheel: opentelemetry_exporter_otlp_proto_common-1.37.0-py3-none-any.whl
+opentelemetry-exporter-otlp-proto-common==1.37.0 \
+    --hash=sha256:53038428449c559b0c564b8d718df3314da387109c4d36bd1b94c9a641b0292e
+
+# wheel: opentelemetry_exporter_otlp_proto_http-1.37.0-py3-none-any.whl
+opentelemetry-exporter-otlp-proto-http==1.37.0 \
+    --hash=sha256:54c42b39945a6cc9d9a2a33decb876eabb9547e0dcb49df090122773447f1aef
+
+# wheel: opentelemetry_instrumentation-0.58b0-py3-none-any.whl
+opentelemetry-instrumentation==0.58b0 \
+    --hash=sha256:50f97ac03100676c9f7fc28197f8240c7290ca1baa12da8bfbb9a1de4f34cc45
+
+# wheel: opentelemetry_instrumentation_requests-0.58b0-py3-none-any.whl
+opentelemetry-instrumentation-requests==0.58b0 \
+    --hash=sha256:672a0be0bb5b52bea0c11820b35e27edcf4cd22d34abe4afc59a92a80519f8a8
+
+# wheel: opentelemetry_instrumentation_threading-0.58b0-py3-none-any.whl
+opentelemetry-instrumentation-threading==0.58b0 \
+    --hash=sha256:eacc072881006aceb5b9b6831bcdce718c67ef6f31ac0b32bd6a23a94d979b4a
+
+# wheel: opentelemetry_proto-1.37.0-py3-none-any.whl
+opentelemetry-proto==1.37.0 \
+    --hash=sha256:8ed8c066ae8828bbf0c39229979bdf583a126981142378a9cbe9d6fd5701c6e2
+
+# wheel: opentelemetry_sdk-1.37.0-py3-none-any.whl
+opentelemetry-sdk==1.37.0 \
+    --hash=sha256:8f3c3c22063e52475c5dbced7209495c2c16723d016d39287dfc215d1771257c
+
+# wheel: opentelemetry_semantic_conventions-0.58b0-py3-none-any.whl
+opentelemetry-semantic-conventions==0.58b0 \
+    --hash=sha256:5564905ab1458b96684db1340232729fce3b5375a06e140e8904c78e4f815b28
+
+# wheel: opentelemetry_util_http-0.58b0-py3-none-any.whl
+opentelemetry-util-http==0.58b0 \
+    --hash=sha256:6c6b86762ed43025fbd593dc5f700ba0aa3e09711aedc36fd48a13b23d8cb1e7
+
+# wheel: packaging-26.3-py3-none-any.whl
+packaging==26.3 \
+    --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
+
+# wheel: peewee-3.19.0-py3-none-any.whl
+peewee==3.19.0 \
+    --hash=sha256:de220b94766e6008c466e00ce4ba5299b9a832117d9eb36d45d0062f3cfd7417
+
+# wheel: protobuf-6.33.6-cp39-abi3-manylinux2014_x86_64.whl
+protobuf==6.33.6 \
+    --hash=sha256:e9db7e292e0ab79dd108d7f1a94fe31601ce1ee3f7b79e0692043423020b0593
+
+# wheel: pycparser-3.0-py3-none-any.whl
+pycparser==3.0 \
+    --hash=sha256:b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992
+
+# wheel: pydantic-2.13.4-py3-none-any.whl
+pydantic==2.13.4 \
+    --hash=sha256:45a282cde31d808236fd7ea9d919b128653c8b38b393d1c4ab335c62924d9aba
+
+# wheel: pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+pydantic-core==2.46.4 \
+    --hash=sha256:926c9541b14b12b1681dca8a0b75feb510b06c6341b70a8e500c2fdcff837cce
+
+# wheel: pydantic_settings-2.15.0-py3-none-any.whl
+pydantic-settings==2.15.0 \
+    --hash=sha256:0ba092c291c94baceb5eff768aa0d56400a457585bc0175925a5a5510303da42
+
+# wheel: pygments-2.20.0-py3-none-any.whl
+pygments==2.20.0 \
+    --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
+
+# wheel: pyjwt-2.13.0-py3-none-any.whl
+pyjwt==2.13.0 \
+    --hash=sha256:66adcc2aff09b3f1bbd95fc1e1577df8ac8723c978552fd43304c8a290ac5728
+
+# wheel: python_dotenv-1.2.2-py3-none-any.whl
+python-dotenv==1.2.2 \
+    --hash=sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a
+
+# wheel: python_multipart-0.0.32-py3-none-any.whl
+python-multipart==0.0.32 \
+    --hash=sha256:ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23
+
+# wheel: pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+pyyaml==6.0.3 \
+    --hash=sha256:ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc
+
+# wheel: referencing-0.37.0-py3-none-any.whl
+referencing==0.37.0 \
+    --hash=sha256:381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231
+
+# wheel: requests-2.34.2-py3-none-any.whl
+requests==2.34.2 \
+    --hash=sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0
+
+# wheel: rich-15.0.0-py3-none-any.whl
+rich==15.0.0 \
+    --hash=sha256:33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb
+
+# wheel: rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+rpds-py==2026.6.3 \
+    --hash=sha256:ecabd69db66de867690f9797f2f8fa27ba501bbc24540cbdbdc649cd15888ba6
+
+# wheel: ruamel_yaml-0.19.1-py3-none-any.whl
+ruamel-yaml==0.19.1 \
+    --hash=sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93
+
+# wheel: ruamel_yaml_clib-0.2.15-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+ruamel-yaml-clib==0.2.15 \
+    --hash=sha256:11e5499db1ccbc7f4b41f0565e4f799d863ea720e01d3e99fa0b7b5fcd7802c9
+
+# wheel: semantic_version-2.10.0-py2.py3-none-any.whl
+semantic-version==2.10.0 \
+    --hash=sha256:de78a3b8e0feda74cabc54aab2da702113e33ac9d9eb9d2389bcf1f58b7d9177
+
+# wheel: semgrep-1.172.0-cp310.cp311.cp312.cp313.cp314.py310.py311.py312.py313.py314-none-manylinux_2_34_x86_64.whl
+semgrep==1.172.0 \
+    --hash=sha256:d8b94af4266a575287ad2cd844573743ab4fe58f6bfb6d9229327807937eade3
+
+# wheel: sse_starlette-3.4.8-py3-none-any.whl
+sse-starlette==3.4.8 \
+    --hash=sha256:6e82314c786709a3cd9520f2285cf9fff90e181e598e8a357b0cf80f66afba0d
+
+# wheel: starlette-1.6.0-py3-none-any.whl
+starlette==1.6.0 \
+    --hash=sha256:a86dd39d14bb45f85a3d18525215a9ef0cfd1f192ac793220e72598c90335f0c
+
+# wheel: stevedore-5.9.0-py3-none-any.whl
+stevedore==5.9.0 \
+    --hash=sha256:e520945d4c257700eddc1eb1d79df04b2ea578eef185e0e3fa5b442fc848d3f7
+
+# wheel: tomli-2.4.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+tomli==2.4.1 \
+    --hash=sha256:136443dbd7e1dee43c68ac2694fde36b2849865fa258d39bf822c10e8068eac5
+
+# wheel: typing_extensions-4.16.0-py3-none-any.whl
+typing-extensions==4.16.0 \
+    --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8
+
+# wheel: typing_inspection-0.4.3-py3-none-any.whl
+typing-inspection==0.4.3 \
+    --hash=sha256:5f42b23858a91e0b4ef521f5418f03a0da3c9216fd2995ef5e73463100e676cd
+
+# wheel: urllib3-2.7.0-py3-none-any.whl
+urllib3==2.7.0 \
+    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
+
+# wheel: uvicorn-0.52.1-py3-none-any.whl
+uvicorn==0.52.1 \
+    --hash=sha256:e4403f9d93188cf9d1088e9f40e3acd12630e2df8675316704379a7fc20fff6a
+
+# wheel: wcmatch-8.5.2-py3-none-any.whl
+wcmatch==8.5.2 \
+    --hash=sha256:17d3ad3758f9d0b5b4dedc770b65420d4dac62e680229c287bf24c9db856a478
+
+# wheel: wrapt-1.17.3-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl
+wrapt==1.17.3 \
+    --hash=sha256:042ec3bb8f319c147b1301f2393bc19dba6e176b7da446853406d041c36c7828
+
+# wheel: zipp-4.1.0-py3-none-any.whl
+zipp==4.1.0 \
+    --hash=sha256:25ad4e16390cd314347dd8f1de67a2ac538ae658ed4ab9db16029c07c188e97f

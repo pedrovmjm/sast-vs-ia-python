@@ -21,9 +21,11 @@ Os comandos tornam-se executáveis depois de T03 criar a imagem e o `compose.yam
 
 | Gate | Comando |
 |---|---|
-| quick | `docker compose run --rm controlador python -m unittest discover -s tests -p "test_*.py"` |
-| full | `docker compose build controlador && docker compose run --rm controlador python -m unittest discover -s tests -p "test_*.py"` |
-| build | `docker compose config --quiet && docker compose build controlador && docker compose run --rm controlador python -m compileall -q runner tests && docker compose run --rm controlador python -m unittest discover -s tests -p "test_*.py"` |
+| quick | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 quick` |
+| full | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 full` |
+| build | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 build` |
+
+O gate `build` valida o Compose, reconstrói a imagem, compila para o `tmpfs`, executa todos os testes, roda a sonda de isolamento, aplica `pip check`, confere as versões e executa o preflight embarcado sem mounts.
 
 Enquanto T03 não estiver concluída, documentos usam `git diff --check` e validação JSON nativa do PowerShell como gate provisório.
 

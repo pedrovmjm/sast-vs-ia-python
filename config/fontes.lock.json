@@ -73,6 +73,22 @@
         "LGPL-2.1-or-later"
       ]
     },
+    "python_packages": {
+      "type": "python-requirements-lock",
+      "python_version": "3.12.13",
+      "platform": "linux/amd64",
+      "resolver": "pip 25.0.1",
+      "index_url": "https://pypi.org/simple",
+      "artifact_host": "files.pythonhosted.org",
+      "only_binary": true,
+      "input_path": "docker/requirements.in",
+      "input_sha256": "a9a929621d5bc5913ad0370bcbd673b3615150361e1d5d862e727cf0b9fbd199",
+      "lock_path": "docker/requirements.lock",
+      "lock_sha256": "6acd3885d28a89476b01dac76b8b8c450f287847b1a6c7505191df30471020a4",
+      "package_count": 69,
+      "wheel_count": 69,
+      "license_review": "pending-before-image-distribution"
+    },
     "semgrep_rules": {
       "type": "git",
       "url": "https://github.com/semgrep/semgrep-rules.git",

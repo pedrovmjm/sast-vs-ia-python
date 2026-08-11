@@ -70,10 +70,10 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Verificar:** `python -m unittest tests.test_aquisicao` no contêiner.
 **Commit:** `feat(fontes): validar manifesto de proveniência`.
 
-### T03: Construir a imagem SAST reproduzível
+### T03: Construir a imagem SAST reproduzível — ✅ CONCLUÍDA
 
 **O que:** criar imagem única com Python, Bandit e Semgrep fixados por digest/lock com hashes.
-**Onde:** `docker/Dockerfile`, `docker/requirements.in`, `docker/requirements.lock`, `compose.yaml`.
+**Onde:** `.dockerignore`, `docker/Dockerfile`, `docker/requirements.in`, `docker/requirements.lock`, `compose.yaml`, `scripts/gate.ps1`, `tests/test_ambiente.py`, `tests/runtime_probe.py`.
 **Depende de:** T02.
 **Requisitos:** AMB-03, AMB-04.
 **Reutiliza:** imagem oficial Python e distribuições PyPI verificadas.
@@ -81,12 +81,12 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 
 **Concluída quando:**
 
-- [ ] build usa a imagem-base por digest;
-- [ ] `pip` usa `--require-hashes`;
-- [ ] versões observadas são Python 3.12.13, Bandit 1.9.4 e Semgrep 1.172.0;
-- [ ] a imagem não contém `benchmark/`, `oracle/` ou alvos;
-- [ ] gate build passa;
-- [ ] contagem acumulada esperada: pelo menos 4 testes.
+- [x] build usa a imagem-base por digest;
+- [x] `pip` usa `--require-hashes` e somente wheels;
+- [x] versões observadas são Python 3.12.13, Bandit 1.9.4 e Semgrep 1.172.0;
+- [x] a imagem não contém `benchmark/`, `oracle/` ou alvos;
+- [x] gate build passa, incluindo sonda dos controles em runtime;
+- [x] contagem acumulada observada: 37 testes, 0 falhas, 0 ignorados.
 
 **Testes:** integração.
 **Gate:** build.
