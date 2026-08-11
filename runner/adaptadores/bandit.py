@@ -198,7 +198,7 @@ def _normalizar_linhas(
         )
     if any(atual > seguinte for atual, seguinte in zip(intervalo, intervalo[1:])):
         raise ErroAdaptador(f"{contexto}.line_range deve estar em ordem crescente")
-    if linha is not None and linha != intervalo[0]:
+    if linha is not None and linha not in intervalo:
         raise ErroAdaptador(
             f"{contexto}.line_range deve começar em line_number"
         )

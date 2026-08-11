@@ -368,6 +368,32 @@ def retomar_orfa(
     return resultado
 
 
+def reabrir_falha(
+    caminho: str | Path,
+    fila_lock: Mapping[str, Any],
+    corpus_lock: Mapping[str, Any],
+    configuracao_sha256: str,
+    execucao_id: str,
+    agora: str | None = None,
+) -> dict[str, Any]:
+    """Reabre explicitamente uma falha terminal para uma nova tentativa."""
+    instante = agora or _agora_utc()
+
+    def alterar(documento: dict[str, Any]) -> dict[str, Any]:
+        item = next((x for x in documento["itens"] if x["execucao_id"] == execucao_id), None)
+        if item is None:
+            raise ErroFila(f"execucao inexistente: {execucao_id}")
+        if item["estado"] != "falha":
+            raise ErroFila("somente falha terminal pode ser reaberta")
+        item.update({"estado": "pendente", "inicio_utc": None, "termino_utc": None,
+                     "manifesto_relativo": None, "falha_tipo": None})
+        return _recibo(item)
+
+    resultado = _mutar(caminho, fila_lock, corpus_lock, configuracao_sha256, instante, alterar)
+    assert resultado is not None
+    return resultado
+
+
 def ler_validada(
     caminho: str | Path,
     fila_lock: Mapping[str, Any],
@@ -653,6 +679,8 @@ def _parser():
     retomar_parser = subparsers.add_parser("retomar-orfa")
     retomar_parser.add_argument("--execucao-id", required=True)
     retomar_parser.add_argument("--tentativa", required=True, type=int)
+    reabrir_parser = subparsers.add_parser("reabrir-falha")
+    reabrir_parser.add_argument("--execucao-id", required=True)
     return parser
 
 
@@ -679,10 +707,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 argumentos.manifesto_relativo,
                 argumentos.falha_tipo,
             )
-        else:
+        elif argumentos.comando == "retomar-orfa":
             saida = retomar_orfa(
                 *comuns, argumentos.execucao_id, argumentos.tentativa
             )
+        else:
+            saida = reabrir_falha(*comuns, argumentos.execucao_id)
         print(json.dumps(saida, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
         return 0
     except (ErroFila, ErroCorpus, OSError, ValueError) as exc:

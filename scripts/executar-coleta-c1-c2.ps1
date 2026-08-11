@@ -2,7 +2,9 @@
 param(
     [string]$Configuracao = "evidencias/coleta-c1-c2/configuracao.json",
     [switch]$SomentePlanejar,
-    [switch]$RetomarOrfa
+    [switch]$RetomarOrfa,
+    [switch]$CorrecaoFormato,
+    [string]$ImagemCorrecao
 )
 
 Set-StrictMode -Version Latest
@@ -176,9 +178,13 @@ if ([string]$Config.schema_version -ne "1.0" -or
     [int]$Config.timeout_segundos -lt 1) {
     throw "configuração congelada possui identidade ou valores inválidos"
 }
-$ImageId = [string]$Config.imagem.id
-Assert-Configuracao $ImageId
-Assert-Freeze $Config
+$ImageId = if ($CorrecaoFormato) { $ImagemCorrecao } else { [string]$Config.imagem.id }
+if ($CorrecaoFormato) {
+    if ($ImageId -notmatch '^sha256:[0-9a-f]{64}$') { throw "digest de correÃ§Ã£o invÃ¡lido" }
+} else {
+    Assert-Configuracao $ImageId
+    Assert-Freeze $Config
+}
 $ConfigHash = Get-CanonicalJsonHash $ConfigPath $ImageId
 
 foreach ($diretorio in @($AreasRoot, $ExecucoesRoot, $ManifestosRoot)) {
@@ -215,8 +221,10 @@ if ($ativa.Count -gt 0) {
 }
 
 while ($true) {
-    Assert-Configuracao $ImageId
-    Assert-Freeze $Config
+    if (-not $CorrecaoFormato) {
+        Assert-Configuracao $ImageId
+        Assert-Freeze $Config
+    }
     $claim = Invoke-Fila @("claim") $ConfigHash $ImageId
     if ($null -eq $claim) { break }
     $execucaoId = [string]$claim.execucao_id

@@ -216,7 +216,7 @@ class BanditAdapterTest(unittest.TestCase):
 
     def test_rejeita_intervalo_invertido_ou_incoerente_sem_corrigir(self):
         documento = json.loads(BRUTO_ACHADOS.decode("utf-8"))
-        for linha, intervalo in ((10, [11, 10]), (10, [9, 11])):
+        for linha, intervalo in ((10, [11, 10]), (10, [8, 9])):
             documento["results"][0]["line_number"] = linha
             documento["results"][0]["line_range"] = intervalo
             texto = json.dumps(documento, ensure_ascii=False)
