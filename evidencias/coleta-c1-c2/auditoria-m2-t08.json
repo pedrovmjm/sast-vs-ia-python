@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "tipo": "auditoria-coleta-c1-c2",
+  "finalidade": "auditoria",
+  "executado_em_utc": "2026-08-11T19:20:00Z",
+  "fila": {
+    "itens": 52,
+    "terminais": 52,
+    "concluidas": 43,
+    "falhas": 9,
+    "em_execucao": 0,
+    "pendentes": 0
+  },
+  "resultados": {
+    "alvos": 26,
+    "tarefas_com_manifesto_terminal": 52,
+    "c1": 26,
+    "c2": 26,
+    "pares_por_alvo": 26,
+    "finalidade_coleta": 52,
+    "tentativas_adicionais_preservadas": 2,
+    "manifestos_preservados": 54
+  },
+  "integridade": {
+    "areas_execucao_residuais": 0,
+    "arquivos_part_residuais": 0,
+    "containers_sast_ativos_ao_final": 0,
+    "fumaca_misturada": false,
+    "fumaca_pre_m2_arquivada": true,
+    "configuracao_sha256": "798f8182793b96650bfa4e89a7c73df4271f5548cebc5289e0dee00b2664d0bc"
+  },
+  "observacao": "As nove falhas sao terminais e permanecem nos manifestos; nenhuma foi convertida em sucesso. As duas tentativas adicionais decorrem de retomadas apos timeout do invocador e foram preservadas por identidade de tentativa."
+}
