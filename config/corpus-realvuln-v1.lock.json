@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "realvuln": {
+    "url": "https://github.com/kolega-ai/Real-Vuln-Benchmark.git",
+    "tag": "v1.0",
+    "tag_object": "aa9f7321c8c53fe417b8faa517f1c4308b69b389",
+    "commit": "d98e9fc91273702c9547663b6906d1fc494d4fcc",
+    "benchmark_version": "1.0.0",
+    "manifesto_sha256": "477169e7852e4a405fc01c7f19aa663cf55447875f166018abbfcf1cd05e4247",
+    "ground_truth_content_identifier": "sha256:a57347fbdf2a"
+  },
+  "politica_sanitizacao": "sanitizacao-v1",
+  "quantidade_alvos": 26,
+  "alvos": [
+    {"alvo": "ALVO-0001", "realvuln_id": "realvuln-damn-vulnerable-flask-application", "url": "https://github.com/kolega-ai/realvuln-Damn-Vulnerable-Flask-Application", "commit": "55f63201c85190e760a8fa34a580a9bf918dbf36"},
+    {"alvo": "ALVO-0002", "realvuln_id": "realvuln-damn-vulnerable-graphql-application", "url": "https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application", "commit": "a961308c02d1fb462b192681c336b0739e432da7"},
+    {"alvo": "ALVO-0003", "realvuln_id": "realvuln-djangoat", "url": "https://github.com/Contrast-Security-OSS/DjanGoat", "commit": "082c88bfefced508ae083b92b459c808f95e905e"},
+    {"alvo": "ALVO-0004", "realvuln_id": "realvuln-dsvpwa", "url": "https://github.com/sgabe/DSVPWA", "commit": "a06abb306ed3699bb2f073e3f41d3d9c57012819"},
+    {"alvo": "ALVO-0005", "realvuln_id": "realvuln-dsvw", "url": "https://github.com/stamparm/DSVW", "commit": "7d40f4b7939c901610ed9b85724552d60e7d63fa"},
+    {"alvo": "ALVO-0006", "realvuln_id": "realvuln-dvblab", "url": "https://github.com/mamgad/DVBLab", "commit": "25bdef1e32055bfb6366856acc5db829e61e3647"},
+    {"alvo": "ALVO-0007", "realvuln_id": "realvuln-dvpwa", "url": "https://github.com/anxolerd/dvpwa", "commit": "a1d8f89fac2e57093189853c6527c2b01fc1d9c1"},
+    {"alvo": "ALVO-0008", "realvuln_id": "realvuln-extremely-vulnerable-flask-app", "url": "https://github.com/manuelz120/extremely-vulnerable-flask-app", "commit": "d5d8875559e21222bbbaadb7b9f0af592c6eb7fa"},
+    {"alvo": "ALVO-0009", "realvuln_id": "realvuln-flask-xss", "url": "https://github.com/terrabitz/Flask_XSS", "commit": "4d6f500246696d9078e141d7eabcc34087c54faa"},
+    {"alvo": "ALVO-0010", "realvuln_id": "realvuln-insecure-web", "url": "https://github.com/brenesrm/insecure-web", "commit": "5d1b791bb6c2d1397843f29ee6a0d5c9386dd667"},
+    {"alvo": "ALVO-0011", "realvuln_id": "realvuln-intentionally-vulnerable-python-application", "url": "https://github.com/kolega-ai/realvuln-Intentionally-Vulnerable-Python-Application", "commit": "3804a18ae666b296675f9a60bc617e527beae520"},
+    {"alvo": "ALVO-0012", "realvuln_id": "realvuln-lets-be-bad-guys", "url": "https://github.com/mpirnat/lets-be-bad-guys", "commit": "7cbf11014bfc6dc9e199dc0b8a64e4597bc2338f"},
+    {"alvo": "ALVO-0013", "realvuln_id": "realvuln-owasp-web-playground", "url": "https://github.com/kolega-ai-dev/realvuln-OWASP-Web-Playground.git", "commit": "5e682aca1b58e03362a5fbd9fc88c37626e429ce"},
+    {"alvo": "ALVO-0014", "realvuln_id": "realvuln-pygoat", "url": "https://github.com/adeyosemanputra/pygoat", "commit": "2fb0c600245f50670e8b9233c784afe61e8b340b"},
+    {"alvo": "ALVO-0015", "realvuln_id": "realvuln-python-app", "url": "https://github.com/RiieCco/owasp-bay-area", "commit": "a33452268ef7489ebeb44f65a1bae06eda2072ab"},
+    {"alvo": "ALVO-0016", "realvuln_id": "realvuln-python-insecure-app", "url": "https://github.com/kolega-ai/realvuln-python-insecure-app", "commit": "80b894a2f754590747a31c92b2088be086421953"},
+    {"alvo": "ALVO-0017", "realvuln_id": "realvuln-pythonssti", "url": "https://github.com/TheWation/PythonSSTI", "commit": "76339c27d5a870c0a81bad6aee5f9bd516592145"},
+    {"alvo": "ALVO-0018", "realvuln_id": "realvuln-threatbyte", "url": "https://github.com/anotherik/ThreatByte", "commit": "c4db46f72586c4ecb65859051ea037018dbf0e5e"},
+    {"alvo": "ALVO-0019", "realvuln_id": "realvuln-vampi", "url": "https://github.com/erev0s/VAmPI", "commit": "1713b54b601ad29582581eeda4b31fceb1319874"},
+    {"alvo": "ALVO-0020", "realvuln_id": "realvuln-vfapi", "url": "https://github.com/naryal2580/vfapi", "commit": "f36f177e1a32aa49272f4eb52f8be0af3e8f6bc3"},
+    {"alvo": "ALVO-0021", "realvuln_id": "realvuln-vulnerable-api", "url": "https://github.com/kolega-ai/realvuln-Vulnerable-API", "commit": "f7797964e1cd63a1cbcc8ced721fa41db674c8e0"},
+    {"alvo": "ALVO-0022", "realvuln_id": "realvuln-vulnerable-flask-app", "url": "https://github.com/we45/Vulnerable-Flask-App", "commit": "b6a4f97afd466e83e1f60781494252dec1c37039"},
+    {"alvo": "ALVO-0023", "realvuln_id": "realvuln-vulnerable-python-apps", "url": "https://github.com/realvuln/Vulnerable-Python-Apps", "commit": "6336c77e6db523a5df34c4b628dff4159110797a"},
+    {"alvo": "ALVO-0024", "realvuln_id": "realvuln-vulnerable-tornado-app", "url": "https://github.com/kolega-ai/realvuln-Vulnerable_Tornado_App", "commit": "7aca8b78ba948c841d6cb1cc2a244922a27e842b"},
+    {"alvo": "ALVO-0025", "realvuln_id": "realvuln-vulnpy", "url": "https://github.com/Contrast-Security-OSS/vulnpy", "commit": "d1d0f64c06f038fe59a049e0e6001bfaf9839697"},
+    {"alvo": "ALVO-0026", "realvuln_id": "realvuln-vulpy", "url": "https://github.com/fportantier/vulpy", "commit": "5249cc8b05a1c37f6b2f757b1cf16a509c327122"}
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "politica_id": "sanitizacao-v1",
+  "segmentos_excluidos": [
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pycache__",
+    "dist",
+    "env",
+    "ground-truth",
+    "htmlcov",
+    "node_modules",
+    "oracle",
+    "solution",
+    "solutions",
+    "venv",
+    "walkthrough",
+    "walkthroughs",
+    "writeup",
+    "writeups"
+  ],
+  "arquivos_excluidos": [
+    ".ds_store",
+    ".gitmodules",
+    "thumbs.db",
+    "zone.identifier"
+  ],
+  "sufixos_excluidos": [
+    ".class",
+    ".pyc",
+    ".pyo"
+  ],
+  "modos_git_permitidos": [
+    "100644",
+    "100755"
+  ]
+}

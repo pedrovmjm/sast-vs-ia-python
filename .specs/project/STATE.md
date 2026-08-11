@@ -1,11 +1,25 @@
 # Estado
 
-**Última atualização:** 2026-08-11T09:53:00-03:00
-**Trabalho atual:** M1 concluído — próximo marco M2, ainda não iniciado
+**Última atualização:** 2026-08-11T10:20:00-03:00
+**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T02
 
 ---
 
 ## Decisões recentes
+
+### AD-008: Censo C1/C2 em fila única com ordem por ranking SHA-256 (2026-08-11)
+
+**Decisão:** formar exatamente 52 itens (26 alvos × C1/C2), ordenar por SHA-256 com semente publicada e executar serialmente; falhas terminais permanecem na fila e interrupções criam nova tentativa.
+**Razão:** o protocolo exige censo integral, ordem anterior aos resultados, exclusão de contenção local e retomada sem sobrescrita.
+**Trade-off:** a coleta será mais demorada e não haverá retry automático de falha terminal.
+**Impacto:** locks de corpus/fila são rastreados; estado runtime e brutos permanecem ignorados; cada tentativa usa área e saída novas.
+
+### AD-009: Exceção de risco do M1 não se estende implicitamente ao M2 (2026-08-11)
+
+**Decisão:** reavaliar as versões do host e exigir decisão com escopo explícito M2 antes de congelar ou executar a coleta principal.
+**Razão:** `host-risk-waiver.json` e AD-005 autorizam somente `ambiente-e-primeira-execucao-sast`, enquanto o próprio estado exige reavaliação antes da coleta definitiva.
+**Trade-off:** implementação e aquisição segura podem avançar, mas a coleta para em M2-T06 sem decisão válida.
+**Impacto:** nenhum resultado com `finalidade=coleta` será criado sob autorização ambígua.
 
 ### AD-001: Capítulos como especificação aprovada (2026-08-10)
 
@@ -90,6 +104,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 008 | Validar C1/C2 reais sobre fixture sintética não executável | 2026-08-11 | `test(fumaca): validar SAST fora do corpus` | ✅ Concluída |
 | 009 | Preparar alvo opaco regenerável e registrar fumaça RealVuln C1/C2 | 2026-08-11 | `feat(fumaca): registrar primeira execução RealVuln` | ✅ Concluída |
 | 010 | Publicar execução reproduzível e transpor evidências para os capítulos | 2026-08-11 | `docs(tcc): registrar ambiente e primeira execução SAST` | ✅ Concluída |
+| 011 | Congelar manifesto RealVuln v1, política de sanitização e ordem 26×2 | 2026-08-11 | `feat(corpus): congelar manifesto RealVuln v1` | ✅ Concluída |
 
 ## Ideias adiadas
 

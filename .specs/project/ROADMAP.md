@@ -1,7 +1,7 @@
 # Roadmap
 
 **Marco atual:** M2 — corpus, fila e coleta C1/C2
-**Status:** PLANEJADO
+**Status:** EM ANDAMENTO
 
 ---
 
@@ -59,7 +59,7 @@
 
 ### Recursos
 
-**Corpus verificável** — PLANEJADO
+**Corpus verificável** — EM ANDAMENTO
 
 **Orquestração retomável** — PLANEJADO
 
