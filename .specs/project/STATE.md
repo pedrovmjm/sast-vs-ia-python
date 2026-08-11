@@ -1,7 +1,7 @@
 # Estado
 
-**Última atualização:** 2026-08-11T10:20:00-03:00
-**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T02
+**Última atualização:** 2026-08-11T10:35:00-03:00
+**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T03
 
 ---
 
@@ -105,6 +105,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 009 | Preparar alvo opaco regenerável e registrar fumaça RealVuln C1/C2 | 2026-08-11 | `feat(fumaca): registrar primeira execução RealVuln` | ✅ Concluída |
 | 010 | Publicar execução reproduzível e transpor evidências para os capítulos | 2026-08-11 | `docs(tcc): registrar ambiente e primeira execução SAST` | ✅ Concluída |
 | 011 | Congelar manifesto RealVuln v1, política de sanitização e ordem 26×2 | 2026-08-11 | `feat(corpus): congelar manifesto RealVuln v1` | ✅ Concluída |
+| 012 | Sanitizar exportações por política fechada e inventário regenerável | 2026-08-11 | `feat(corpus): sanitizar alvos por política congelada` | ✅ Concluída |
 
 ## Ideias adiadas
 

@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from runner.aquisicao import calcular_sha256_arquivo
+from runner.corpus import caminho_excluido, carregar_json, validar_politica
 
 
 class ErroPreparacao(ValueError):
@@ -108,6 +109,53 @@ def preparar_alvo(
         raise
 
 
+def preparar_alvo_com_politica(
+    origem: str | Path,
+    destino: str | Path,
+    politica: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Sanitiza uma exportação aplicando uma política fechada e relata exclusões."""
+
+    fonte = Path(origem)
+    saida = Path(destino)
+    documento_politica = validar_politica(politica)
+    _validar_raiz_real(fonte, "origem")
+    arquivos, exclusoes = _listar_arquivos_com_politica(fonte, documento_politica)
+    if not arquivos:
+        raise ErroPreparacao("origem não pode ficar vazia após a sanitização")
+    if saida.exists() or saida.is_symlink():
+        raise ErroPreparacao("destino deve ser novo")
+
+    fonte_resolvida = fonte.resolve(strict=True)
+    pai_resolvido = saida.parent.resolve(strict=True)
+    saida_resolvida = pai_resolvido / saida.name
+    if _contem_caminho(fonte_resolvida, saida_resolvida) or _contem_caminho(
+        saida_resolvida, fonte_resolvida
+    ):
+        raise ErroPreparacao("origem e destino não podem se sobrepor")
+
+    temporario = saida.parent / f".{saida.name}.preparando-{uuid.uuid4().hex}"
+    temporario.mkdir(mode=0o700)
+    try:
+        for _, relativo, arquivo in arquivos:
+            alvo = temporario.joinpath(*relativo.split("/"))
+            alvo.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(arquivo, alvo, follow_symlinks=False)
+        inventario = criar_inventario(temporario)
+        temporario.replace(saida)
+        return {
+            "schema_version": "1.0",
+            "politica_id": documento_politica["politica_id"],
+            "arquivos_incluidos": inventario["arquivos"],
+            "entradas_excluidas": len(exclusoes),
+            "exclusoes": exclusoes,
+            "inventario": inventario,
+        }
+    except Exception:
+        shutil.rmtree(temporario, ignore_errors=True)
+        raise
+
+
 def validar_inventarios_iguais(
     primeiro: Mapping[str, Any], segundo: Mapping[str, Any]
 ) -> str:
@@ -134,8 +182,7 @@ def escrever_json_atomico(caminho: str | Path, documento: Mapping[str, Any]) -> 
     """Persiste JSON canônico por criação exclusiva e rename atômico."""
 
     destino = Path(caminho)
-    if destino.exists() or destino.is_symlink():
-        raise ErroPreparacao(f"arquivo de evidência já existe: {destino}")
+    _validar_saida_json_nova(destino)
     destino.parent.mkdir(parents=True, exist_ok=True)
     temporario = destino.with_name(f".{destino.name}.{uuid.uuid4().hex}.tmp")
     try:
@@ -157,6 +204,11 @@ def escrever_json_atomico(caminho: str | Path, documento: Mapping[str, Any]) -> 
     except Exception:
         temporario.unlink(missing_ok=True)
         raise
+
+
+def _validar_saida_json_nova(destino: Path) -> None:
+    if destino.exists() or destino.is_symlink():
+        raise ErroPreparacao(f"arquivo de evidência já existe: {destino}")
 
 
 def _listar_arquivos_seguros(
@@ -186,7 +238,81 @@ def _listar_arquivos_seguros(
     return sorted(entradas, key=lambda item: item[0])
 
 
+def _listar_arquivos_com_politica(
+    raiz: Path,
+    politica: Mapping[str, Any],
+) -> tuple[list[tuple[bytes, str, Path]], list[dict[str, str]]]:
+    entradas: list[tuple[bytes, str, Path]] = []
+    exclusoes: list[dict[str, str]] = []
+    pendentes = [raiz]
+    try:
+        while pendentes:
+            diretorio = pendentes.pop()
+            with os.scandir(diretorio) as itens:
+                for item in itens:
+                    path = Path(item.path)
+                    if item.is_symlink() or _eh_juncao(path):
+                        raise ErroPreparacao(f"link ou junção proibido no alvo: {path}")
+                    relativo = path.relative_to(raiz).as_posix()
+                    _validar_sintaxe_relativa(relativo)
+                    if caminho_excluido(relativo, politica):
+                        if item.is_dir(follow_symlinks=False):
+                            tipo = "diretorio"
+                            _validar_subarvore_descartada(path)
+                        elif item.is_file(follow_symlinks=False):
+                            tipo = "arquivo"
+                        else:
+                            raise ErroPreparacao(f"entrada especial proibida no alvo: {path}")
+                        exclusoes.append({"caminho": relativo, "tipo": tipo})
+                        continue
+                    _validar_relativo(relativo)
+                    if item.is_dir(follow_symlinks=False):
+                        pendentes.append(path)
+                    elif item.is_file(follow_symlinks=False):
+                        relativo_bytes = relativo.encode("utf-8")
+                        entradas.append((relativo_bytes, relativo, path))
+                    else:
+                        raise ErroPreparacao(f"entrada especial proibida no alvo: {path}")
+    except OSError as exc:
+        raise ErroPreparacao(f"não foi possível percorrer o alvo {raiz}: {exc}") from exc
+    return (
+        sorted(entradas, key=lambda item: item[0]),
+        sorted(exclusoes, key=lambda item: item["caminho"].encode("utf-8")),
+    )
+
+
+def _validar_subarvore_descartada(raiz: Path) -> None:
+    """Recusa links/especiais também onde a política impede a cópia."""
+
+    pendentes = [raiz]
+    while pendentes:
+        diretorio = pendentes.pop()
+        try:
+            with os.scandir(diretorio) as itens:
+                for item in itens:
+                    path = Path(item.path)
+                    if item.is_symlink() or _eh_juncao(path):
+                        raise ErroPreparacao(f"link ou junção proibido no alvo: {path}")
+                    if item.is_dir(follow_symlinks=False):
+                        pendentes.append(path)
+                    elif not item.is_file(follow_symlinks=False):
+                        raise ErroPreparacao(f"entrada especial proibida no alvo: {path}")
+        except OSError as exc:
+            raise ErroPreparacao(
+                f"não foi possível validar subárvore excluída {raiz}: {exc}"
+            ) from exc
+
+
 def _validar_relativo(relativo: str) -> None:
+    _validar_sintaxe_relativa(relativo)
+    partes = relativo.split("/")
+    if any(parte.casefold() in _SEGMENTOS_PROIBIDOS for parte in partes):
+        raise ErroPreparacao(f"metadado proibido no alvo: {relativo}")
+    if partes[-1].casefold() in _ARQUIVOS_PROIBIDOS:
+        raise ErroPreparacao(f"arquivo interno do benchmark proibido no alvo: {relativo}")
+
+
+def _validar_sintaxe_relativa(relativo: str) -> None:
     partes = relativo.split("/")
     if (
         not relativo
@@ -196,10 +322,6 @@ def _validar_relativo(relativo: str) -> None:
         or any(parte in {"", ".", ".."} for parte in partes)
     ):
         raise ErroPreparacao(f"caminho inseguro no alvo: {relativo!r}")
-    if any(parte.casefold() in _SEGMENTOS_PROIBIDOS for parte in partes):
-        raise ErroPreparacao(f"metadado proibido no alvo: {relativo}")
-    if partes[-1].casefold() in _ARQUIVOS_PROIBIDOS:
-        raise ErroPreparacao(f"arquivo interno do benchmark proibido no alvo: {relativo}")
 
 
 def _validar_raiz_real(raiz: Path, campo: str) -> None:
@@ -227,6 +349,12 @@ def _parser() -> argparse.ArgumentParser:
     preparar.add_argument("--origem", required=True)
     preparar.add_argument("--destino", required=True)
     preparar.add_argument("--inventario", required=True)
+    preparar_corpus = subparsers.add_parser("preparar-corpus")
+    preparar_corpus.add_argument("--origem", required=True)
+    preparar_corpus.add_argument("--destino", required=True)
+    preparar_corpus.add_argument("--politica", required=True)
+    preparar_corpus.add_argument("--inventario", required=True)
+    preparar_corpus.add_argument("--relatorio", required=True)
     inventariar = subparsers.add_parser("inventariar")
     inventariar.add_argument("--entrada", required=True)
     inventariar.add_argument("--inventario", required=True)
@@ -238,6 +366,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         if argumentos.comando == "preparar":
             documento = preparar_alvo(argumentos.origem, argumentos.destino)
+        elif argumentos.comando == "preparar-corpus":
+            inventario_path = Path(argumentos.inventario)
+            relatorio_path = Path(argumentos.relatorio)
+            if inventario_path.resolve(strict=False) == relatorio_path.resolve(strict=False):
+                raise ErroPreparacao("inventário e relatório devem usar arquivos diferentes")
+            _validar_saida_json_nova(inventario_path)
+            _validar_saida_json_nova(relatorio_path)
+            resultado = preparar_alvo_com_politica(
+                argumentos.origem,
+                argumentos.destino,
+                carregar_json(argumentos.politica),
+            )
+            documento = resultado["inventario"]
+            relatorio = {chave: valor for chave, valor in resultado.items() if chave != "inventario"}
+            escrever_json_atomico(argumentos.relatorio, relatorio)
         else:
             documento = criar_inventario(argumentos.entrada)
         escrever_json_atomico(argumentos.inventario, documento)

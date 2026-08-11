@@ -1,5 +1,7 @@
 import json
 import hashlib
+import os
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,9 +10,15 @@ from runner.preparacao import (
     ErroPreparacao,
     criar_inventario,
     escrever_json_atomico,
+    main,
     preparar_alvo,
+    preparar_alvo_com_politica,
     validar_inventarios_iguais,
 )
+from runner.corpus import carregar_json
+
+
+RAIZ_REPOSITORIO = Path(__file__).resolve().parents[1]
 
 
 class PreparacaoTests(unittest.TestCase):
@@ -23,6 +31,9 @@ class PreparacaoTests(unittest.TestCase):
         (self.origem / "app.py").write_bytes(b"print('dado')\n")
         (self.origem / "pkg").mkdir()
         (self.origem / "pkg" / "mod.py").write_bytes(b"x = 1\n")
+        self.politica = carregar_json(
+            RAIZ_REPOSITORIO / "config/politica-sanitizacao-v1.json"
+        )
 
     def test_inventario_deterministico_e_ordenado(self):
         primeiro = criar_inventario(self.origem)
@@ -86,6 +97,144 @@ class PreparacaoTests(unittest.TestCase):
     def test_recusa_destino_sobreposto(self):
         with self.assertRaisesRegex(ErroPreparacao, "sobrepor"):
             preparar_alvo(self.origem, self.origem / "copia")
+
+    def test_politica_remove_diretorio_sem_executar_conteudo(self):
+        respostas = self.origem / "ground-truth"
+        respostas.mkdir()
+        (respostas / "nao-executar.py").write_text("raise SystemExit(99)\n")
+        destino = self.raiz / "ALVO-0001"
+        resultado = preparar_alvo_com_politica(self.origem, destino, self.politica)
+        self.assertFalse((destino / "ground-truth").exists())
+        self.assertEqual(
+            [{"caminho": "ground-truth", "tipo": "diretorio"}],
+            resultado["exclusoes"],
+        )
+
+    def test_politica_remove_arquivos_e_bytecode(self):
+        (self.origem / ".gitmodules").write_text("[submodule]\n")
+        (self.origem / "pkg" / "mod.pyc").write_bytes(b"nao e codigo fonte")
+        destino = self.raiz / "ALVO-0001"
+        resultado = preparar_alvo_com_politica(self.origem, destino, self.politica)
+        self.assertEqual(
+            [
+                {"caminho": ".gitmodules", "tipo": "arquivo"},
+                {"caminho": "pkg/mod.pyc", "tipo": "arquivo"},
+            ],
+            resultado["exclusoes"],
+        )
+        self.assertEqual(2, resultado["arquivos_incluidos"])
+
+    def test_relatorio_e_inventario_sao_deterministicos(self):
+        (self.origem / "__pycache__").mkdir()
+        (self.origem / "__pycache__" / "a.pyc").write_bytes(b"x")
+        primeiro = preparar_alvo_com_politica(
+            self.origem, self.raiz / "ALVO-0001", self.politica
+        )
+        segundo = preparar_alvo_com_politica(
+            self.origem, self.raiz / "ALVO-0002", self.politica
+        )
+        self.assertEqual(primeiro, segundo)
+        self.assertEqual(
+            primeiro["inventario"], criar_inventario(self.raiz / "ALVO-0001")
+        )
+
+    def test_link_e_recusado_mesmo_em_diretorio_excluido(self):
+        excluido = self.origem / "ground-truth"
+        excluido.mkdir()
+        link = excluido / "atalho"
+        try:
+            link.symlink_to(self.origem / "app.py")
+        except OSError:
+            self.skipTest("host não permite criar link simbólico")
+        with self.assertRaisesRegex(ErroPreparacao, "link"):
+            preparar_alvo_com_politica(
+                self.origem, self.raiz / "ALVO-0001", self.politica
+            )
+
+    def test_arquivo_especial_e_recusado_mesmo_quando_excluivel(self):
+        if not hasattr(os, "mkfifo"):
+            self.skipTest("plataforma não oferece FIFO")
+        fifo = self.origem / "cache.pyc"
+        os.mkfifo(fifo)
+        with self.assertRaisesRegex(ErroPreparacao, "especial"):
+            preparar_alvo_com_politica(
+                self.origem, self.raiz / "ALVO-0001", self.politica
+            )
+
+    def test_recusa_arvore_vazia_depois_da_politica(self):
+        (self.origem / "app.py").unlink()
+        shutil.rmtree(self.origem / "pkg")
+        (self.origem / "ground-truth").mkdir()
+        with self.assertRaisesRegex(ErroPreparacao, "vazia"):
+            preparar_alvo_com_politica(
+                self.origem, self.raiz / "ALVO-0001", self.politica
+            )
+
+    def test_politica_nao_enfraquece_proibicao_de_interno_do_benchmark(self):
+        (self.origem / "validate_gt.py").write_text("pass\n")
+        with self.assertRaisesRegex(ErroPreparacao, "benchmark"):
+            preparar_alvo_com_politica(
+                self.origem, self.raiz / "ALVO-0001", self.politica
+            )
+
+    def test_politica_recusa_destino_existente_e_sobreposto(self):
+        existente = self.raiz / "existente"
+        existente.mkdir()
+        with self.assertRaisesRegex(ErroPreparacao, "novo"):
+            preparar_alvo_com_politica(self.origem, existente, self.politica)
+        with self.assertRaisesRegex(ErroPreparacao, "sobrepor"):
+            preparar_alvo_com_politica(
+                self.origem, self.origem / "copia", self.politica
+            )
+
+    def test_cli_preparar_corpus_escreve_inventario_e_relatorio_separados(self):
+        (self.origem / "cache.pyc").write_bytes(b"cache")
+        destino = self.raiz / "ALVO-0001"
+        inventario = self.raiz / "evidencias" / "inventario.json"
+        relatorio = self.raiz / "evidencias" / "sanitizacao.json"
+        codigo = main(
+            [
+                "preparar-corpus",
+                "--origem",
+                str(self.origem),
+                "--destino",
+                str(destino),
+                "--politica",
+                str(RAIZ_REPOSITORIO / "config/politica-sanitizacao-v1.json"),
+                "--inventario",
+                str(inventario),
+                "--relatorio",
+                str(relatorio),
+            ]
+        )
+        self.assertEqual(0, codigo)
+        documento_inventario = json.loads(inventario.read_text(encoding="utf-8"))
+        documento_relatorio = json.loads(relatorio.read_text(encoding="utf-8"))
+        self.assertEqual(criar_inventario(destino), documento_inventario)
+        self.assertNotIn("inventario", documento_relatorio)
+        self.assertEqual(1, documento_relatorio["entradas_excluidas"])
+
+    def test_cli_recusa_saida_compartilhada_antes_de_preparar(self):
+        saida = self.raiz / "mesma.json"
+        destino = self.raiz / "ALVO-0001"
+        codigo = main(
+            [
+                "preparar-corpus",
+                "--origem",
+                str(self.origem),
+                "--destino",
+                str(destino),
+                "--politica",
+                str(RAIZ_REPOSITORIO / "config/politica-sanitizacao-v1.json"),
+                "--inventario",
+                str(saida),
+                "--relatorio",
+                str(saida),
+            ]
+        )
+        self.assertEqual(2, codigo)
+        self.assertFalse(destino.exists())
+        self.assertFalse(saida.exists())
 
     def test_compara_inventarios_integralmente(self):
         inventario = criar_inventario(self.origem)

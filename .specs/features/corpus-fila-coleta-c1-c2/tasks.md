@@ -26,7 +26,7 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 
 **Evidência:** 29 testes específicos e 161 testes no gate quick, todos aprovados em 2026-08-11.
 
-### M2-T02: Implementar sanitização e inventário do corpus
+### M2-T02: Implementar sanitização e inventário do corpus — CONCLUÍDA
 
 **O que:** estender a preparação para aplicar a política v1, relatar exclusões e provar regeneração sem executar arquivos.
 **Onde:** `runner/preparacao.py`, `runner/corpus.py`, `tests/test_preparacao.py`, `tests/test_corpus.py`.
@@ -35,6 +35,8 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 
 **Concluída quando:** somente arquivos regulares permitidos são copiados; exclusões são determinísticas; duas preparações produzem inventários idênticos; sobreposição, links e especiais são recusados; gate quick verde.
 **Commit:** `feat(corpus): sanitizar alvos por política congelada`.
+
+**Evidência:** 29 testes de preparação e 171 testes no gate quick, todos aprovados em 2026-08-11.
 
 ### M2-T03: Adquirir e validar o corpus completo
 
