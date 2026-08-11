@@ -1,7 +1,7 @@
 # Estado
 
-**Última atualização:** 2026-08-10T23:13:26-03:00
-**Trabalho atual:** ambiente-e-primeira-execucao-sast — T07
+**Última atualização:** 2026-08-11T00:18:08-03:00
+**Trabalho atual:** ambiente-e-primeira-execucao-sast — T09
 
 ---
 
@@ -87,6 +87,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 005 | Normalizar saída Bandit 1.9.4 sem inferência | 2026-08-10 | `feat(adaptadores): normalizar saída do Bandit` | ✅ Concluída |
 | 006 | Normalizar saída Semgrep CE 1.172.0 sem inferência | 2026-08-10 | `feat(adaptadores): normalizar saída do Semgrep` | ✅ Concluída |
 | 007 | Isolar C1/C2 em contêiner endurecido e preservar tentativas | 2026-08-11 | `feat(execucao): isolar condições SAST em Docker` | ✅ Concluída |
+| 008 | Validar C1/C2 reais sobre fixture sintética não executável | 2026-08-11 | `test(fumaca): validar SAST fora do corpus` | ✅ Concluída |
 
 ## Ideias adiadas
 
@@ -95,7 +96,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 
 ## Todos
 
-- [ ] Fixar e testar o conjunto exato de regras públicas Python do Semgrep.
+- [x] Fixar e testar o conjunto exato de regras públicas Python do Semgrep.
 - [ ] Registrar o horário real e o digest da imagem produzida no relatório de fumaça.
 - [ ] Corrigir no texto a promessa de publicar arquivos de regras incompatível com sua licença atual.
 - [ ] Reavaliar a exceção de versões do host antes da coleta definitiva e registrar se foi mantida ou revogada.

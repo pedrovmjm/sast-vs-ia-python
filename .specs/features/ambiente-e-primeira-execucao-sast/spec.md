@@ -12,7 +12,7 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 
 - [x] Inicializar e documentar o ambiente sem instalar Python no host.
 - [x] Fixar todas as entradas externas deste marco por origem oficial, versão/commit/digest e hash.
-- [ ] Executar Bandit e Semgrep em contêiner endurecido sobre fixture externa ao corpus.
+- [x] Executar Bandit e Semgrep em contêiner endurecido sobre fixture externa ao corpus.
 - [ ] Executar fumaça descartável em um alvo RealVuln fixado e registrar evidências.
 - [ ] Atualizar o Capítulo 7 apenas com valores observados e verificáveis.
 
@@ -62,7 +62,7 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 
 1. QUANDO o alvo de fumaça for adquirido ENTÃO sua URL e commit DEVERÃO corresponder ao manifesto oficial v1.0.
 2. QUANDO C1 e C2 receberem o alvo ENTÃO os inventários de entrada DEVERÃO ter o mesmo SHA-256.
-3. QUANDO a fumaça terminar ENTÃO o sistema DEVERÁ marcar a evidência como `descartavel` e impedir sua inclusão na coleta principal.
+3. QUANDO a fumaça terminar ENTÃO o sistema DEVERÁ registrar `finalidade=fumaca` e impedir sua inclusão na coleta principal.
 4. QUANDO a fumaça for descartada ENTÃO o alvo DEVERÁ poder ser regenerado com o mesmo hash.
 
 **Teste independente:** adquirir um alvo, executar C1/C2, comparar inventários, remover a área temporária e regenerá-la.
@@ -85,12 +85,12 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 | AMB-02 | RealVuln v1.0 fixado e validado | `06:64-70`, `07:50-54` | Verificado em T02 |
 | AMB-03 | Proveniência/licença/hash antes do download | `06:70`, `07:46,54,130` | Verificado em T02/T03 |
 | AMB-04 | Python e ferramentas em imagem imutável | `06:118`, `07:128-132` | Verificado em T03 |
-| AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Verificado em T03/T07; scanner real em T08 |
+| AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Verificado em T03/T07/T08 |
 | AMB-06 | Saída bruta preservada antes da normalização | `07:98-124` | Verificado em T04/T07 |
 | AMB-07 | Esquema comum sem inferência | `06:126-130`, `07:100-124` | Verificado em T04 |
-| AMB-08 | Adaptador Bandit | `07:134-142` | Verificado em T05 |
-| AMB-09 | Adaptador Semgrep com regras locais fixadas | `07:144-153` | Adaptador verificado em T06; execução em T07/T08 |
-| AMB-10 | Testes artificiais externos ao corpus | `06:130`, `07:189-191` | Em tarefas |
+| AMB-08 | Adaptador Bandit | `07:134-142` | Verificado em T05/T08 |
+| AMB-09 | Adaptador Semgrep com regras locais fixadas | `07:144-153` | Verificado em T06/T07/T08 |
+| AMB-10 | Testes artificiais externos ao corpus | `06:130`, `07:189-191` | Verificado em T08 |
 | AMB-11 | Fumaça descartável e regenerável | `07:193` | Em tarefas |
 | AMB-12 | Registro real no Capítulo 7 | `07:195-221` | Em tarefas |
 | AMB-13 | Preflight do host e exceção de risco auditável | decisão AD-005 | Verificado em T02 |
@@ -100,7 +100,7 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 ## Critérios de sucesso
 
 - [ ] Gate `build` com zero falhas e sem testes ignorados.
-- [ ] Versões observadas iguais às fixadas e imagem identificada por digest.
-- [ ] C1 e C2 produzem bruto e normalizado sobre fixture externa.
+- [x] Versões observadas iguais às fixadas e imagem identificada por digest.
+- [x] C1 e C2 produzem bruto e normalizado sobre fixture externa.
 - [ ] Fumaça RealVuln marcada como descartável, com hashes de entrada iguais.
 - [ ] Capítulo 7 contém apenas dados copiados de evidências geradas.

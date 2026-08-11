@@ -91,11 +91,11 @@ No Semgrep, o mapa congelado é `INFO/WARNING/ERROR` para `baixa/media/alta`. A 
 - **Montagens:** `/entrada:ro` e `/saida:rw` são as únicas comuns; C2 recebe adicionalmente o bundle local verificado em `/opt/regras-semgrep:ro`.
 - **Timeouts:** o processo interno encerra o grupo do scanner no limite fixado; um watchdog PowerShell limita o contêiner inteiro ao timeout interno mais 120 segundos e preserva `watchdog-host.json` se precisar interrompê-lo.
 
-### Evidência de fumaça
+### Validação sintética e evidência de fumaça
 
-- **Finalidade:** registrar uma execução verificável sem integrá-la à coleta.
-- **Localização:** `evidencias/primeira-execucao/` para manifestos pequenos; brutos permanecem em `resultados/` ignorado.
-- **Conteúdo:** versões, digests, comandos, hashes de entrada/saída, durações, códigos de saída, contagens e status `descartavel`.
+- **T08 — validação sintética:** `scripts/test-fumaca-sintetica.ps1` reutiliza a única CLI pública, `scripts/executar-sast.ps1`, para executar C1 e C2 serialmente. `runner.executor_sast` permanece um entrypoint interno do contêiner. As tentativas usam `finalidade=fumaca`, estado terminal `concluida` e diretórios temporários em `resultados/`, ignorados e removidos pelo próprio teste após a validação.
+- **T09 — fumaça RealVuln:** os manifestos pequenos e o resumo verificável ficam em `evidencias/primeira-execucao/`; os brutos continuam em `resultados/` ignorado. Essa evidência também usa `finalidade=fumaca` e é excluída da coleta principal por sua finalidade, não por um estado adicional.
+- **Conteúdo:** versões, IDs/digests, comandos, hashes de entrada/saída, durações, códigos de saída, contagens, finalidade e estado do manifesto.
 
 ## Modelos de dados
 
@@ -139,7 +139,7 @@ Os JSON Schemas fecham campos, tipos e implicações estruturais. Comparações 
 | RealVuln | tag v1.0 desembrulhada para commit | a branch atual é v2 e mudaria o corpus |
 | Regras Semgrep | commit upstream, caminho e hash canônico fixados; bundle local ignorado montado `ro` somente em C2 | licença proíbe redistribuição; a imagem e o remoto não recebem uma cópia |
 | Versões atuais do host | continuar pela exceção AD-005 | risco aceito pelo usuário; controles compensatórios permanecem |
-| Resultados de fumaça | separados e `descartavel` | impede contaminação da coleta principal |
+| Resultados de fumaça | separados por `finalidade=fumaca`; sintéticos são temporários e RealVuln recebe resumo em `evidencias/` | impede contaminação da coleta principal sem inventar estado fora do esquema |
 | Escrita de evidência | arquivo temporário + rename | evita manifesto parcialmente gravado |
 
 ## Controles de segurança

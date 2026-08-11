@@ -162,15 +162,23 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Gate:** full.
 **Commit:** `feat(execucao): isolar condições SAST em Docker`.
 
-### T08: Validar adaptadores em fixture externa
+### T08: Validar adaptadores em fixture externa — ✅ CONCLUÍDA
 
 **O que:** criar fixture Python própria e comando de fumaça para C1/C2 fora do corpus.
-**Onde:** `tests/fixtures/alvo-sintetico/`, `runner/cli.py`, `tests/test_fumaca_sintetica.py`.
+**Onde:** `tests/fixtures/alvo-sintetico/`, `scripts/test-fumaca-sintetica.ps1`, `tests/test_fumaca_sintetica.py`, `scripts/gate.ps1`.
+**Reutiliza:** `scripts/executar-sast.ps1`, a única CLI pública do host.
 **Depende de:** T07.
-**Requisitos:** AMB-08, AMB-09, AMB-10.
-**Ferramentas:** filesystem e Docker.
+**Requisitos:** AMB-05, AMB-08, AMB-09, AMB-10.
+**Ferramentas:** filesystem, Docker e PowerShell.
 
-**Concluída quando:** C1/C2 geram bruto e normalizado válidos, sem rede e sem executar a fixture; pelo menos 2 testes e gate full verdes.
+**Concluída quando:**
+
+- [x] C1/C2 reais e seriais geram bruto e três achados normalizados esperados por ferramenta;
+- [x] modelos, hashes, proveniência, versões, regras, linhas, CWEs, mapeamentos e comandos conferem;
+- [x] adaptadores reexecutados sobre os brutos reproduzem os normalizados persistidos;
+- [x] a entrada mantém SHA-256 `1dbbff2e447b9ea0596f38b414c0d1e1ce4f5789e30f964b8dc568f39fd474ef` antes/depois;
+- [x] não há rede, execução da fixture, avisos, watchdog, partes nem contêiner residual;
+- [x] gate full verde com 113 testes Python, 18 testes do wrapper, 8 integrações Docker e o e2e PowerShell C1/C2.
 **Testes:** e2e serial.
 **Gate:** full.
 **Commit:** `test(fumaca): validar SAST fora do corpus`.
