@@ -3,6 +3,14 @@
 **Última atualização:** 2026-08-11T14:30:00-03:00
 **Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T06 (gate de risco)
 
+### AD-013: Reavaliação do risco do host M2 pendente (2026-08-11)
+
+**Decisão:** nenhuma autorização de coleta foi inferida. A reavaliação registrada em `evidencias/reavaliacao-risco-host-m2-2026-08-11.json` encontrou Git for Windows 2.46.2, WSL 2.0.14.0 e Docker Desktop 4.38.0/Engine 27.5.1, todos anteriores às versões oficiais atuais; a coleta permanece desarmada até atualização ou autorização explícita do risco residual.
+
+**Razão:** a correção Docker para CVE-2025-9074 só aparece a partir do Desktop 4.44.3, e a versão observada é anterior; Git e WSL também possuem releases posteriores com correções de segurança.
+
+**Impacto:** T06 não pode congelar configuração nem T07 iniciar enquanto a decisão do usuário não estiver registrada com escopo M2 e data.
+
 ---
 
 ## Decisões recentes

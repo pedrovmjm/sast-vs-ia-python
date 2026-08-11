@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "tipo": "reavaliacao-risco-host-m2",
+  "observado_em_utc": "2026-08-11T14:05:15Z",
+  "status": "decisao_pendente",
+  "autorizacao_coleta": false,
+  "host_observado": {
+    "git_for_windows": "2.46.2.windows.1",
+    "wsl": "2.0.14.0",
+    "wsl_kernel": "5.15.133.1-1",
+    "docker_desktop": "4.38.0.181591",
+    "docker_engine": "27.5.1",
+    "docker_context": "desktop-linux",
+    "plataforma": "linux/amd64"
+  },
+  "referencias_oficiais": {
+    "git_for_windows_release": {
+      "versao_atual_consultada": "2.55.0(3)",
+      "url": "https://github.com/git-for-windows/git/releases/latest",
+      "notas": "https://raw.githubusercontent.com/git-for-windows/build-extra/main/ReleaseNotes.md"
+    },
+    "wsl_release": {
+      "versao_atual_consultada": "2.7.11",
+      "url": "https://github.com/microsoft/WSL/releases/latest"
+    },
+    "docker_desktop_release": {
+      "versao_atual_consultada": "4.86.0",
+      "engine_atual_consultado": "29.7.2",
+      "url": "https://docs.docker.com/desktop/release-notes/"
+    },
+    "docker_security": {
+      "url": "https://docs.docker.com/security/security-announcements/",
+      "relevante": "Docker Desktop 4.44.3 corrigiu CVE-2025-9074; a versao observada 4.38.0 e anterior a essa correcao.",
+      "cve": "CVE-2025-9074"
+    }
+  },
+  "avaliacao": {
+    "git": "desatualizado; releases posteriores corrigem vulnerabilidades de NTLM e wincred",
+    "wsl": "desatualizado; releases posteriores incluem correcoes de seguranca",
+    "docker": "desatualizado e abaixo da versao que corrige CVE-2025-9074",
+    "controles_compensatorios": [
+      "rede none",
+      "rootfs read-only",
+      "entrada read-only",
+      "capabilities drop ALL",
+      "no-new-privileges",
+      "usuario nao-root",
+      "limites de CPU, memoria e PIDs",
+      "imagem local por ID",
+      "sem docker.sock"
+    ],
+    "conclusao": "Os controles reduzem a superficie, mas nao eliminam o risco do host desatualizado; a excecao AD-005 do M1 nao se estende ao M2."
+  },
+  "decisao_exigida": "Atualizar Git/WSL/Docker Desktop ou autorizar explicitamente o risco residual para a coleta M2; 'continuar' sem uma dessas escolhas nao e tratado como waiver."
+}
