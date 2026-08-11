@@ -1,0 +1,96 @@
+{
+    "schema_version":  "1.0",
+    "status":  "descartavel",
+    "finalidade":  "fumaca",
+    "gerado_utc":  "2026-08-11T12:35:16.968357Z",
+    "alvo":  {
+                 "id_opaco":  "ALVO-0001",
+                 "realvuln_id":  "realvuln-dsvw",
+                 "url":  "https://github.com/stamparm/DSVW",
+                 "commit":  "7d40f4b7939c901610ed9b85724552d60e7d63fa",
+                 "realvuln_url":  "https://github.com/kolega-ai/Real-Vuln-Benchmark.git",
+                 "realvuln_tag":  "v1.0",
+                 "realvuln_tag_object":  "aa9f7321c8c53fe417b8faa517f1c4308b69b389",
+                 "realvuln_commit":  "d98e9fc91273702c9547663b6906d1fc494d4fcc"
+             },
+    "entrada":  {
+                    "algoritmo":  "tree-sha256-v1",
+                    "sha256":  "60913ac90d496cf087a5fe6e9a4dbb04882c862a93f7d094eebb692d41467206",
+                    "arquivos":  6,
+                    "tamanho_total_bytes":  23610,
+                    "inventarios_c1_c2_iguais":  true,
+                    "regeneracao_verificada":  true
+                },
+    "imagem":  {
+                   "referencia":  "tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0",
+                   "id":  "sha256:a08aacb91c2482fd2baa97cf06334b72839925893f6b80a3fe01d484ce794580",
+                   "os":  "linux",
+                   "arquitetura":  "amd64"
+               },
+    "execucoes":  [
+                      {
+                          "condicao":  "C1",
+                          "execucao_id":  "C1-ALVO-0001-R01",
+                          "estado":  "concluida",
+                          "finalidade":  "fumaca",
+                          "inicio_utc":  "2026-08-11T12:34:42.879501Z",
+                          "termino_utc":  "2026-08-11T12:34:43.769782Z",
+                          "duracao_monotonica_segundos":  0.890142602,
+                          "codigo_saida":  1,
+                          "comando":  [
+                                          "/usr/local/bin/bandit",
+                                          "--recursive",
+                                          "/entrada",
+                                          "--format",
+                                          "json",
+                                          "--output",
+                                          "/saida/bruto.json.part"
+                                      ],
+                          "versoes":  {
+                                          "bandit":  "1.9.4",
+                                          "python":  "3.12.13",
+                                          "semgrep":  "1.172.0"
+                                      },
+                          "achados":  1,
+                          "bruto_sha256":  "ad7c01daa6064d0d662dd31d297c71be180376438afb64ae8602753507fefc50",
+                          "normalizado_sha256":  "5e52bacc87e5d71d6e5e5f7adf6f7eeb85e25e180bb2601a5aae83e2fdda870e",
+                          "manifesto_sha256":  "ceb97f1ad08a61b6c15d3d4a89b854d8b3dba4cd9c562d26aab17116b3dda556",
+                          "bruto_relativo":  "resultados/C1-ALVO-0001-R01/tentativa-001/bruto.json"
+                      },
+                      {
+                          "condicao":  "C2",
+                          "execucao_id":  "C2-ALVO-0001-R01",
+                          "estado":  "concluida",
+                          "finalidade":  "fumaca",
+                          "inicio_utc":  "2026-08-11T12:34:46.237452Z",
+                          "termino_utc":  "2026-08-11T12:35:16.107570Z",
+                          "duracao_monotonica_segundos":  29.872785753,
+                          "codigo_saida":  0,
+                          "comando":  [
+                                          "/usr/local/bin/semgrep",
+                                          "scan",
+                                          "--config",
+                                          "/opt/regras-semgrep/python",
+                                          "--json",
+                                          "--metrics=off",
+                                          "--jobs",
+                                          "1",
+                                          "--output",
+                                          "/saida/bruto.json.part",
+                                          "/entrada"
+                                      ],
+                          "versoes":  {
+                                          "bandit":  "1.9.4",
+                                          "python":  "3.12.13",
+                                          "regras_semgrep_sha256":  "29eb41850a07fee98955446524423ddd9e9f5040cbf7e301788b791386ee8309",
+                                          "semgrep":  "1.172.0"
+                                      },
+                          "achados":  1,
+                          "bruto_sha256":  "143a352a43f0e0fdf3d41d62fa303c485b7f48028ca2e60e1267e3fd19ad26a1",
+                          "normalizado_sha256":  "b631e770f60dd65f089120d845b3a19f1f12a1e3cc20b3fbe947c74dea4236e6",
+                          "manifesto_sha256":  "57f785534c4d63281ed9168044677fb1d97186adadbd65bd2b2592a0389d81e9",
+                          "bruto_relativo":  "resultados/C2-ALVO-0001-R01/tentativa-001/bruto.json"
+                      }
+                  ],
+    "exclusao_coleta_principal":  "finalidade=fumaca"
+}

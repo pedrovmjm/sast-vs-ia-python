@@ -13,7 +13,7 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 - [x] Inicializar e documentar o ambiente sem instalar Python no host.
 - [x] Fixar todas as entradas externas deste marco por origem oficial, versão/commit/digest e hash.
 - [x] Executar Bandit e Semgrep em contêiner endurecido sobre fixture externa ao corpus.
-- [ ] Executar fumaça descartável em um alvo RealVuln fixado e registrar evidências.
+- [x] Executar fumaça descartável em um alvo RealVuln fixado e registrar evidências.
 - [ ] Atualizar o Capítulo 7 apenas com valores observados e verificáveis.
 
 ## Fora de escopo
@@ -91,7 +91,7 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 | AMB-08 | Adaptador Bandit | `07:134-142` | Verificado em T05/T08 |
 | AMB-09 | Adaptador Semgrep com regras locais fixadas | `07:144-153` | Verificado em T06/T07/T08 |
 | AMB-10 | Testes artificiais externos ao corpus | `06:130`, `07:189-191` | Verificado em T08 |
-| AMB-11 | Fumaça descartável e regenerável | `07:193` | Em tarefas |
+| AMB-11 | Fumaça descartável e regenerável | `07:193` | Verificado em T09 |
 | AMB-12 | Registro real no Capítulo 7 | `07:195-221` | Em tarefas |
 | AMB-13 | Preflight do host e exceção de risco auditável | decisão AD-005 | Verificado em T02 |
 
@@ -99,8 +99,8 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 
 ## Critérios de sucesso
 
-- [ ] Gate `build` com zero falhas e sem testes ignorados.
+- [x] Gate `build` com zero falhas e sem testes ignorados.
 - [x] Versões observadas iguais às fixadas e imagem identificada por digest.
 - [x] C1 e C2 produzem bruto e normalizado sobre fixture externa.
-- [ ] Fumaça RealVuln marcada como descartável, com hashes de entrada iguais.
+- [x] Fumaça RealVuln marcada como descartável, com hashes de entrada iguais.
 - [ ] Capítulo 7 contém apenas dados copiados de evidências geradas.

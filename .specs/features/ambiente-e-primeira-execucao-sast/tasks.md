@@ -183,7 +183,7 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Gate:** full.
 **Commit:** `test(fumaca): validar SAST fora do corpus`.
 
-### T09: Executar fumaça descartável no RealVuln
+### T09: Executar fumaça descartável no RealVuln — ✅ CONCLUÍDA
 
 **O que:** adquirir um alvo pelo commit do manifesto, sanitizar, executar C1/C2 e registrar evidência descartável.
 **Onde:** `runner/preparacao.py`, `tests/test_preparacao.py`, `evidencias/primeira-execucao/`.
@@ -192,6 +192,13 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Ferramentas:** Git, Docker e filesystem.
 
 **Concluída quando:** commits conferem, inventários de C1/C2 são iguais, o alvo é regenerável, a evidência tem hashes/versões/comandos/tempos/status `descartavel`, pelo menos 5 testes e gate build verdes.
+
+- [x] RealVuln v1.0 e DSVW foram adquiridos somente pelos commits fixados;
+- [x] C1/C2 usaram inventários idênticos com SHA-256 `60913ac90d496cf087a5fe6e9a4dbb04882c862a93f7d094eebb692d41467206`;
+- [x] uma segunda preparação reproduziu integralmente o inventário e foi descartada;
+- [x] resumo, dois inventários e dois manifestos preservam versões, imagem, comandos, tempos, hashes e status `descartavel`;
+- [x] 19 testes próprios (12 de preparação e 7 da evidência) e 132 testes Python acumulados passaram;
+- [x] gate build passou, incluindo 18 testes do wrapper, 8 integrações Docker e o e2e sintético C1/C2.
 **Testes:** integração e e2e, não seguros em paralelo.
 **Gate:** build.
 **Commit:** `feat(fumaca): registrar primeira execução RealVuln`.
