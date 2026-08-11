@@ -1,6 +1,6 @@
 # Estado
 
-**Freeze M2-T06 (2026-08-11):** commit `002d3a4889dcfdcd851d7b30b274cc6c869b7da2`; configuracao `evidencias/coleta-c1-c2/configuracao.json` hash `ebe3418e8465bbaf1644845431337c40af3873e3689d7ebbfc1904bc1e8b4435`; imagem `sha256:3aab47b08e5defe0a01b869d710d3b8fdfe315673c73560bcb7b4c9b95a8cd51`. Gate build verde e nenhuma fila/saida de coleta criada no freeze.
+**Freeze M2-T06 (2026-08-11):** configuracao `evidencias/coleta-c1-c2/configuracao.json` hash `ab6add17480eda1e7b17cf239c30c79a4a04447760e2eee64e398feff630277f`; imagem `sha256:3aab47b08e5defe0a01b869d710d3b8fdfe315673c73560bcb7b4c9b95a8cd51`. O commit do freeze acompanha esta configuracao. Gate build verde e nenhuma fila/saida de coleta criada no freeze.
 
 **Última atualização:** 2026-08-11T14:30:00-03:00
 **Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T06 (gate de risco)
