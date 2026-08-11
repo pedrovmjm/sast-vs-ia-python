@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "tipo": "configuracao-agente-ia",
+  "condicao": "C3",
+  "produto": "Cursor",
+  "perfil": "principal",
+  "modelo_solicitado": "GPT-5.6 Luna",
+  "repeticoes": 3,
+  "alvos": 26,
+  "entrada": "alvos/corpus-v1/ALVO-NNNN",
+  "prompt": "config/agentes/prompt-relatorio-ia-v1.txt",
+  "prompt_sha256": "64ed79243a9d0dfcc7588a823b88612b04533438d969d2e7aa5978d25a238ca7",
+  "schema_saida": "config/agentes/schema-relatorio-ia-v1.json",
+  "schema_saida_sha256": "6e0b2f29d5f3275d05fb52a2b207cfc8aa1a842264e5f53fd42d7cb600f3a189",
+  "restricoes": {
+    "somente_leitura": true,
+    "sem_execucao_codigo": true,
+    "sem_execucao_testes": true,
+    "sem_bandit": true,
+    "sem_semgrep": true,
+    "sem_oracle": true,
+    "sem_docker_socket": true,
+    "sessao_nova_por_repeticao": true,
+    "mesma_instrução": true
+  },
+  "metadados_obrigatorios": ["produto", "versao_cliente", "modelo_solicitado", "modelo_exibido", "sessao_id", "inicio_utc", "termino_utc", "duracao_segundos", "tokens_entrada", "tokens_saida", "tokens_total", "resposta_bruta_sha256"],
+  "estado": "aguarda-piloto"
+}
