@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "validated_at": "2026-08-10",
+  "host_policy": {
+    "git": {
+      "recommended": "2.55.0.windows.3",
+      "source": "https://github.com/git-for-windows/git/releases"
+    },
+    "wsl": {
+      "recommended": "2.1.5",
+      "source": "https://learn.microsoft.com/windows/wsl/install"
+    },
+    "docker_desktop": {
+      "recommended": "4.86.0",
+      "source": "https://docs.docker.com/desktop/release-notes/"
+    },
+    "docker_engine": {
+      "recommended": "29.7.2",
+      "source": "https://docs.docker.com/desktop/release-notes/"
+    }
+  },
+  "sources": {
+    "realvuln": {
+      "type": "git",
+      "url": "https://github.com/kolega-ai/Real-Vuln-Benchmark.git",
+      "tag": "v1.0",
+      "tag_object": "aa9f7321c8c53fe417b8faa517f1c4308b69b389",
+      "commit": "d98e9fc91273702c9547663b6906d1fc494d4fcc",
+      "upstream_abbreviated_identifiers": {
+        "ground_truth_content_hash": "sha256:a57347fbdf2a",
+        "default_prompt_version": "sha256:3481f1432c23"
+      },
+      "license_observed": [
+        "MIT em LICENSE",
+        "Apache-2.0 em pyproject.toml"
+      ]
+    },
+    "python_image": {
+      "type": "oci",
+      "registry": "docker.io/library/python",
+      "reference": "python:3.12.13-slim-bookworm",
+      "index_digest": "sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2",
+      "platform": "linux/amd64",
+      "manifest_digest": "sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af",
+      "source_url": "https://github.com/docker-library/python",
+      "source_revision": "3362634339580d3232e65a66dd5a36c47ae7ff14",
+      "license_observed": [
+        "PSF-2.0",
+        "licenças dos componentes Debian"
+      ]
+    },
+    "bandit": {
+      "type": "pypi",
+      "project_url": "https://pypi.org/project/bandit/1.9.4/",
+      "source_url": "https://github.com/PyCQA/bandit",
+      "version": "1.9.4",
+      "wheel": "bandit-1.9.4-py3-none-any.whl",
+      "wheel_sha256": "f89ffa663767f5a0585ea075f01020207e966a9c0f2b9ef56a57c7963a3f6f8e",
+      "source_commit": "92ae8b82fb422a639f0ed8d99e96cea769594e08",
+      "license_observed": [
+        "Apache-2.0"
+      ]
+    },
+    "semgrep": {
+      "type": "pypi",
+      "project_url": "https://pypi.org/project/semgrep/1.172.0/",
+      "source_url": "https://github.com/semgrep/semgrep",
+      "version": "1.172.0",
+      "wheel_platform": "manylinux_2_34_x86_64",
+      "wheel_sha256": "d8b94af4266a575287ad2cd844573743ab4fe58f6bfb6d9229327807937eade3",
+      "source_commit": "651f37efa397bf066e1cf627414eeabe40b07e27",
+      "license_observed": [
+        "LGPL-2.1-or-later"
+      ]
+    },
+    "semgrep_rules": {
+      "type": "git",
+      "url": "https://github.com/semgrep/semgrep-rules.git",
+      "commit": "40b8c63f75dc7c22c8a77482d73bfb864b146f7e",
+      "paths": [
+        "python"
+      ],
+      "bundle_sha256": "29eb41850a07fee98955446524423ddd9e9f5040cbf7e301788b791386ee8309",
+      "license_observed": [
+        "Semgrep Rules License v1.0"
+      ],
+      "redistribute": false
+    }
+  }
+}

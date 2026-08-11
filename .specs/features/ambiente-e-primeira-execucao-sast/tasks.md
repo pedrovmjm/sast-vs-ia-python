@@ -49,10 +49,10 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Verificar:** `git diff --check` e leitura dos arquivos.
 **Commit:** `docs(spec): estruturar primeiro incremento experimental`.
 
-### T02: Implementar manifesto e verificação de fontes
+### T02: Implementar manifesto e verificação de fontes — ✅ CONCLUÍDA
 
 **O que:** validar o lock de fontes e rejeitar revisão, domínio ou hash divergente.
-**Onde:** `config/fontes.lock.json`, `config/host-risk-waiver.json`, `runner/__init__.py`, `runner/aquisicao.py`, `tests/__init__.py`, `tests/test_aquisicao.py`.
+**Onde:** `.gitattributes`, `.gitignore`, `config/fontes.lock.json`, `config/host-risk-waiver.json`, `runner/__init__.py`, `runner/aquisicao.py`, `tests/__init__.py`, `tests/test_aquisicao.py`.
 **Depende de:** T01.
 **Requisitos:** AMB-02, AMB-03, AMB-13.
 **Reutiliza:** Git, Docker CLI e manifesto oficial do RealVuln.
@@ -60,10 +60,10 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 
 **Concluída quando:**
 
-- [ ] pelo menos sete casos de unidade cobrem manifesto válido, revisão errada, origem errada, hash errado, versão de host aceita, versão antiga sem exceção e versão antiga com exceção;
-- [ ] nenhum script baixado é executado pela validação;
-- [ ] gate quick passa;
-- [ ] contagem esperada: pelo menos 7 testes.
+- [x] 25 casos de unidade cobrem manifesto, URLs exatas, revisões, hashes, JSON estrito, árvore canônica e exceção do host;
+- [x] nenhum script baixado é executado pela validação;
+- [x] gate quick passa;
+- [x] contagem observada: 25 testes, 0 falhas, 0 ignorados.
 
 **Testes:** unidade.
 **Gate:** quick; até T03, usar diretamente a imagem-base Python fixada por digest.

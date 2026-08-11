@@ -125,7 +125,7 @@ Registra `execucao_id`, condição, ferramenta, alvo, repetição, hash da entra
 | Python do host | não instalar | Docker existente é suficiente e mais reproduzível |
 | Dependências do harness | biblioteca padrão | reduz cadeia de suprimentos; ferramentas SAST continuam fixadas |
 | RealVuln | tag v1.0 desembrulhada para commit | a branch atual é v2 e mudaria o corpus |
-| Regras Semgrep | aquisição local fixada, sem commit | licença proíbe redistribuição |
+| Regras Semgrep | commit upstream, caminho e hash canônico fixados; arquivos fora do Git autoral | licença proíbe redistribuição |
 | Versões atuais do host | continuar pela exceção AD-005 | risco aceito pelo usuário; controles compensatórios permanecem |
 | Resultados de fumaça | separados e `descartavel` | impede contaminação da coleta principal |
 | Escrita de evidência | arquivo temporário + rename | evita manifesto parcialmente gravado |

@@ -18,6 +18,7 @@ __pycache__/
 /oracle/
 /execucoes/
 /resultados/
+/docker/regras-semgrep/
 
 # Saídas de construção e cobertura
 /build/

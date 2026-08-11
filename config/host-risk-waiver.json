@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "status": "accepted",
+  "decision": "AD-005",
+  "accepted_at": "2026-08-10",
+  "accepted_by": "autor do projeto",
+  "scope": "ambiente-e-primeira-execucao-sast",
+  "reason": "Risco das versões do sistema aceito explicitamente para permitir a continuidade do desenvolvimento e das execuções.",
+  "versions": {
+    "git": "2.46.2.windows.1",
+    "wsl": "2.0.14.0",
+    "docker_desktop": "4.38.0",
+    "docker_engine": "27.5.1"
+  },
+  "allowed_actions": [
+    "preflight",
+    "acquire-git-sources",
+    "docker-build",
+    "sast-smoke"
+  ],
+  "required_controls": [
+    "validar_origem_commit_sha256",
+    "nao_executar_codigo_alvo",
+    "container_sem_rede",
+    "alvo_somente_leitura",
+    "usuario_nao_root",
+    "capabilities_removidas",
+    "no_new_privileges"
+  ],
+  "approval": {
+    "reference": ".specs/project/STATE.md#AD-005",
+    "git_commit": "81561a2c6eb0473ab5a1a5cdffdf787a586965b7"
+  }
+}

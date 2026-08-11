@@ -13,7 +13,7 @@
 | Python | [imagem oficial Docker](https://hub.docker.com/_/python) | `3.12.13-slim-bookworm` | índice OCI `sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2`; revisão da imagem `3362634339580d3232e65a66dd5a36c47ae7ff14` | PSF e licenças dos componentes Debian | usar por tag completa + digest |
 | Bandit | [PyPI/PyCQA](https://pypi.org/project/bandit/1.9.4/) e [fonte](https://github.com/PyCQA/bandit/tree/92ae8b82fb422a639f0ed8d99e96cea769594e08) | `1.9.4` | wheel `bandit-1.9.4-py3-none-any.whl`: SHA-256 `f89ffa663767f5a0585ea075f01020207e966a9c0f2b9ef56a57c7963a3f6f8e`; PyPI Trusted Publishing/Sigstore; tag no commit `92ae8b...` | Apache-2.0 | instalar somente por lock completo com hashes |
 | Semgrep CE | [PyPI/Semgrep](https://pypi.org/project/semgrep/1.172.0/) e [releases](https://github.com/semgrep/semgrep/releases/tag/v1.172.0) | `1.172.0`; commit `651f37efa397bf066e1cf627414eeabe40b07e27` | wheel Linux x86-64 manylinux 2.34: SHA-256 `d8b94af4266a575287ad2cd844573743ab4fe58f6bfb6d9229327807937eade3`; PyPI Trusted Publishing/Sigstore | LGPL-2.1-or-later para o engine | instalar somente por lock completo com hashes |
-| Regras Semgrep CE | [semgrep/semgrep-rules](https://github.com/semgrep/semgrep-rules) | commit a congelar no piloto; referência observada `40b8c63f75dc7c22c8a77482d73bfb864b146f7e` | commit Git + SHA-256 do bundle efetivamente selecionado, calculado depois da aquisição | [Semgrep Rules License v1.0](https://semgrep.dev/legal/rules-license/) | adquirir localmente; não redistribuir no Git remoto |
+| Regras Semgrep CE | [semgrep/semgrep-rules](https://github.com/semgrep/semgrep-rules) | commit `40b8c63f75dc7c22c8a77482d73bfb864b146f7e`; caminho `python/` | 717 arquivos regulares; árvore canônica `sha256:29eb41850a07fee98955446524423ddd9e9f5040cbf7e301788b791386ee8309` | [Semgrep Rules License v1.0](https://semgrep.dev/legal/rules-license/) | adquirir localmente; não redistribuir no Git remoto |
 | Docker Desktop/Engine | [release notes oficiais](https://docs.docker.com/desktop/release-notes/) | host `4.38.0`/Engine `27.5.1`; recomendado `4.86.0`/`29.7.2` em 2026-08-10 | versões observadas localmente e release notes oficiais | Docker Subscription Service Agreement e licenças dos componentes | continuar por exceção explícita AD-005 e manter isolamento compensatório |
 
 ## Evidências do RealVuln v1.0
@@ -45,6 +45,10 @@ Consequências para o TCC:
 - origem, commit, lista de arquivos e SHA-256 do bundle serão publicados;
 - durante a análise, Semgrep usará somente essa cópia local, com `--metrics=off` e `--network none`;
 - se os termos não forem aceitáveis para o uso acadêmico concreto, C2 ficará bloqueada até esclarecimento do mantenedor; não será trocada por regras escolhidas depois de observar resultados.
+
+Na T02, o commit foi adquirido com hooks, submódulos, conversão de fim de linha e protocolo local desativados. Antes do checkout esparso de `python/`, a árvore foi inspecionada e continha apenas blobs regulares. O hash canônico usa, em ordem de caminho UTF-8, `caminho relativo POSIX`, tamanho e SHA-256 de cada arquivo; assim, independe de mtime e ordem de criação. A cópia permanece em `docker/regras-semgrep/`, ignorada pelo Git.
+
+O lock e a aceitação de risco também são identificados por SHA-256 para inclusão posterior nas evidências: `fontes.lock.json` = `b1323d8f999698fa23554864985b0a346e530d02ef4ff592040806ba681c5173`; `host-risk-waiver.json` = `38e22933c7d7d4a0699ebb7c084a6451f9e586f2f151a350ab790526763a9cf7`.
 
 ## Docker: estado atual e gate de segurança
 

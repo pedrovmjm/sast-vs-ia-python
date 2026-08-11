@@ -1,7 +1,7 @@
 # Estado
 
 **Última atualização:** 2026-08-10T00:00:00-03:00
-**Trabalho atual:** ambiente-e-primeira-execucao-sast — T02
+**Trabalho atual:** ambiente-e-primeira-execucao-sast — T03
 
 ---
 
@@ -67,6 +67,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | # | Descrição | Data | Commit | Status |
 |---|---|---|---|---|
 | 001 | Inicializar Git local e excluir artefatos inseguros/gerados | 2026-08-10 | `5bdadd3` | ✅ Concluída |
+| 002 | Validar lock de fontes, hash das regras e exceção do host | 2026-08-10 | `feat(fontes): validar manifesto de proveniência` | ✅ Concluída |
 
 ## Ideias adiadas
 

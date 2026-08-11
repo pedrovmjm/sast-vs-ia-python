@@ -82,8 +82,8 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 | ID | Requisito | Origem | Status |
 |---|---|---|---|
 | AMB-01 | Git local seguro e transferível | solicitação do usuário; `07:46` | Verificado |
-| AMB-02 | RealVuln v1.0 fixado e validado | `06:64-70`, `07:50-54` | Em tarefas |
-| AMB-03 | Proveniência/licença/hash antes do download | `06:70`, `07:46,54,130` | Em tarefas |
+| AMB-02 | RealVuln v1.0 fixado e validado | `06:64-70`, `07:50-54` | Verificado em T02 |
+| AMB-03 | Proveniência/licença/hash antes do download | `06:70`, `07:46,54,130` | Parcial em T02; lock transitivo em T03 |
 | AMB-04 | Python e ferramentas em imagem imutável | `06:118`, `07:128-132` | Em tarefas |
 | AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Em tarefas |
 | AMB-06 | Saída bruta preservada antes da normalização | `07:98-124` | Em tarefas |
@@ -93,7 +93,7 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 | AMB-10 | Testes artificiais externos ao corpus | `06:130`, `07:189-191` | Em tarefas |
 | AMB-11 | Fumaça descartável e regenerável | `07:193` | Em tarefas |
 | AMB-12 | Registro real no Capítulo 7 | `07:195-221` | Em tarefas |
-| AMB-13 | Preflight do host e exceção de risco auditável | decisão AD-005 | Em tarefas |
+| AMB-13 | Preflight do host e exceção de risco auditável | decisão AD-005 | Verificado em T02 |
 
 **Cobertura:** 13 requisitos, 13 mapeados para tarefas, 0 não mapeados.
 
