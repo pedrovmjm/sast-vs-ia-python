@@ -96,6 +96,8 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 **Concluída quando:** 52 itens são terminais; C1/C2 compartilham hash/commit por alvo; manifestos/artefatos conferem; falhas estão explícitas; nenhum resultado de fumaça entrou; não há contêiner/área/parte residual.
 **Commit:** `data(coleta): registrar manifestos C1 C2`.
 
+**Registro de conclusao M2-T07 (2026-08-11):** 52 itens terminais (43 concluidas, 9 falhas), 26 pares C1/C2, 54 manifestos preservados incluindo duas tentativas adicionais de retomada; sem areas ou arquivos `.part` residuais.
+
 ### M2-T08: Auditar e documentar o M2
 
 **O que:** produzir resumo final, validar requisito por requisito e transpor somente fatos comprovados para documentação/capítulos.
@@ -104,6 +106,7 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 **Requisitos:** M2-01--M2-10.
 
 **Concluída quando:** auditoria prova 26×2, hashes e estados; gate build final passa; LaTeX não ganha erro; M2 fica verificado; M3 permanece separado e nenhuma métrica de detecção é antecipada.
+**Registro de conclusao M2-T08 (2026-08-11):** auditoria publicada em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`; fila, manifestos, pares C1/C2 e limpeza verificados; nenhuma metrica de deteccao foi calculada.
 **Commit:** `docs(tcc): registrar corpus e coleta C1 C2`.
 
 ## Gates
