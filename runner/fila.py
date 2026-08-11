@@ -399,6 +399,9 @@ def reabrir_falha(
         })
         item.update({"estado": "pendente", "inicio_utc": None, "termino_utc": None,
                      "manifesto_relativo": None, "falha_tipo": None})
+        # A tentativa terminal acrescenta dois eventos ao revisionamento:
+        # abertura e encerramento da transição de reabertura.
+        documento["revision"] += 1
         return _recibo(item)
 
     resultado = _mutar(caminho, fila_lock, corpus_lock, configuracao_sha256, instante, alterar)
