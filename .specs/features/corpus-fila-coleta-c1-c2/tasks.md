@@ -62,7 +62,7 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 
 **Evidência:** 30 testes específicos e 223 testes no gate quick, todos aprovados em 2026-08-11; o estado runtime valida hashes dos locks/configuração, revisão derivada do histórico, ordem temporal, claim exclusivo e caminhos de manifesto por tentativa.
 
-### M2-T05: Implementar orquestrador e auditoria da coleta
+### M2-T05: Implementar orquestrador e auditoria da coleta — CONCLUÍDA
 
 **O que:** integrar fila, cópia nova por tarefa, wrapper SAST, validação terminal, cleanup próprio e resumo final.
 **Onde:** `scripts/executar-coleta-c1-c2.ps1`, `runner/coleta.py`, `tests/test_coleta.py`, `scripts/test-coleta-c1-c2.ps1`, `scripts/gate.ps1`.
@@ -71,6 +71,8 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 
 **Concluída quando:** dry-run cobre 52; fixture reduzida comprova sucesso/falha/interrupção; configuração é revalidada a cada claim; áreas são novas e removidas; brutos/tentativas permanecem; gate full verde.
 **Commit:** `feat(coleta): integrar fila serial C1 C2`.
+
+**Evidência:** plano seco com 52 tarefas (26 C1/26 C2), 19 testes específicos de preparação/auditoria/orquestração, 242 testes Python, 18 testes do wrapper, 8 testes Docker, fumaça C1/C2, 15 testes de aquisição e teste PowerShell da coleta aprovados no gate full em 2026-08-11. Nenhuma fila ou saída de coleta foi criada.
 
 ### M2-T06: Reavaliar risco e congelar ambiente
 

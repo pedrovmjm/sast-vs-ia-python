@@ -56,6 +56,14 @@ services:
         target: /workspace/scripts/gate.ps1
         read_only: true
       - type: bind
+        source: ./scripts/executar-coleta-c1-c2.ps1
+        target: /workspace/scripts/executar-coleta-c1-c2.ps1
+        read_only: true
+      - type: bind
+        source: ./scripts/test-coleta-c1-c2.ps1
+        target: /workspace/scripts/test-coleta-c1-c2.ps1
+        read_only: true
+      - type: bind
         source: ./runner
         target: /workspace/runner
         read_only: true
