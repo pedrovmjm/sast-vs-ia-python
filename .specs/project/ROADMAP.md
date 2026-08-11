@@ -1,7 +1,7 @@
 # Roadmap
 
-**Marco atual:** M1 — ambiente e primeira execução SAST
-**Status:** EM ANDAMENTO
+**Marco atual:** M2 — corpus, fila e coleta C1/C2
+**Status:** PLANEJADO
 
 ---
 
@@ -33,19 +33,19 @@
 
 ### Recursos
 
-**Cadeia de suprimentos verificável** — EM ANDAMENTO
+**Cadeia de suprimentos verificável** — COMPLETO
 
 - origens oficiais, versões, licenças, commits, digests e hashes documentados;
 - RealVuln v1.0 adquirido pelo commit, nunca pela branch atual;
 - regras Semgrep obtidas localmente sem redistribuição indevida.
 
-**Executores e adaptadores SAST** — PLANEJADO
+**Executores e adaptadores SAST** — COMPLETO
 
 - contêiner sem rede, sem privilégios e com alvo somente leitura;
 - Bandit e Semgrep com saídas brutas preservadas;
 - achados convertidos ao esquema comum sem consultar o oracle.
 
-**Fumaça descartável** — PLANEJADO
+**Fumaça descartável** — COMPLETO
 
 - fixture artificial externa ao corpus;
 - um alvo RealVuln regenerável, sem incorporar o resultado à coleta;

@@ -1,9 +1,9 @@
 \chapter{Desenvolvimento}\label{cap:desenvolvimento}
 \addcontentsline{toc}{chapter}{Desenvolvimento}
 
-Este capítulo transforma o protocolo definido no Capítulo~\ref{cap:metodologia} em uma especificação técnica executável. Enquanto a metodologia estabelece o corpus, as condições, os controles, as métricas e os critérios de avaliação, o desenvolvimento descreve como serão construídos o repositório controlador, o \textit{harness}, os adaptadores, a imagem Docker e os artefatos de rastreabilidade necessários à coleta.
+Este capítulo transforma o protocolo definido no Capítulo~\ref{cap:metodologia} em uma especificação técnica executável. Enquanto a metodologia estabelece o corpus, as condições, os controles, as métricas e os critérios de avaliação, o desenvolvimento descreve o repositório controlador, o \textit{harness}, os adaptadores, a imagem Docker e os artefatos de rastreabilidade necessários à coleta. O primeiro incremento da implementação, encerrado em 11 de agosto de 2026, materializou o ambiente e validou C1 e C2 em execuções de fumaça; a coleta principal permanece futura.
 
-Como a coleta principal ainda não foi executada, não são antecipados identificadores que dependem da implementação efetiva, como \textit{commits}, versões de clientes, modelos exibidos, \textit{hashes} e identificadores de imagem. Em vez de manter o capítulo inteiro como um esqueleto, as decisões técnicas que independem da coleta são definidas nas seções seguintes, e os poucos registros variáveis são reunidos na Seção~\ref{sec:registro-configuracao-desenvolvimento}. Os resultados produzidos pela execução pertencem ao Capítulo~\ref{cap:avaliacao}.
+Como a coleta principal ainda não foi executada, não são antecipados identificadores de clientes de IA, modelos exibidos ou resultados comparativos. Os valores já produzidos pelo primeiro incremento são transcritos de manifestos verificáveis na Seção~\ref{sec:registro-configuracao-desenvolvimento}; os demais continuam definidos como registros a obter no momento apropriado. Resultados da coleta principal pertencem ao Capítulo~\ref{cap:avaliacao}, enquanto a fumaça descrita aqui demonstra apenas integração.
 
 \section{Visão Geral da Implementação}\label{sec:visao-geral-desenvolvimento}
 
@@ -127,7 +127,7 @@ O caminho será relativo à raiz do alvo e terá separadores normalizados. Linha
 
 \subsection{Imagem Docker e isolamento}\label{subsec:construcao-imagem-docker}
 
-Uma única imagem conterá o Python, o Bandit, o Semgrep Community Edition e as regras locais necessárias. A imagem-base será referenciada por \textit{digest}; as dependências Python serão fixadas por versão e verificação de integridade. A construção não copiará o corpus nem o \textit{ground truth} para nenhuma camada. O \textit{digest} da imagem resultante será registrado e a imagem não será reconstruída durante um bloco de coleta.
+Uma única imagem contém o Python, o Bandit e o Semgrep Community Edition. A imagem-base é referenciada por \textit{digest}, e as dependências Python são fixadas por versão e verificação de integridade. A construção não copia corpus, \textit{ground truth} ou regras Semgrep para nenhuma camada. O identificador da imagem usada em cada execução é registrado; depois do congelamento de um bloco de coleta, essa imagem não poderá ser reconstruída até o término do bloco.
 
 O executor criará um contêiner efêmero para cada par ferramenta--alvo. A árvore do alvo será montada como somente leitura, e apenas um diretório de saída será gravável. A execução utilizará usuário sem privilégios, remoção de capacidades, impedimento de novos privilégios, rede desativada e limites fixos de CPU, memória e tempo. Quando a ferramenta precisar de arquivos temporários, será fornecido um \textit{tmpfs} limitado e descartável. Nenhum pacote será instalado durante a análise, e o código do projeto não será executado.
 
@@ -136,18 +136,20 @@ O executor criará um contêiner efêmero para cada par ferramenta--alvo. A árv
 O Bandit será invocado recursivamente sobre a raiz sanitizada e emitirá JSON. A forma-base do comando será:
 
 \begin{verbatim}
-bandit -r /entrada -f json -o /saida/bandit.json
+/usr/local/bin/bandit --recursive /entrada --format json \
+  --output /saida/bruto.json.part
 \end{verbatim}
 
 O comando efetivo, incluindo opções de exclusão indispensáveis ao funcionamento, será armazenado no manifesto. O conjunto nativo de \textit{plugins} será mantido e nenhum filtro de severidade ou confiança será aplicado depois de conhecidos os resultados. O adaptador preservará identificador do teste, mensagem, arquivo, intervalo, severidade, confiança e CWE fornecido pelo Bandit.
 
 \subsection{Adaptador do Semgrep Community Edition}\label{subsec:execucao-semgrep}
 
-As regras públicas de segurança para Python serão copiadas para a imagem antes da coleta e identificadas por origem, revisão e \textit{hash}. Durante as análises não haverá consulta ao registro remoto do Semgrep. A forma-base do comando será:
+As regras públicas de segurança para Python são adquiridas do repositório oficial em diretório local ignorado pelo Git, identificadas por origem, revisão e \textit{hash}, e não são redistribuídas. Em C2, somente o bundle verificado é montado como leitura em \texttt{/opt/regras-semgrep}; ele não integra a imagem. Durante a análise não há consulta ao registro remoto do Semgrep. A forma efetivamente observada do comando foi:
 
 \begin{verbatim}
-semgrep scan --config /opt/regras-semgrep --json --metrics=off \
-  --output /saida/semgrep.json /entrada
+/usr/local/bin/semgrep scan \
+  --config /opt/regras-semgrep/python --json --metrics=off \
+  --jobs 1 --output /saida/bruto.json.part /entrada
 \end{verbatim}
 
 O adaptador preservará identificador da regra, mensagem, caminho, intervalo, metadados CWE, severidade e conteúdo adicional emitido pela ferramenta. Erros de análise e arquivos ignorados serão mantidos no registro bruto, pois podem explicar perda de cobertura mesmo quando o processo terminar com saída parcial.
@@ -188,33 +190,35 @@ A avaliação qualitativa não será executada pelo normalizador. Depois do sort
 
 \section{Verificação do Artefato Antes da Coleta}\label{sec:verificacao-artefato-desenvolvimento}
 
-Os adaptadores serão testados com casos artificiais externos ao corpus. O conjunto mínimo conterá: um achado correspondente a uma vulnerabilidade; um achado sobre armadilha segura; um achado sem correspondência; alertas duplicados; caminho com separadores diferentes; CWE ausente; JSON vazio; JSON inválido; processo com código de erro; e execução interrompida. Os testes deverão confirmar a preservação da saída original, o tratamento de nulos, a idempotência da retomada e a compatibilidade com o avaliador oficial.
+Os adaptadores foram testados com casos artificiais externos ao corpus, abrangendo achados completos e ausentes, duplicatas, caminhos sintáticos, CWE ausente, JSON vazio ou inválido, erros parciais, códigos de saída e interrupções. A fumaça sintética executou os analisadores reais sobre uma fixture própria sem importar ou executar seu código. No fechamento do incremento, o gate reuniu 132 testes Python, 18 testes do \textit{wrapper} e 8 integrações Docker, todos aprovados sem testes ignorados.
 
-Uma execução de fumaça verificará a integração de ponta a ponta em um repositório do benchmark. Seu resultado não integrará a análise principal. Antes da coleta, a área de trabalho, a sessão e a saída derivada dessa execução serão descartadas, e o alvo será regenerado a partir da revisão fixada. Também serão verificados a ausência de \texttt{oracle/} nas áreas entregues, o bloqueio de rede dos contêineres, a igualdade do \textit{hash} de entrada entre as seis condições e a correspondência entre o perfil de modelo solicitado e o exibido pelo produto quando essa informação estiver disponível.
+Uma execução de fumaça verificou a integração ponta a ponta em um repositório do benchmark. O DSVW foi adquirido no \textit{commit} fixado, exportado sem metadados Git e exposto aos analisadores como \texttt{ALVO-0001}. A entrada possuía seis arquivos, 23.610 bytes e SHA-256 canônico iniciado por \texttt{60913ac90d49}; o valor completo permanece nos inventários. Os inventários de C1 e C2 foram idênticos, uma segunda preparação reproduziu o mesmo inventário e as árvores temporárias foram removidas. Os contêineres executaram sem rede e sem acesso ao \texttt{oracle/}. Os manifestos registram \texttt{finalidade=fumaca}, e o resumo atribui \texttt{status=descartavel}; por isso, os achados não integram a análise principal. A igualdade entre as seis condições e os perfis de IA somente poderá ser verificada no estudo-piloto correspondente.
 
 \section{Registro da Configuração Efetiva}\label{sec:registro-configuracao-desenvolvimento}
 
-A Tabela~\ref{tab:registro-configuracao-efetiva} substitui os campos genéricos que antes apareciam espalhados neste capítulo. Os valores não são preenchidos antecipadamente porque devem ser extraídos do ambiente real, mas seu momento de fixação e sua fonte ficam definidos antes da coleta.
+A Tabela~\ref{tab:registro-configuracao-efetiva} contém somente valores extraídos do lock, do preflight e da evidência de fumaça. Identificadores futuros de clientes e modelos de IA não são preenchidos antecipadamente e serão adicionados a partir dos manifestos do estudo-piloto.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
-\caption{\label{tab:registro-configuracao-efetiva}Registros variáveis da implementação e da coleta}
+\caption{\label{tab:registro-configuracao-efetiva}Configuração observada no primeiro incremento}
 \centering
 \begin{tabularx}{\textwidth}{|X|X|X|}
 \hline
-\textbf{Registro} & \textbf{Momento de fixação} & \textbf{Fonte de evidência} \\
+\textbf{Registro} & \textbf{Valor observado} & \textbf{Fonte de evidência} \\
 \hline
-\textit{Commit} do RealVuln, projetos e \textit{hashes} do manifesto, avaliador e \textit{ground truth} & Antes da preparação do corpus & Manifesto de integridade \\
+RealVuln & tag \texttt{v1.0}; objeto \texttt{aa9f7321c8c5...}; \textit{commit} \texttt{d98e9fc91273...} & \texttt{config/fontes.lock.json} e resumo da fumaça \\
 \hline
-Sistema hospedeiro, Docker, Python, Bandit, Semgrep, imagem-base e \textit{digest} da imagem final & Antes do estudo-piloto & Comandos de versão, arquivo de construção e inspeção da imagem \\
+Host & Git 2.46.2.windows.1; WSL 2.0.14.0; Docker Desktop 4.38.0; Engine 27.5.1 & \texttt{config/host-risk-waiver.json} e AD-005 \\
 \hline
-Origem, revisão e \textit{hash} das regras do Semgrep e comandos completos de C1 e C2 & Antes do estudo-piloto & Diretório de regras e manifesto do executor \\
+Imagem SAST & Python 3.12.13; Bandit 1.9.4; Semgrep 1.172.0; base amd64 \texttt{sha256:6e13e65c...}; ID observado na fumaça \texttt{sha256:a08aacb9...} & \texttt{Dockerfile}, \texttt{versoes.json} e resumo da fumaça \\
 \hline
-Versão dos clientes, bloco, estratégia de seleção, modelo solicitado e exibido, nível de raciocínio, modo de contexto, permissões e texto final das instruções & No início de cada bloco de C3--C6 & Metadados, configuração e transcrição da sessão \\
+Regras Semgrep & \textit{commit} \texttt{40b8c63f75dc...}; árvore Python \texttt{sha256:29eb4185...}; montagem externa somente em C2 & lock de fontes, manifesto C2 e \texttt{versoes.json} \\
 \hline
-Identificador, horário, duração, estado e consumo de tokens de entrada, saída e total de cada execução & Durante cada execução & Manifesto, relógio do controlador e contadores informados pelo produto \\
+Entrada da fumaça & DSVW no \textit{commit} \texttt{7d40f4b7939c...}; 6 arquivos; 23.610 bytes; \texttt{tree-sha256-v1} \texttt{60913ac9...} & inventários C1/C2 e resumo da fumaça \\
 \hline
-Falhas, reinícios e alterações de configuração & No momento da ocorrência & Registro de eventos e relatório de desvios \\
+C1 & 12:34:42Z--12:34:43Z; 0,890142602 s; código 1; estado concluída; 1 achado & manifesto C1 e resumo da fumaça \\
+\hline
+C2 & 12:34:46Z--12:35:16Z; 29,872785753 s; código 0; estado concluída; 1 achado & manifesto C2 e resumo da fumaça \\
 \hline
 \end{tabularx}
 \legend{Fonte: Elaborado pelo autor (2026).}
@@ -224,4 +228,4 @@ Falhas, reinícios e alterações de configuração & No momento da ocorrência 
 
 Todo desvio será registrado com data, tarefas afetadas, diferença em relação ao protocolo, justificativa, decisão adotada e impacto esperado. Exemplos incluem mudança de modelo durante um bloco, indisponibilidade de produto, regra SAST que não pôde ser carregada, execução contaminada por ferramenta proibida ou alteração indispensável do mapeamento entre regra e CWE. A decisão não poderá depender de a execução ter produzido resultado favorável.
 
-Até a versão atual deste capítulo, a coleta principal ainda não foi executada e, portanto, não há desvios observados a relatar. Após a execução, esta seção deverá distinguir explicitamente entre ausência de desvios, falhas contabilizadas pelo modo estrito e modificações reais do protocolo; nenhuma dessas situações deverá ser ocultada por exclusão silenciosa de tarefas.
+Até a versão atual deste capítulo, a coleta principal ainda não foi executada e, portanto, não há desvios de coleta observados a relatar. Antes da fumaça, a arquitetura foi ajustada para que as regras Semgrep permanecessem fora da imagem e do histórico Git, em razão da licença aplicável; origem, revisão, hash e conjunto de regras foram mantidos, e o bundle foi montado somente como leitura em C2. Essa alteração ocorreu antes da coleta e não dependeu dos achados observados. Após a execução principal, esta seção deverá distinguir explicitamente entre ausência de desvios, falhas contabilizadas pelo modo estrito e modificações reais do protocolo; nenhuma dessas situações deverá ser ocultada por exclusão silenciosa de tarefas.

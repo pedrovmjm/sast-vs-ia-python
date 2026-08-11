@@ -4,7 +4,13 @@ param(
     [string]$Imagem = "tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0",
 
     [ValidateRange(30, 3600)]
-    [int]$TimeoutSegundos = 300
+    [int]$TimeoutSegundos = 300,
+
+    [ValidatePattern("^ALVO-[A-Za-z0-9][A-Za-z0-9._-]{0,95}$")]
+    [string]$AlvoId = "ALVO-0001",
+
+    [ValidatePattern("^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$")]
+    [string]$EvidenciaNome = "primeira-execucao"
 )
 
 Set-StrictMode -Version Latest
@@ -15,13 +21,12 @@ $BenchmarkRoot = [IO.Path]::GetFullPath((Join-Path $Repo "benchmark"))
 $AlvosRoot = [IO.Path]::GetFullPath((Join-Path $Repo "alvos"))
 $ResultadosRoot = [IO.Path]::GetFullPath((Join-Path $Repo "resultados"))
 $EvidenciasRoot = [IO.Path]::GetFullPath((Join-Path $Repo "evidencias"))
-$EvidenciaFinal = [IO.Path]::GetFullPath((Join-Path $EvidenciasRoot "primeira-execucao"))
+$EvidenciaFinal = [IO.Path]::GetFullPath((Join-Path $EvidenciasRoot $EvidenciaNome))
 $Wrapper = Join-Path $PSScriptRoot "executar-sast.ps1"
 $Token = [guid]::NewGuid().ToString("N")
 $Trabalho = [IO.Path]::GetFullPath((Join-Path $BenchmarkRoot ".t09-$Token"))
 $EvidenciaTemporaria = [IO.Path]::GetFullPath((Join-Path $EvidenciasRoot ".primeira-execucao-$Token"))
-$AlvoId = "ALVO-0001"
-$AlvoRegeneradoId = "ALVO-REGENERADO-T09"
+$AlvoRegeneradoId = "$AlvoId-REGENERADO"
 $AlvoPath = [IO.Path]::GetFullPath((Join-Path $AlvosRoot $AlvoId))
 $AlvoRegeneradoPath = [IO.Path]::GetFullPath((Join-Path $AlvosRoot $AlvoRegeneradoId))
 $RealVulnUrl = "https://github.com/kolega-ai/Real-Vuln-Benchmark.git"

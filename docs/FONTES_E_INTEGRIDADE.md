@@ -58,14 +58,18 @@ O lock foi resolvido em contêiner descartável da mesma base e plataforma da im
 ```text
 docker/requirements.in   sha256:a9a929621d5bc5913ad0370bcbd673b3615150361e1d5d862e727cf0b9fbd199
 docker/requirements.lock sha256:6acd3885d28a89476b01dac76b8b8c450f287847b1a6c7505191df30471020a4
-docker/Dockerfile        sha256:b36151d770acd9bfa002780838f928cc7a7e4d8e20a8ed290321af1983e4c9a2
-compose.yaml             sha256:e9337f8562b5e16cfc048397fd5fe4d72cb231d94fc529aad8360f053c0e3fef
-scripts/gate.ps1         sha256:aba4dcbdf9569ea6b941fbf73eaa8f105b3ea5e1344fbc223eb3bbef1aca7f6e
+docker/Dockerfile        sha256:519923e7c18c99c814fb9d184672d33d6faf794d508c7b218890909060ca6fd9
+compose.yaml             sha256:7f492375d765bbf5ee35f13b4343bcc91d9053bd1945bf337d5d27af005af8d1
+scripts/gate.ps1         sha256:fcbb6ee21e933a7b8e4dd5f11c38149da8c00f91dff20b7d101c545f45fb10e8
+scripts/executar-fumaca-realvuln.ps1 sha256:5f8caf7f244312c8d8eaa0e2c1cf436a6e729f50e8a4e8cb0e5dee2bdb6c524b
+evidencias/primeira-execucao/resumo.json sha256:31156cc2bead944a23b74fef2d7f7c43edcb1b2a19ad195f083394c5f4c34888
 ```
 
-O build local final de 2026-08-10 22:30:30-03:00 gerou `tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0`, identificada por `sha256:34364bcd30dcead82b894173569327126bd0c8e89f73610f57b1fa275edfab43`, com 140.582.622 bytes, `linux/amd64`, usuário `10001:10001` e diretório `/workspace`. O preflight embarcado revalidou o lock sem mounts. Dentro do perfil Compose, foram observados Python 3.12.13, Bandit 1.9.4, Semgrep 1.172.0 e pip 25.0.1.
+O build local que encerrou T03 em 2026-08-10 22:30:30-03:00 gerou `tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0`, então identificada por `sha256:34364bcd30dcead82b894173569327126bd0c8e89f73610f57b1fa275edfab43`, com 140.582.622 bytes, `linux/amd64`, usuário `10001:10001` e diretório `/workspace`. O preflight embarcado revalidou o lock sem mounts. Dentro do perfil Compose, foram observados Python 3.12.13, Bandit 1.9.4, Semgrep 1.172.0 e pip 25.0.1.
 
-A sonda de integração comprovou `CapEff=0`, `NoNewPrivs=1`, UID/GID 10001, somente interface `lo`, raiz somente leitura, `/tmp` gravável e ausência de `benchmark`, `alvos`, `oracle`, `execucoes` e `resultados`. O gate oficial `build`, executado por `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 build`, compilou para o `tmpfs`, executou 37 testes, obteve 37 aprovações sem ignorados, rodou a sonda e revalidou dependências/versões/preflight embarcado.
+A sonda de integração comprovou `CapEff=0`, `NoNewPrivs=1`, UID/GID 10001, somente interface `lo`, raiz somente leitura, `/tmp` gravável e ausência de `benchmark`, `alvos`, `oracle`, `execucoes` e `resultados`. Na conclusão de T03, o gate oficial `build` executou 37 testes sem falhas ou ignorados, rodou a sonda e revalidou dependências, versões e preflight embarcado.
+
+Na fumaça RealVuln de 2026-08-11, a tag local apontava para o ID de imagem `sha256:a08aacb91c2482fd2baa97cf06334b72839925893f6b80a3fe01d484ce794580`, registrado em ambos os manifestos antes das análises. O gate `build` final do marco reconstruiu a imagem a partir dos arquivos autorais, executou 132 testes Python, 18 testes do wrapper, 8 integrações Docker e a fumaça sintética C1/C2, sem falhas ou testes ignorados. IDs locais de builds posteriores não substituem retroativamente o ID preservado no manifesto de uma execução.
 
 ## Docker: estado atual e gate de segurança
 

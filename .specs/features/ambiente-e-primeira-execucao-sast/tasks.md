@@ -1,7 +1,7 @@
 # Tasks: ambiente e primeira execução SAST
 
 **Design:** `.specs/features/ambiente-e-primeira-execucao-sast/design.md`
-**Status:** APROVADAS — EM ANDAMENTO
+**Status:** CONCLUÍDAS — VERIFICADAS
 **Ferramentas autorizadas pela solicitação:** `apply_patch`/filesystem para arquivos autorais, PowerShell/Git/Docker para verificação local e web somente em fontes oficiais/primárias. Skill: `spc-driven`. Nenhum MCP adicional é necessário neste marco.
 
 ## Plano de execução
@@ -203,7 +203,7 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Gate:** build.
 **Commit:** `feat(fumaca): registrar primeira execução RealVuln`.
 
-### T10: Atualizar documentação operacional e Capítulo 7
+### T10: Atualizar documentação operacional e Capítulo 7 — ✅ CONCLUÍDA
 
 **O que:** documentar reprodução e transpor somente valores comprovados para o capítulo de desenvolvimento.
 **Onde:** `README.md`, `docs/EXECUCAO.md`, `07-desenvolvimento.tex`, spec/tasks/STATE.
@@ -212,6 +212,13 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Ferramentas:** filesystem, Git e LaTeX disponível.
 
 **Concluída quando:** comandos são copiáveis, valores correspondem às evidências, tarefas/requisitos estão verificados, LaTeX não ganha erro novo e gate build permanece verde.
+
+- [x] `README.md` apresenta o marco, gates e entrada para reprodução;
+- [x] `docs/EXECUCAO.md` documenta aquisição das regras, execução, artefatos, controles e valores observados;
+- [x] capítulos 6 e 7 registram a política de não redistribuição das regras e os valores comprovados da fumaça;
+- [x] compilação isolada de `07-desenvolvimento.tex` terminou com exit code zero;
+- [x] spec, tasks, STATE e ROADMAP refletem a conclusão do M1;
+- [x] gate build final permaneceu verde com 132 testes Python, 18 do wrapper e 8 integrações Docker.
 **Testes:** nenhum código novo; validação documental/build.
 **Gate:** build.
 **Commit:** `docs(tcc): registrar ambiente e primeira execução SAST`.
