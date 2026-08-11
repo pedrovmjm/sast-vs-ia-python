@@ -385,6 +385,18 @@ def reabrir_falha(
             raise ErroFila(f"execucao inexistente: {execucao_id}")
         if item["estado"] != "falha":
             raise ErroFila("somente falha terminal pode ser reaberta")
+        # Registra a reabertura como uma transição explícita, sem apagar a falha
+        # terminal anterior, e deixa o item elegível para um novo claim.
+        tentativa = item["tentativa"] + 1
+        item["tentativa"] = tentativa
+        item["historico"].append({
+            "tentativa": tentativa,
+            "inicio_utc": instante,
+            "termino_utc": instante,
+            "desfecho": "interrompida",
+            "manifesto_relativo": None,
+            "falha_tipo": "interrompida",
+        })
         item.update({"estado": "pendente", "inicio_utc": None, "termino_utc": None,
                      "manifesto_relativo": None, "falha_tipo": None})
         return _recibo(item)
