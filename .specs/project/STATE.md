@@ -1,7 +1,7 @@
 # Estado
 
-**Última atualização:** 2026-08-10T00:00:00-03:00
-**Trabalho atual:** ambiente-e-primeira-execucao-sast — T04
+**Última atualização:** 2026-08-10T22:54:12-03:00
+**Trabalho atual:** ambiente-e-primeira-execucao-sast — T05/T06
 
 ---
 
@@ -42,6 +42,13 @@
 **Trade-off:** permanece um risco residual maior no host durante aquisição e análise do corpus vulnerável.
 **Impacto:** o preflight emitirá aviso auditável, mas não bloqueará por versão; validação de origem/hash, ausência de hooks/submódulos, rede desligada, montagem somente leitura, usuário não root, capabilities removidas e `no-new-privileges` continuam obrigatórios.
 
+### AD-006: Separar classificação bruta, forma normalizada e ciclo de falha (2026-08-10)
+
+**Decisão:** o Achado v1 mantém campos `*_original` ao lado das classificações normalizadas; o Manifesto v1 usa somente os quatro estados do Capítulo 7, registra `timeout` em `falha_tipo` e exige artefato preservado antes de aceitar `concluida`.
+**Razão:** os adaptadores precisam demonstrar que não inventaram classificação, e timeout descreve a causa da falha, não um estado adicional da fila.
+**Trade-off:** o contrato possui mais campos nulos explícitos e validações condicionais.
+**Impacto:** T05/T06 devem preencher valores originais diretamente da saída nativa e deixar normalizações sem regra congelada como `null`.
+
 ## Bloqueadores ativos
 
 Nenhum bloqueador técnico impede o primeiro marco.
@@ -69,6 +76,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 001 | Inicializar Git local e excluir artefatos inseguros/gerados | 2026-08-10 | `5bdadd3` | ✅ Concluída |
 | 002 | Validar lock de fontes, hash das regras e exceção do host | 2026-08-10 | `feat(fontes): validar manifesto de proveniência` | ✅ Concluída |
 | 003 | Construir e validar a imagem SAST fixada | 2026-08-10 | `build(docker): fixar ambiente SAST reproduzível` | ✅ Concluída |
+| 004 | Definir Achado v1 e ManifestoExecucao v1 | 2026-08-10 | `feat(esquema): definir achado e execução versionados` | ✅ Concluída |
 
 ## Ideias adiadas
 

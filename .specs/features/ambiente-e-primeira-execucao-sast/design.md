@@ -66,7 +66,7 @@ Não há código autoral pré-existente para reutilizar. A pontuação oficial s
 ### Esquema comum
 
 - **Finalidade:** representar achados e metadados sem inferência.
-- **Localização:** `runner/modelos.py`, `runner/schemas/achado-v1.schema.json`.
+- **Localização:** `runner/modelos.py`, `runner/schemas/achado-v1.schema.json`, `runner/schemas/execucao-v1.schema.json`.
 - **Interfaces:** `Achado.from_dict()`, `Achado.to_dict()` e validações explícitas.
 - **Decisão:** dataclasses e validação autoral mínima; nenhuma dependência de runtime além da biblioteca padrão.
 
@@ -98,13 +98,17 @@ Não há código autoral pré-existente para reutilizar. A pontuação oficial s
 | `schema_version` | string | sempre `1.0` |
 | `condicao`, `ferramenta`, `alvo`, `repeticao`, `execucao_id` | string/int | proveniência obrigatória |
 | `arquivo`, `linha_inicial`, `linha_final` | string/int/null | caminho relativo; inteiros positivos |
-| `regra`, `cwe`, `severidade`, `confianca` | string/null | valor bruto e normalizado separados quando necessário |
+| `regra` | string/null | identificador nativo, sem inferência |
+| `cwe_original`, `severidade_original`, `confianca_original` | string/list/null | valor emitido pela ferramenta; a CWE original pode ser plural |
+| `cwe`, `severidade`, `confianca` | string/null | forma normalizada; permanece nula sem mapeamento público congelado |
 | `descricao`, `evidencia`, `recomendacao`, `texto_original` | string/null | nunca completados pelo adaptador |
 | `saida_bruta_sha256` | string | referência obrigatória ao bruto encerrado |
 
 ### Manifesto de execução v1
 
-Registra `execucao_id`, condição, ferramenta, alvo, repetição, hash da entrada, comando em vetor, imagem/digest, início/término UTC, duração monotônica, código de saída, estado, tentativa e hashes dos artefatos.
+Registra `execucao_id`, condição, ferramenta, bloco, alvo, repetição, commit/hash da entrada, comando em vetor, imagem/digest, finalidade, início/término UTC, duração monotônica, código de saída, estado, tipo/mensagem de falha, tentativa e hashes dos artefatos. A finalidade `fumaca` separa evidência descartável do ciclo de vida; os estados permanecem `pendente`, `em_execucao`, `concluida` e `falha`. Um timeout usa `estado=falha` e `falha_tipo=timeout`.
+
+Os JSON Schemas fecham campos, tipos e implicações estruturais. Comparações entre campos que o JSON Schema Draft 2020-12 não expressa de forma portável — ordem entre início/término e entre linhas inicial/final — aparecem em `x-tcc-semantic-invariants` e são bloqueadas por `Achado.from_dict()` e `ManifestoExecucao.from_dict()`. Uma execução somente pode ser `concluida` quando ao menos um artefato de saída já possui hash.
 
 ## Tratamento de erros
 

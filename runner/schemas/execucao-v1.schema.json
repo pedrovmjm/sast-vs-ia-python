@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tcc:schemas:execucao:v1",
+  "title": "Manifesto de execução v1",
+  "description": "Snapshot fechado de uma tarefa ou tentativa do experimento.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-tcc-semantic-invariants": [
+    {
+      "id": "timestamps-ordenados",
+      "description": "Quando ambos existem, termino_utc deve ser maior ou igual a inicio_utc.",
+      "validator": "runner.modelos.ManifestoExecucao.from_dict"
+    }
+  ],
+  "required": [
+    "schema_version",
+    "execucao_id",
+    "condicao",
+    "ferramenta",
+    "bloco",
+    "alvo",
+    "repeticao",
+    "entrada_commit",
+    "entrada_sha256",
+    "comando",
+    "imagem",
+    "imagem_digest",
+    "finalidade",
+    "inicio_utc",
+    "termino_utc",
+    "duracao_monotonica_segundos",
+    "codigo_saida",
+    "estado",
+    "falha_tipo",
+    "falha_mensagem",
+    "tentativa",
+    "artefatos_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "execucao_id": {
+      "$ref": "#/$defs/identificador"
+    },
+    "condicao": {
+      "enum": ["C1", "C2", "C3", "C4", "C5", "C6"]
+    },
+    "ferramenta": {
+      "enum": ["bandit", "semgrep", "cursor", "codex"]
+    },
+    "bloco": {
+      "type": ["string", "null"],
+      "pattern": "^[^\\u0000]*$"
+    },
+    "alvo": {
+      "$ref": "#/$defs/identificador"
+    },
+    "repeticao": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "entrada_commit": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      ]
+    },
+    "entrada_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "comando": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[^\\u0000]+$"
+      }
+    },
+    "imagem": {
+      "$ref": "#/$defs/texto_nao_vazio"
+    },
+    "imagem_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "finalidade": {
+      "enum": ["coleta", "piloto", "fumaca"]
+    },
+    "inicio_utc": {
+      "$ref": "#/$defs/timestamp_utc_nulo"
+    },
+    "termino_utc": {
+      "$ref": "#/$defs/timestamp_utc_nulo"
+    },
+    "duracao_monotonica_segundos": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "codigo_saida": {
+      "type": ["integer", "null"]
+    },
+    "estado": {
+      "enum": ["pendente", "em_execucao", "concluida", "falha"]
+    },
+    "falha_tipo": {
+      "type": ["string", "null"],
+      "enum": [
+        "proveniencia",
+        "preflight",
+        "timeout",
+        "codigo_saida",
+        "formato",
+        "interrompida",
+        "contaminada",
+        "indisponibilidade",
+        "interna",
+        null
+      ]
+    },
+    "falha_mensagem": {
+      "type": ["string", "null"],
+      "pattern": "^[^\\u0000]*$"
+    },
+    "tentativa": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "artefatos_sha256": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/caminho_relativo"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/sha256"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"estado": {"const": "pendente"}}},
+      "then": {
+        "properties": {
+          "inicio_utc": {"type": "null"},
+          "termino_utc": {"type": "null"},
+          "duracao_monotonica_segundos": {"type": "null"},
+          "codigo_saida": {"type": "null"},
+          "falha_tipo": {"type": "null"},
+          "falha_mensagem": {"type": "null"},
+          "artefatos_sha256": {"maxProperties": 0}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"estado": {"const": "em_execucao"}}},
+      "then": {
+        "properties": {
+          "inicio_utc": {"type": "string"},
+          "termino_utc": {"type": "null"},
+          "duracao_monotonica_segundos": {"type": "null"},
+          "codigo_saida": {"type": "null"},
+          "falha_tipo": {"type": "null"},
+          "falha_mensagem": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "estado": {"enum": ["concluida", "falha"]}
+        }
+      },
+      "then": {
+        "properties": {
+          "inicio_utc": {"type": "string"},
+          "termino_utc": {"type": "string"},
+          "duracao_monotonica_segundos": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"estado": {"const": "concluida"}}},
+      "then": {
+        "properties": {
+          "codigo_saida": {"type": "integer"},
+          "falha_tipo": {"type": "null"},
+          "falha_mensagem": {"type": "null"},
+          "artefatos_sha256": {"minProperties": 1}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"estado": {"const": "falha"}}},
+      "then": {"properties": {"falha_tipo": {"type": "string"}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C1"}}},
+      "then": {"properties": {"ferramenta": {"const": "bandit"}, "bloco": {"type": "null"}, "repeticao": {"const": 1}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C2"}}},
+      "then": {"properties": {"ferramenta": {"const": "semgrep"}, "bloco": {"type": "null"}, "repeticao": {"const": 1}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"enum": ["C3", "C4", "C5", "C6"]}}},
+      "then": {"properties": {"bloco": {"enum": ["principal", "complementar"]}, "repeticao": {"maximum": 3}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"enum": ["C3", "C5"]}}},
+      "then": {"properties": {"ferramenta": {"const": "cursor"}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"enum": ["C4", "C6"]}}},
+      "then": {"properties": {"ferramenta": {"const": "codex"}}}
+    }
+  ],
+  "$defs": {
+    "identificador": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "texto_nao_vazio": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?=.*\\S)[^\\u0000]+$"
+    },
+    "timestamp_utc_nulo": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-(?:(?:01|03|05|07|08|10|12)-(?:0[1-9]|[12]\\d|3[01])|(?:04|06|09|11)-(?:0[1-9]|[12]\\d|30)|02-(?:0[1-9]|1\\d|2[0-9]))T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,6})?Z$"
+        }
+      ]
+    },
+    "caminho_relativo": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*//)(?!.*\\/$)[^\\u0000-\\u001f]+$"
+    }
+  }
+}

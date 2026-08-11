@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tcc:schemas:achado:v1",
+  "title": "Achado normalizado v1",
+  "description": "Contrato fechado de um achado ligado à saída bruta preservada.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-tcc-semantic-invariants": [
+    {
+      "id": "intervalo-ordenado",
+      "description": "Quando ambas existem, linha_final deve ser maior ou igual a linha_inicial.",
+      "validator": "runner.modelos.Achado.from_dict"
+    }
+  ],
+  "required": [
+    "schema_version",
+    "condicao",
+    "ferramenta",
+    "alvo",
+    "repeticao",
+    "execucao_id",
+    "arquivo",
+    "linha_inicial",
+    "linha_final",
+    "regra",
+    "cwe_original",
+    "cwe",
+    "severidade_original",
+    "severidade",
+    "confianca_original",
+    "confianca",
+    "descricao",
+    "evidencia",
+    "recomendacao",
+    "texto_original",
+    "saida_bruta_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "condicao": {
+      "enum": ["C1", "C2", "C3", "C4", "C5", "C6"]
+    },
+    "ferramenta": {
+      "enum": ["bandit", "semgrep", "cursor", "codex"]
+    },
+    "alvo": {
+      "$ref": "#/$defs/identificador"
+    },
+    "repeticao": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "execucao_id": {
+      "$ref": "#/$defs/identificador"
+    },
+    "arquivo": {
+      "$ref": "#/$defs/caminho_relativo_nulo"
+    },
+    "linha_inicial": {
+      "$ref": "#/$defs/linha_nula"
+    },
+    "linha_final": {
+      "$ref": "#/$defs/linha_nula"
+    },
+    "regra": {
+      "$ref": "#/$defs/texto_nulo"
+    },
+    "cwe_original": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "minLength": 1, "pattern": "^[^\\u0000]+$"},
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1, "pattern": "^[^\\u0000]+$"}
+        }
+      ]
+    },
+    "cwe": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^CWE-[1-9][0-9]*$"}
+      ]
+    },
+    "severidade_original": {
+      "$ref": "#/$defs/texto_nulo"
+    },
+    "severidade": {
+      "type": ["string", "null"],
+      "enum": ["baixa", "media", "alta", "critica", null]
+    },
+    "confianca_original": {
+      "$ref": "#/$defs/texto_nulo"
+    },
+    "confianca": {
+      "type": ["string", "null"],
+      "enum": ["baixa", "media", "alta", null]
+    },
+    "descricao": {
+      "$ref": "#/$defs/texto_nulo"
+    },
+    "evidencia": {
+      "$ref": "#/$defs/texto_nulo"
+    },
+    "recomendacao": {
+      "$ref": "#/$defs/texto_nulo"
+    },
+    "texto_original": {
+      "$ref": "#/$defs/texto_nulo"
+    },
+    "saida_bruta_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"arquivo": {"type": "null"}}},
+      "then": {
+        "properties": {
+          "linha_inicial": {"type": "null"},
+          "linha_final": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"linha_final": {"type": "integer"}}},
+      "then": {"properties": {"linha_inicial": {"type": "integer", "minimum": 1}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C1"}}},
+      "then": {"properties": {"ferramenta": {"const": "bandit"}, "repeticao": {"const": 1}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C2"}}},
+      "then": {"properties": {"ferramenta": {"const": "semgrep"}, "repeticao": {"const": 1}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C3"}}},
+      "then": {"properties": {"ferramenta": {"const": "cursor"}, "repeticao": {"maximum": 3}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C4"}}},
+      "then": {"properties": {"ferramenta": {"const": "codex"}, "repeticao": {"maximum": 3}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C5"}}},
+      "then": {"properties": {"ferramenta": {"const": "cursor"}, "repeticao": {"maximum": 3}}}
+    },
+    {
+      "if": {"properties": {"condicao": {"const": "C6"}}},
+      "then": {"properties": {"ferramenta": {"const": "codex"}, "repeticao": {"maximum": 3}}}
+    }
+  ],
+  "$defs": {
+    "identificador": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "linha_nula": {
+      "type": ["integer", "null"],
+      "minimum": 1
+    },
+    "texto_nulo": {
+      "type": ["string", "null"],
+      "pattern": "^[^\\u0000]*$"
+    },
+    "caminho_relativo_nulo": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*//)(?!.*\\/$)[^\\u0000-\\u001f]+$"
+        }
+      ]
+    }
+  }
+}

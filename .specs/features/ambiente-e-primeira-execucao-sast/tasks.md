@@ -93,20 +93,21 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Verificar:** comandos `--version`, `docker image inspect` e gates de TESTING.md.
 **Commit:** `build(docker): fixar ambiente SAST reproduzível`.
 
-### T04: Definir esquema comum e manifesto de execução
+### T04: Definir esquema comum e manifesto de execução — ✅ CONCLUÍDA
 
 **O que:** implementar modelos versionados, serialização determinística e validação de nulos/linhas.
-**Onde:** `runner/modelos.py`, `runner/schemas/achado-v1.schema.json`, `tests/test_modelos.py`.
+**Onde:** `runner/modelos.py`, `runner/schemas/achado-v1.schema.json`, `runner/schemas/execucao-v1.schema.json`, `tests/test_modelos.py`.
 **Depende de:** T03.
 **Requisitos:** AMB-06, AMB-07.
 **Ferramentas:** filesystem e Docker.
 
 **Concluída quando:**
 
-- [ ] serialização preserva `null` e referências ao bruto;
-- [ ] caminhos absolutos e linhas não positivas são rejeitados;
-- [ ] pelo menos 8 testes de unidade passam;
-- [ ] gate quick passa.
+- [x] serialização preserva `null`, valores brutos/normalizados e referências ao bruto;
+- [x] caminhos absolutos, travessia, linhas não positivas e intervalos invertidos são rejeitados;
+- [x] conclusão exige artefato preservado e `timeout` é registrado como tipo de falha;
+- [x] 24 testes do T04 e 61 testes acumulados passam, sem falhas ou ignorados;
+- [x] gate quick passa.
 
 **Testes:** unidade.
 **Gate:** quick.

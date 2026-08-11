@@ -8,7 +8,7 @@ O host não precisa de Python. Testes e verificações Python são executados no
 
 | Camada criada ou modificada | Tipo obrigatório | Seguro em paralelo? | Observação |
 |---|---|---:|---|
-| funções puras, modelos e validação de esquema | unidade | Sim | `unittest`, sem rede e sem Docker aninhado |
+| funções puras, modelos e validação de esquema | unidade | Sim | `unittest`, sem rede e sem Docker aninhado; `jsonschema` fixado valida os contratos publicados |
 | adaptador de JSON Bandit/Semgrep | unidade | Sim | usa fixtures próprias, nunca o ground truth |
 | aquisição, inventário e sanitização | integração | Não | usa diretórios temporários e Git/Docker local |
 | executor de contêiner e isolamento | integração | Não | inspeciona mounts, rede, usuário e limites |
@@ -26,6 +26,8 @@ Os comandos tornam-se executáveis depois de T03 criar a imagem e o `compose.yam
 | build | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 build` |
 
 O gate `build` valida o Compose, reconstrói a imagem, compila para o `tmpfs`, executa todos os testes, roda a sonda de isolamento, aplica `pip check`, confere as versões e executa o preflight embarcado sem mounts.
+
+O harness de produção continua usando apenas a biblioteca padrão. Os testes de conformidade dos JSON Schemas utilizam `jsonschema`, já presente e fixado no lock da imagem por uma ferramenta SAST; isso não adiciona dependência ao código executado pelo controlador.
 
 Enquanto T03 não estiver concluída, documentos usam `git diff --check` e validação JSON nativa do PowerShell como gate provisório.
 
