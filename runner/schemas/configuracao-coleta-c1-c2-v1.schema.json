@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tcc:schemas:configuracao-coleta-c1-c2:v1",
+  "title": "Configuração congelada da coleta C1/C2 v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tipo", "criada_em", "controlador_commit", "imagem", "timeout_segundos", "hashes", "corpus", "risco", "limites", "comandos"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "tipo": {"const": "configuracao-coleta-c1-c2"},
+    "criada_em": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"},
+    "controlador_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "imagem": {"type": "object", "additionalProperties": false, "required": ["tag", "id", "os", "arquitetura"], "properties": {"tag": {"type": "string"}, "id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}, "os": {"const": "linux"}, "arquitetura": {"const": "amd64"}}},
+    "timeout_segundos": {"type": "integer", "minimum": 1, "maximum": 86400},
+    "hashes": {"type": "object", "additionalProperties": false, "required": ["corpus_lock_sha256", "fila_lock_sha256", "politica_sha256", "regras_bundle_sha256", "host_risk_decision_sha256"], "patternProperties": {".*": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "corpus": {"type": "object", "additionalProperties": false, "required": ["quantidade_alvos", "alvos"], "properties": {"quantidade_alvos": {"const": 26}, "alvos": {"type": "array", "minItems": 26, "maxItems": 26, "items": {"type": "object", "additionalProperties": false, "required": ["alvo", "commit", "entrada_sha256", "inventario_sha256"], "properties": {"alvo": {"type": "string", "pattern": "^ALVO-[0-9]{4}$"}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "entrada_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "inventario_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}}}},
+    "risco": {"type": "object", "required": ["decisao", "host_observado", "autorizacao_coleta"], "properties": {"autorizacao_coleta": {"const": true}, "decisao": {"type": "object"}, "host_observado": {"type": "object"}}},
+    "limites": {"type": "object"},
+    "comandos": {"type": "object", "required": ["C1", "C2"], "properties": {"C1": {"type": "array", "minItems": 1}, "C2": {"type": "array", "minItems": 1}}}
+  }
+}

@@ -76,6 +76,10 @@ services:
         target: /workspace/config
         read_only: true
       - type: bind
+        source: ./docker/regras-semgrep
+        target: /workspace/docker/regras-semgrep
+        read_only: true
+      - type: bind
         source: ./evidencias
         target: /workspace/evidencias
         read_only: true

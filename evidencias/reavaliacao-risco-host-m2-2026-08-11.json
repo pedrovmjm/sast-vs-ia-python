@@ -2,8 +2,11 @@
   "schema_version": "1.0",
   "tipo": "reavaliacao-risco-host-m2",
   "observado_em_utc": "2026-08-11T14:05:15Z",
-  "status": "decisao_pendente",
-  "autorizacao_coleta": false,
+  "status": "accepted",
+  "autorizacao_coleta": true,
+  "decisao": "accept-residual-risk-m2",
+  "decidido_em": "2026-08-11",
+  "responsavel": "usuário do projeto",
   "host_observado": {
     "git_for_windows": "2.46.2.windows.1",
     "wsl": "2.0.14.0",
@@ -51,5 +54,5 @@
     ],
     "conclusao": "Os controles reduzem a superficie, mas nao eliminam o risco do host desatualizado; a excecao AD-005 do M1 nao se estende ao M2."
   },
-  "decisao_exigida": "Atualizar Git/WSL/Docker Desktop ou autorizar explicitamente o risco residual para a coleta M2; 'continuar' sem uma dessas escolhas nao e tratado como waiver."
+  "decisao_registrada": "O usuário autorizou explicitamente o risco residual das versões observadas para M2, incluindo a permanência local dos aplicativos vulneráveis do corpus; a autorização não se estende a outros experimentos."
 }

@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "tipo": "host-risk-waiver-m2",
+  "status": "accepted",
+  "decision": "accept-residual-risk-m2",
+  "decided_at": "2026-08-11",
+  "authorized_by": "usuário do projeto",
+  "scope": "M2",
+  "authorization": true,
+  "reason": "O usuário autorizou explicitamente continuar a coleta M2 aceitando o risco residual das versões atuais de Docker, Git e WSL e a permanência local dos aplicativos vulneráveis do corpus.",
+  "versions": {
+    "git": "2.46.2.windows.1",
+    "wsl": "2.0.14.0",
+    "docker_desktop": "4.38.0",
+    "docker_engine": "27.5.1"
+  },
+  "allowed_actions": [
+    "M2-T06-freeze",
+    "M2-T07-coleta-c1-c2",
+    "M2-T08-auditoria"
+  ],
+  "required_controls": [
+    "validar_origem_commit_sha256",
+    "nao_executar_codigo_alvo",
+    "container_sem_rede",
+    "alvo_somente_leitura",
+    "usuario_nao_root",
+    "capabilities_removidas",
+    "no_new_privileges",
+    "imagem_local_por_id",
+    "sem_docker_socket",
+    "preservar_brutos_e_falhas",
+    "nao_publicar_corpus_oracle_ou_regras"
+  ],
+  "approval": {
+    "reference": ".specs/project/STATE.md#AD-013",
+    "authorization_message_date": "2026-08-11"
+  }
+}
