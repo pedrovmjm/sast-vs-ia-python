@@ -1,0 +1,90 @@
+\chapter{Avaliação dos Resultados}\label{cap:avaliacao}
+\addcontentsline{toc}{chapter}{Avaliação dos Resultados}
+
+Este capítulo apresenta e discute os resultados obtidos com a execução do protocolo descrito no Capítulo~\ref{cap:metodologia} e relatado no Capítulo~\ref{cap:desenvolvimento}, organizados de acordo com as quatro questões de pesquisa formuladas na Seção~\ref{sec:questoes-pesquisa-metodologia}.
+
+A Seção~\ref{sec:visao-geral-coleta} caracteriza a coleta efetivamente realizada. A Seção~\ref{sec:desempenho-quantitativo} responde à QP1, apresentando o desempenho de detecção por condição, categoria CWE e severidade. A Seção~\ref{sec:qualidade-relatorios} responde à QP2, com os resultados da rubrica qualitativa. A Seção~\ref{sec:efeito-hibrido} responde à QP3, comparando as condições híbridas às condições de IA isolada e SAST isolado. A Seção~\ref{sec:estabilidade-execucoes} e a Seção~\ref{sec:priorizacao-resultados} respondem à QP4, tratando, respectivamente, de estabilidade entre execuções e de priorização por severidade. A Seção~\ref{sec:tempo-tokens-resultados} apresenta a caracterização operacional complementar do tempo de execução e do consumo de tokens, sem vinculá-la a uma questão de pesquisa autônoma. Por fim, a Seção~\ref{sec:discussao-integrada} integra os achados e a Seção~\ref{sec:ameacas-validade-observadas} revisita as ameaças à validade descritas na Seção~\ref{sec:validade-limitacoes} à luz do que foi efetivamente observado.
+
+\begin{quote}
+\textbf{Nota de redação:} assim como no Capítulo~\ref{cap:desenvolvimento}, os trechos entre colchetes marcam pontos que dependem dos dados coletados no experimento e serão substituídos por resultados, tabelas e figuras reais. Nenhum valor numérico foi antecipado nesta versão.
+\end{quote}
+
+\section{Visão Geral da Coleta e do Conjunto de Dados Analisado}\label{sec:visao-geral-coleta}
+
+[A PREENCHER APÓS A COLETA: número de repositórios, execuções e entradas efetivamente analisadas em cada condição; configuração de modelo usada em cada bloco; confirmação da execução ou não do bloco complementar; e eventuais exclusões ou falhas de execução tratadas pelo modo estrito, conforme a Seção~\ref{sec:universo-amostra}.]
+
+\section{Desempenho Quantitativo de Detecção (QP1)}\label{sec:desempenho-quantitativo}
+
+\subsection{Resultados por condição experimental}\label{subsec:resultados-por-condicao}
+
+[A PREENCHER APÓS A COLETA: precisão, \textit{recall}, F1, F2, F3 e taxa de falsos positivos para C1--C6 no bloco principal com GPT-5.6 Luna, com intervalos de confiança de 95\% obtidos por reamostragem no nível do repositório, conforme a Seção~\ref{subsec:metricas-quantitativas-metodologia}. Se o bloco complementar for executado, apresentar Cursor Auto e Codex com GPT-5.6 Terra em tabela separada, sem combinar essas observações com a linha de base Luna.]
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:resultados-deteccao-condicao}Desempenho de detecção por condição experimental (a preencher)}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|X|X|X|X|}
+\hline
+\textbf{Condição} & \textbf{Precisão} & \textbf{Recall} & \textbf{F1} & \textbf{F2} & \textbf{F3} & \textbf{Taxa de FP} \\
+\hline
+C1 & & & & & & \\
+\hline
+C2 & & & & & & \\
+\hline
+C3 & & & & & & \\
+\hline
+C4 & & & & & & \\
+\hline
+C5 & & & & & & \\
+\hline
+C6 & & & & & & \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026). Valores a preencher após a coleta.}
+\end{table}
+
+\subsection{Resultados por categoria CWE}\label{subsec:resultados-por-cwe}
+
+[A PREENCHER APÓS A COLETA: desempenho de cada condição por categoria CWE presente no RealVuln, incluindo casos em que a quantidade de entradas permite apenas interpretação descritiva, conforme previsto na Seção~\ref{subsec:metricas-quantitativas-metodologia}.]
+
+\subsection{Resultados por severidade}\label{subsec:resultados-por-severidade}
+
+[A PREENCHER APÓS A COLETA: desempenho de cada condição por categoria de severidade (baixa, média, alta, crítica) do \textit{ground truth} do RealVuln.]
+
+\section{Qualidade dos Relatórios Verdadeiros-Positivos (QP2)}\label{sec:qualidade-relatorios}
+
+\subsection{Correção técnica, localização e acionabilidade}\label{subsec:resultados-rubrica}
+
+[A PREENCHER APÓS A COLETA: escores médios e distribuição por condição nas três dimensões ordinais da rubrica definida na Tabela~\ref{tab:dimensoes-rubrica}, para o recorte comum e para o recorte estratificado descritos na Seção~\ref{subsec:metricas-qualitativas-metodologia}. Se houver bloco complementar, apresentar sua amostra e seus resultados separadamente do bloco Luna.]
+
+\subsection{Clareza e legibilidade}\label{subsec:resultados-clareza}
+
+[A PREENCHER APÓS A COLETA: resultados do checklist estrutural de clareza (Tabela~\ref{tab:checklist-clareza}) e do Índice de Legibilidade de Flesch adaptado ao português, por condição.]
+
+\subsection{Concordância entre avaliadores}\label{subsec:resultados-concordancia}
+
+[A PREENCHER APÓS A COLETA: Kappa ponderado de Cohen para as dimensões ordinais e percentual de concordância e Kappa não ponderado para os itens binários de clareza, conforme a Seção~\ref{subsec:metricas-qualitativas-metodologia}, com discussão de eventuais divergências registradas entre avaliadores.]
+
+\section{Efeito da Combinação SAST + IA (QP3)}\label{sec:efeito-hibrido}
+
+[A PREENCHER APÓS A COLETA: comparação pareada entre C3/C4 (IA isolada) e C5/C6 (híbrido correspondente), com intervalos de confiança pareados, discutindo se o fornecimento dos alertas de Bandit e Semgrep aumentou ou reduziu a detecção e a qualidade dos relatórios, à luz do alerta metodológico de \cite{Croft2021RuleLearningSAST} citado na Seção~\ref{subsubsec:sast-vantagens-limitacoes}. Realizar as comparações dentro de cada bloco de modelos, sem parear Luna com Auto ou Terra.]
+
+\section{Estabilidade entre Execuções (QP4)}\label{sec:estabilidade-execucoes}
+
+[A PREENCHER APÓS A COLETA: média, amplitude e desvio das métricas entre as três repetições de C3--C6, e frequência de detecção (zero, uma, duas ou três execuções) por entrada vulnerável, conforme a Seção~\ref{subsec:testes-ensaios}. Calcular a estabilidade separadamente para o bloco Luna e para o bloco complementar, caso realizado.]
+
+\section{Priorização e Indicação de Severidade (QP4)}\label{sec:priorizacao-resultados}
+
+[A PREENCHER APÓS A COLETA: cobertura de priorização, concordância exata, concordância com tolerância de uma categoria e Kappa ponderado entre a severidade indicada por cada condição e a categoria de referência do RealVuln, conforme a Seção~\ref{subsec:priorizacao-metodologia}.]
+
+\section{Tempo de Execução e Consumo de Tokens}\label{sec:tempo-tokens-resultados}
+
+[A PREENCHER APÓS A COLETA: mediana, intervalo interquartil e valores mínimos e máximos do tempo por condição e por bloco de modelos. Para C3--C6, apresentar também tokens de entrada, de saída e totais por execução e por repositório, além de categorias adicionais informadas pelos produtos. Indicar explicitamente a proporção de execuções com contadores disponíveis e evitar comparações diretas quando as definições ou os tokenizadores não forem equivalentes, conforme a Seção~\ref{subsec:tempo-tokens-metodologia}.]
+
+\section{Discussão Integrada}\label{sec:discussao-integrada}
+
+[A PREENCHER APÓS A COLETA: leitura conjunta dos resultados de detecção, qualidade, estabilidade e priorização, acompanhada da caracterização de tempo e consumo de tokens, evitando reduzir a comparação a uma única métrica, conforme a advertência de validade de construto da Seção~\ref{sec:validade-limitacoes}. Discussão explícita de como os achados dialogam com os estudos do Capítulo~\ref{cap:estadoarte}.]
+
+\section{Ameaças à Validade Observadas na Coleta}\label{sec:ameacas-validade-observadas}
+
+[A PREENCHER APÓS A COLETA: revisão da Tabela~\ref{tab:ameacas-validade}, indicando quais ameaças se manifestaram de fato durante a coleta, como foram tratadas e quais limitações adicionais só puderam ser identificadas após a execução do experimento.]

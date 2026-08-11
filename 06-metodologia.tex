@@ -1,0 +1,315 @@
+\chapter{Metodologia}\label{cap:metodologia}
+
+Este capítulo operacionaliza o problema de pesquisa delimitado nos capítulos anteriores: comparar a capacidade de ferramentas SAST tradicionais, de agentes empresariais de codificação baseados em IA e de uma abordagem híbrida SAST + IA para detectar, explicar e priorizar vulnerabilidades em aplicações Python. A fundamentação e os critérios de escolha de Bandit, Semgrep Community Edition, Cursor e OpenAI Codex foram apresentados no Capítulo~\ref{cap:fundTeoric}; neste capítulo, o foco recai sobre como essas ferramentas serão executadas sobre o benchmark RealVuln, quais dados serão coletados e como os resultados serão avaliados.
+
+A metodologia adota um desenho empírico comparativo, com medidas repetidas sobre os mesmos repositórios Python e o \textit{ground truth} público e versionado do RealVuln \cite{Pellew2026RealVuln}. Um repositório controlador organizará a versão fixada do benchmark, as cópias entregues às ferramentas, as instruções e os resultados, mantendo os arquivos de resposta fora do alcance dos agentes durante a análise. Bandit e Semgrep serão invocados pelo \textit{harness} em contêineres Docker efêmeros e equivalentes. As ferramentas empresariais de IA serão avaliadas sobre cópias idênticas dos mesmos repositórios, com instruções, permissões e recursos controlados.
+
+\section{Questões de Pesquisa}\label{sec:questoes-pesquisa-metodologia}
+
+O experimento é orientado pelas seguintes questões de pesquisa:
+
+\begin{enumerate}
+\item[\textbf{QP1}] Qual é o desempenho de cada condição experimental na detecção de vulnerabilidades Python, considerando precisão, \textit{recall}, F1, F2, F3 e taxa de falsos positivos?
+\item[\textbf{QP2}] Qual é a qualidade dos relatórios verdadeiros-positivos quanto à correção técnica, localização, clareza e acionabilidade?
+\item[\textbf{QP3}] Em que medida fornecer os alertas de Bandit e Semgrep aos agentes de IA melhora ou degrada a detecção e a qualidade dos relatórios em relação às ferramentas executadas isoladamente?
+\item[\textbf{QP4}] Quão estáveis são os resultados das condições baseadas em IA entre execuções independentes e quão adequadamente essas condições indicam a prioridade dos achados quando existe uma referência de severidade confiável?
+\end{enumerate}
+
+As QP1 e QP3 constituem o eixo quantitativo principal. A QP2 acrescenta a avaliação da utilidade prática dos relatórios, enquanto a QP4 combina medidas quantitativas de estabilidade e concordância com a análise da priorização, dimensões apontadas como pouco exploradas pela literatura revisada \cite{Germano2025LLMSLR, Mao2025ExplainableVD, Tamberg2025LLMHarness}. O tempo de execução e o consumo de tokens serão apresentados como caracterização operacional complementar, sem constituir uma questão de pesquisa autônoma.
+
+\section{Classificação e Desenho da Pesquisa}\label{sec:classificacao-pesquisa}
+
+Quanto à natureza, a pesquisa é aplicada, pois produz evidência empírica destinada a apoiar a escolha e a combinação de ferramentas de análise de segurança no ecossistema Python. Quanto à abordagem, emprega métodos mistos com predominância quantitativa: as condições são comparadas por métricas derivadas da matriz de confusão, enquanto a qualidade dos relatórios é examinada por uma rubrica estruturada. Quanto aos objetivos, o estudo é exploratório e descritivo-comparativo. Não se pretende demonstrar causalidade geral sobre todas as ferramentas ou modelos de IA, mas caracterizar diferenças observadas sob as condições controladas deste protocolo.
+
+O procedimento central é um experimento computacional de medidas repetidas: cada condição experimental é aplicada aos mesmos repositórios da versão fixada do RealVuln. A comparação utiliza as vulnerabilidades e os falsos-positivos armadilha já rotulados pelo benchmark, reduzindo a influência de diferenças de corpus entre as ferramentas. A pesquisa bibliográfica apresentada nos capítulos anteriores fundamenta a escolha das condições, dos dados, das métricas e das ameaças à validade; o desenvolvimento do \textit{harness} constitui a instrumentação necessária para integrar Cursor e Codex ao formato de resultados e ao avaliador do benchmark.
+
+\section{Condições Experimentais}\label{sec:condicoes-experimentais}
+
+As três abordagens conceituais do trabalho são operacionalizadas em seis condições, apresentadas na Tabela~\ref{tab:condicoes-experimentais}. Bandit e Semgrep são avaliados separadamente, conforme suas diferenças técnicas discutidas na Seção~\ref{subsec:ferramentas-sast}. Cursor e Codex também permanecem separados, evitando que uma união artificial de suas respostas seja interpretada como uma única ferramenta. No braço híbrido, a união normalizada e sem duplicatas dos alertas de Bandit e Semgrep é fornecida, como contexto adicional, a uma nova execução de cada agente.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:condicoes-experimentais}Condições experimentais avaliadas}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+\textbf{Condição} & \textbf{Execução} & \textbf{Papel na comparação} \\
+\hline
+C1 & Bandit em configuração fixada & Linha de base SAST específica para Python \\
+\hline
+C2 & Semgrep Community Edition com conjunto de regras fixado & Linha de base SAST baseada em regras declarativas \\
+\hline
+C3 & Cursor com GPT-5.6 Luna, sem receber alertas SAST & Agente empresarial isolado com modelo controlado \\
+\hline
+C4 & OpenAI Codex com GPT-5.6 Luna, sem receber alertas SAST & Agente empresarial isolado com modelo controlado \\
+\hline
+C5 & Alertas normalizados de C1 e C2 fornecidos ao Cursor com GPT-5.6 Luna & Condição híbrida SAST $\rightarrow$ Cursor com modelo controlado \\
+\hline
+C6 & Alertas normalizados de C1 e C2 fornecidos ao Codex com GPT-5.6 Luna & Condição híbrida SAST $\rightarrow$ Codex com modelo controlado \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+Os resultados primários serão reportados por condição, e não apenas agregados nos rótulos ``SAST'', ``IA'' e ``híbrido''. Uma síntese por abordagem poderá ser apresentada como leitura complementar, desde que preserve os valores individuais e não trate ferramentas diferentes como observações independentes de uma população de ferramentas.
+
+O bloco experimental principal utilizará o GPT-5.6 Luna em C3--C6, desde que o modelo permaneça disponível nos dois produtos no início da coleta. A adoção do mesmo modelo reduz o confundimento entre a capacidade do modelo subjacente e os efeitos próprios da ferramenta, como seleção de contexto, orquestração, ferramentas disponíveis e interface agêntica. O identificador do modelo, o nível de raciocínio, o modo de contexto e as demais opções observáveis serão fixados no estudo-piloto e mantidos durante todo o bloco \cite{Cursor2026Models, OpenAI2026ModelGuidance}.
+
+Concluído o bloco principal, o desenho admite um bloco complementar com as configurações nativas indicadas pelos fornecedores. Na data de planejamento, os candidatos são o modo Auto no Cursor e o GPT-5.6 Terra no Codex. O Auto é uma estratégia adaptativa de seleção e pode encaminhar solicitações a modelos diferentes; por isso, não será tratado como equivalente ao Terra nem combinado com a linha de base Luna. A disponibilidade desse bloco será decidida no estudo-piloto, antes da observação dos resultados principais, a partir das cotas e do limite de tokens reservados para a coleta. Se executado, abrangerá o corpus completo e seguirá as mesmas três repetições, instruções, permissões e critérios de avaliação. Caso os recursos disponíveis não comportem o bloco completo, ele não será executado, evitando uma seleção posterior de repositórios ou resultados favoráveis. A configuração efetiva, a justificativa documental e a data de consulta serão registradas antes de iniciar o bloco.
+
+Nas condições C3 e C4, os agentes poderão ler e pesquisar os arquivos do repositório, preservando a característica agêntica definida na Seção~\ref{sec:agentes-codificacao}, mas não poderão executar Bandit, Semgrep ou outros analisadores de segurança. Nas condições C5 e C6, receberão os alertas SAST previamente coletados, sem acesso ao \textit{ground truth}. O acesso à rede, a execução de comandos, a possibilidade de modificar arquivos e as demais permissões serão configurados da forma mais equivalente permitida pelos dois produtos e registrados como parte do artefato experimental.
+
+\section{Universo, Corpus e Unidade de Análise}\label{sec:universo-amostra}
+
+O universo de interesse compreende vulnerabilidades classificáveis por CWE em projetos Python. O corpus experimental será a versão 1.0 do RealVuln descrita por \citeonline{Pellew2026RealVuln}, composta por 26 repositórios Python intencionalmente vulneráveis e 796 entradas manualmente rotuladas, das quais 676 representam vulnerabilidades e 120 representam padrões seguros incluídos como falsos-positivos armadilha. Essa versão será usada integralmente, caracterizando um censo do \textit{release} escolhido, e não uma nova amostra construída pelo autor.
+
+A escolha do RealVuln decorre de sua correspondência direta com o objetivo do trabalho: o benchmark foi projetado para comparar ferramentas baseadas em regras e scanners baseados em LLM sobre os mesmos repositórios, publica o código-fonte, o \textit{ground truth}, o algoritmo de correspondência e os scripts de pontuação, além de incluir exemplos seguros necessários ao cálculo de falsos positivos \cite{Pellew2026RealVuln}. O VUDENC permanece relevante como evidência histórica sobre detecção em Python, mas não será o corpus principal deste experimento porque sua rotulagem automática e sua granularidade em janelas de tokens exigiriam uma reconstrução de \textit{ground truth} incompatível com a comparação em nível de repositório.
+
+A unidade de análise é a entrada rotulada do RealVuln: uma vulnerabilidade conhecida ou um falso-positivo armadilha, associada a repositório, arquivo, intervalo de linhas, CWE e evidência. A unidade de execução é um repositório completo analisado por uma condição experimental. A unidade de observação é o achado individual emitido pela condição, posteriormente associado, ou não, a uma entrada do \textit{ground truth}. Essa distinção permite que o agente navegue pelo projeto inteiro sem reduzir a avaliação a funções isoladas.
+
+Será fixado o identificador da versão do benchmark, o \textit{commit} do repositório RealVuln, o \textit{commit} de cada projeto-alvo e o \textit{hash} dos arquivos de \textit{ground truth}. Nenhum repositório ou rótulo será removido após a observação dos resultados. Caso uma falha técnica impeça determinada condição de concluir um projeto, o modo estrito do benchmark será aplicado: as vulnerabilidades daquele projeto serão contabilizadas como não detectadas, e a falha de execução será reportada separadamente.
+
+\section{Controle do Corpus e Cegamento}\label{sec:repositorio-experimental}
+
+O RealVuln não será alterado nem terá suas vulnerabilidades recriadas. Para cada repositório, será utilizada a revisão indicada pelo manifesto oficial, e as seis condições receberão cópias com o mesmo conteúdo verificável por \textit{hash}. Código-fonte, configurações, dependências declaradas e testes pertencentes à revisão serão preservados; metadados de versionamento, artefatos gerados e documentos que revelem explicitamente as respostas serão excluídos por uma regra definida antes da coleta e aplicada de forma idêntica a todas as condições.
+
+O \textit{ground truth}, o avaliador e a correspondência entre os projetos originais e seus identificadores opacos permanecerão fisicamente separados das áreas entregues às ferramentas. Cada execução utilizará uma área de trabalho nova. As condições de IA receberão apenas o código e a instrução padronizada; nas condições híbridas, será acrescentada somente a união normalizada dos alertas de C1 e C2, sem indicação de verdadeiro ou falso positivo. Esses controles reduzem a exposição direta das respostas e evitam estado residual entre condições e repetições.
+
+Um manifesto interno registrará o alvo, a condição, a repetição, o \textit{commit}, o \textit{hash} da entrada e o estado da execução. Ele permitirá retomar a fila após interrupções sem reutilizar áreas de trabalho ou sessões anteriores. A estrutura de diretórios e os mecanismos utilizados para implementar essa separação são descritos no Capítulo~\ref{cap:desenvolvimento}, Seção~\ref{sec:organizacao-repositorio-desenvolvimento}.
+
+\section{Importação e Uso do \textit{Ground Truth}}\label{sec:ground-truth-metodologia}
+
+O \textit{ground truth} será importado diretamente da versão fixada do RealVuln, sem reconstrução ou alteração de rótulos pelo autor. Cada entrada contém identificador, indicação de vulnerabilidade ou armadilha segura, CWE principal, conjunto de CWEs aceitáveis, arquivo, intervalo de linhas, severidade e evidência de rotulagem \cite{Pellew2026RealVuln}. Antes da coleta, o arquivo será validado pelo verificador disponibilizado pelo benchmark e seu \textit{hash} será registrado.
+
+Será preservado o algoritmo de correspondência do benchmark: caminho de arquivo normalizado, CWE pertencente ao conjunto aceitável da entrada e linha dentro da tolerância definida pelo RealVuln. Cada entrada poderá ser consumida uma única vez, evitando que alertas duplicados ampliem artificialmente a detecção. As saídas de Bandit, Semgrep, Cursor e Codex serão apenas convertidas para o esquema de entrada esperado pelo avaliador; a lógica de pontuação não será reimplementada quando o script oficial puder ser reutilizado.
+
+Conforme as regras do RealVuln, um achado associado a uma entrada vulnerável será verdadeiro positivo; um achado associado a uma armadilha segura ou não associado a nenhuma entrada será falso positivo; uma vulnerabilidade sem correspondência será falso negativo; e uma armadilha corretamente ignorada será verdadeiro negativo. Eventuais erros identificados no \textit{ground truth} serão registrados e comunicados ao projeto, mas não corrigidos silenciosamente durante a coleta. Qualquer análise com rótulo corrigido será apresentada separadamente como análise de sensibilidade, preservando o resultado obtido com a versão oficial.
+
+\section{Ambiente de Execução e Docker}\label{sec:materiais-ambiente}
+
+A Tabela~\ref{tab:ambiente-experimental} apresenta os principais materiais e controles do ambiente. A justificativa técnica das ferramentas foi desenvolvida no Capítulo~\ref{cap:fundTeoric}; aqui são registrados apenas os elementos necessários à reprodução das execuções.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:ambiente-experimental}Materiais e controles do ambiente experimental}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+\textbf{Categoria} & \textbf{Item} & \textbf{Controle registrado} \\
+\hline
+SAST & Bandit & Versão, comando, configuração, imagem Docker, duração e saída JSON \\
+\hline
+SAST & Semgrep Community Edition & Versão, comando, regras locais, \textit{hash} das regras, imagem Docker, duração e saída JSON \\
+\hline
+Conteinerização & Docker & Versão do motor, imagem-base por \textit{digest}, limites de recursos, rede e volumes \\
+\hline
+IA empresarial & Cursor & Versão do cliente, estratégia de seleção, modelo solicitado e efetivamente exibido, nível de raciocínio, modo de contexto, data e hora, instrução, permissões, duração, consumo de tokens informado e identificador da sessão \\
+\hline
+IA empresarial & OpenAI Codex & Versão do cliente, modelo solicitado e efetivamente exibido, nível de raciocínio, modo de contexto, data e hora, instrução, permissões, duração, consumo de tokens informado e identificador da sessão \\
+\hline
+Dados & RealVuln v1.0 & 26 repositórios, manifesto, 796 entradas rotuladas, \textit{ground truth} e avaliador fixados por \textit{hash} \\
+\hline
+Infraestrutura & \textit{Harness} em Python & Código versionado, esquema comum, registros brutos, normalização e cálculo das métricas \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+Bandit e Semgrep serão executados a partir de uma imagem Docker imutável, com versões fixadas, código-alvo somente para leitura e saída gravada separadamente. Cada combinação entre ferramenta e repositório utilizará um contêiner novo, sem rede, com usuário sem privilégios e os mesmos limites de CPU, memória e tempo. Assim, a conteinerização atua como variável de controle das condições SAST, enquanto o manifesto externo ao contêiner permite retomar a fila de execuções.
+
+Em conformidade com a delimitação estabelecida na Seção~\ref{subsec:ferramentas-sast}, não serão criadas regras específicas para os repositórios do corpus. O Bandit será executado com seu conjunto nativo de \textit{plugins} e sem supressões ajustadas após a observação dos resultados. O Semgrep Community Edition utilizará um conjunto público de regras de segurança para Python, selecionado antes do estudo-piloto, copiado para \texttt{docker/regras-semgrep/} e fixado por versão e \textit{hash}. O nome do conjunto, os arquivos efetivamente carregados e a linha de comando completa serão publicados, pois a expressão ``configuração padrão'' não identifica sozinha quais regras públicas foram aplicadas pelo Semgrep.
+
+A conteinerização equaliza o ambiente local das condições C1 e C2, mas não torna os serviços de IA equivalentes nem imutáveis. Por isso, cada bloco de C3--C6 será executado em uma janela de coleta tão curta quanto possível, com sessões novas, o mesmo texto de instrução, a mesma cópia do repositório e permissões equivalentes. No bloco principal, o modelo será fixado em GPT-5.6 Luna nos dois produtos. No bloco complementar, se realizado, Cursor Auto e Codex com GPT-5.6 Terra serão analisados como configurações próprias de cada produto, sem atribuir suas diferenças exclusivamente à camada de ferramenta. Alterações de modelo ou de produto durante a coleta interromperão o bloco afetado, que será reiniciado ou analisado separadamente. A construção da imagem, os comandos e os adaptadores pertencem à implementação e são detalhados no Capítulo~\ref{cap:desenvolvimento}.
+
+\section{Instrumentação e Dados Coletados}\label{subsec:implementacao-harness}
+
+Um \textit{harness} em Python será utilizado para preparar entradas idênticas, controlar a fila, preservar saídas brutas e metadados e converter os achados para o formato aceito pelo avaliador. Para cada execução serão registrados, no mínimo, condição, ferramenta, bloco de modelos, alvo, repetição, arquivo, intervalo de linhas, regra ou CWE informado, severidade, descrição, recomendação, duração e estado da execução. Nas condições baseadas em IA, serão registrados também a estratégia de seleção, o modelo solicitado, o modelo efetivamente exibido e os consumos de tokens de entrada, de saída e total quando esses dados forem disponibilizados pelo produto.
+
+As condições C3--C6 deverão emitir uma lista JSON com caminho do arquivo, linha inicial e final, CWE, severidade, descrição da causa e recomendação. A lista vazia será aceita como ausência de achados. Campos omitidos permanecerão nulos: o normalizador não utilizará o \textit{ground truth} para completar localizações, CWE ou severidades. A união SAST fornecida às condições híbridas será deduplicada antes da nova execução dos agentes, mantendo a origem dos alertas e sem anexar rótulos do benchmark.
+
+Os adaptadores serão verificados antes da coleta com saídas artificiais externas ao corpus e com uma execução de fumaça descartável. A arquitetura do \textit{harness}, o esquema comum, as regras de deduplicação, os comandos e os testes de integração são especificados no Capítulo~\ref{cap:desenvolvimento}, Seções~\ref{sec:arquitetura-harness} e~\ref{sec:verificacao-artefato-desenvolvimento}.
+
+\section{Métricas de Avaliação}\label{sec:metricas-metodologia}
+
+\subsection{Métricas quantitativas de detecção}\label{subsec:metricas-quantitativas-metodologia}
+
+A matriz de confusão será produzida pelo avaliador do RealVuln no nível das entradas rotuladas. Vulnerabilidades correspondidas serão verdadeiros positivos (TP), vulnerabilidades não encontradas serão falsos negativos (FN), armadilhas ou regiões não rotuladas sinalizadas serão falsos positivos (FP), e armadilhas corretamente ignoradas serão verdadeiros negativos (TN). A pontuação principal utilizará o modo estrito e agregado por microcontagem do benchmark, no qual uma falha completa de análise não é removida do denominador \cite{Pellew2026RealVuln}.
+
+Serão calculadas, por condição, repositório, categoria CWE e severidade:
+
+\begin{itemize}
+\item \textbf{Precisão}: $TP/(TP+FP)$;
+\item \textbf{Recall}: $TP/(TP+FN)$;
+\item \textbf{F1}: média harmônica entre precisão e \textit{recall};
+\item \textbf{F2}: média harmônica ponderada com maior peso para o \textit{recall}, adequada à maior criticidade dos falsos negativos em segurança \cite{Kalouptsoglou2023VulnPrediction};
+\item \textbf{F3}: média harmônica ponderada que atribui peso nove vezes maior ao \textit{recall}, métrica principal do RealVuln \cite{Pellew2026RealVuln};
+\item \textbf{Taxa de falsos positivos}: $FP/(FP+TN)$.
+\end{itemize}
+
+Além dos valores pontuais, serão apresentados intervalos de confiança de 95\% obtidos por reamostragem no nível do repositório, preservando o agrupamento de entradas pertencentes ao mesmo projeto. As diferenças entre condições aplicadas aos mesmos repositórios serão calculadas de forma pareada, com intervalos obtidos pelo mesmo procedimento de reamostragem. A análise por CWE e severidade será apresentada mesmo quando a quantidade de entradas permitir apenas interpretação descritiva.
+
+\subsection{Tempo de execução e consumo de tokens}\label{subsec:tempo-tokens-metodologia}
+
+O tempo de execução será medido pelo \textit{harness} como tempo de relógio entre o envio da tarefa e a disponibilidade da saída final. Nas condições SAST, serão registrados também o tempo de inicialização do contêiner e o tempo interno do analisador, permitindo distinguir a sobrecarga da infraestrutura do tempo da análise. Nas condições de IA, o tempo incluirá as iterações autônomas do agente até sua resposta final ou até o limite de execução previamente definido. Serão reportados mediana, intervalo interquartil e valores mínimos e máximos por condição, pois tempos de serviços remotos podem apresentar distribuição assimétrica.
+
+O consumo de tokens será coletado apenas nas condições baseadas em IA e conforme os contadores efetivamente disponibilizados por cada produto. Serão preservados separadamente tokens de entrada, tokens de saída e total de tokens; categorias adicionais expostas pela ferramenta, como tokens em cache ou de raciocínio, serão mantidas em campos próprios. Quando um produto não informar algum desses valores, o campo será registrado como indisponível, sem estimativa a partir de caracteres, palavras ou duração. Os resultados serão resumidos por condição e por repositório, com mediana, intervalo interquartil e valores mínimos e máximos. Como produtos distintos podem empregar tokenizadores e mecanismos de contabilização diferentes, a comparação será descritiva e explicitará a disponibilidade e a definição dos contadores usados.
+
+\subsection{Repetição e estabilidade}\label{subsec:testes-ensaios}
+
+As condições determinísticas C1 e C2 serão executadas uma vez por repositório, após a validação da imagem Docker. As condições baseadas em IA, C3--C6, serão executadas três vezes por repositório em cada bloco efetivamente realizado, sempre em sessão nova e sem memória das execuções anteriores. A ordem dos repositórios será aleatorizada por bloco, e todas as execuções de um bloco utilizarão as mesmas versões e configurações observáveis. As repetições do bloco complementar não serão combinadas com as do bloco principal para calcular estabilidade.
+
+As métricas quantitativas serão calculadas separadamente em cada repetição e resumidas por média, amplitude e desvio entre execuções. No nível de cada entrada vulnerável, será reportada a frequência de detecção em zero, uma, duas ou três execuções. Essa frequência representa estabilidade empírica e não será convertida silenciosamente em um único resultado por voto majoritário. Para tornar a avaliação qualitativa exequível e evitar seleção retrospectiva da melhor resposta, a primeira execução, definida antes da coleta, será a saída principal da rubrica; as demais serão usadas na análise de estabilidade.
+
+\subsection{Avaliação qualitativa dos relatórios}\label{subsec:metricas-qualitativas-metodologia}
+
+A avaliação qualitativa será aplicada aos relatórios verdadeiros-positivos da execução principal. Para manter a etapa exequível, primeiro serão sorteadas até 20 entradas detectadas por todas as condições, que formarão o recorte diretamente comparável. Em seguida, a amostra de cada condição será completada até 50 relatórios com sorteio estratificado por CWE e severidade. Quando uma condição produzir menos de 50 verdadeiros-positivos, todos serão avaliados. A semente e a lista sorteada serão publicadas. Assim, serão apresentados tanto um recorte comum, sobre as mesmas vulnerabilidades, quanto um recorte representativo da utilidade efetivamente entregue por cada condição. O sorteio e a aplicação da rubrica serão realizados separadamente para cada bloco de modelos, sem reunir respostas Luna, Auto e Terra em uma única amostra.
+
+A Tabela~\ref{tab:dimensoes-rubrica} define as três dimensões ordinais, pontuadas de 1 a 5. A clareza será avaliada separadamente por checklist estrutural.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:dimensoes-rubrica}Dimensões da rubrica qualitativa}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+\textbf{Dimensão} & \textbf{Critério} & \textbf{Fundamentação} \\
+\hline
+Correção técnica & Explica corretamente a causa e o fluxo da vulnerabilidade, sem afirmar relações inexistentes no código & \cite{Mao2025ExplainableVD} \\
+\hline
+Localização & Identifica o arquivo e o trecho responsável com granularidade compatível com o \textit{ground truth} & \cite{Zhang2023LocateDescribe, Mao2025ExplainableVD} \\
+\hline
+Acionabilidade & Propõe correção tecnicamente válida, específica e aplicável ao contexto analisado & \cite{Mao2025ExplainableVD, Aloraini2019SASTWarnings} \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor com base nas referências indicadas (2026).}
+\end{table}
+
+Os descritores-âncora da escala são apresentados na Tabela~\ref{tab:ancoras-rubrica}. Os níveis 2 e 4 representam posições intermediárias entre os descritores adjacentes.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:ancoras-rubrica}Descritores-âncora da rubrica qualitativa}
+\centering
+\begin{tabularx}{\textwidth}{|c|X|X|X|}
+\hline
+\textbf{Nível} & \textbf{Correção técnica} & \textbf{Localização} & \textbf{Acionabilidade} \\
+\hline
+1 & Erro factual que compromete a explicação da causa & Localização ausente ou incorreta & Ausência de recomendação ou proposta incompatível com o caso \\
+\hline
+3 & Causa geral correta, com imprecisões secundárias & Arquivo ou função corretos, sem o trecho exato & Recomendação válida, porém genérica \\
+\hline
+5 & Causa e fluxo tecnicamente corretos e completos & Arquivo e trecho vulnerável corretamente identificados & Correção específica, tecnicamente válida e diretamente aplicável \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+\subsubsection{Operacionalização da clareza}\label{subsubsec:operacionalizacao-clareza}
+
+A clareza será medida pelo checklist da Tabela~\ref{tab:checklist-clareza}. Embora as respostas sejam binárias, os critérios ainda envolvem julgamento humano; por isso, o escore de zero a cinco será tratado como contagem estruturada, e não como medida inteiramente objetiva.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:checklist-clareza}Checklist estrutural de clareza dos relatórios}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Critério} & \textbf{Pergunta binária} \\
+\hline
+C1 --- Problema & O texto declara qual é a vulnerabilidade, além de apresentar apenas regra ou CWE? \\
+\hline
+C2 --- Risco & O texto explica impacto ou cenário de exploração associado à falha? \\
+\hline
+C3 --- Contexto técnico & O jargão empregado é compreensível no contexto do relatório? \\
+\hline
+C4 --- Concretude & O texto menciona elementos concretos do código, como função, variável ou parâmetro? \\
+\hline
+C5 --- Concisão & O texto comunica problema, risco e contexto sem omissões impeditivas nem repetição desnecessária? \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+Como medida secundária, será calculado o Índice de Legibilidade de Flesch adaptado ao português brasileiro \cite{Martins1996ReadabilityPortuguese}. O idioma das respostas será fixado pelo \textit{prompt}; trechos de código, caminhos e identificadores serão removidos do cálculo de legibilidade. O índice será interpretado apenas como facilidade sintática de leitura e não como substituto da avaliação técnica ou do checklist.
+
+Os relatórios serão apresentados aos avaliadores sem identificação direta da ferramenta e em ordem aleatorizada, sempre que a remoção da origem não eliminar conteúdo necessário à avaliação. O autor avaliará a totalidade do recorte qualitativo, e um segundo avaliador examinará independentemente pelo menos 20\% dos relatórios, em amostra estratificada por condição e CWE. Para as dimensões ordinais será reportado o Kappa ponderado de Cohen; para os itens binários de clareza, percentual de concordância e Kappa não ponderado \cite{Landis1977ObserverAgreement}. Divergências não serão resolvidas alterando retroativamente os descritores, mas serão registradas e discutidas.
+
+\subsection{Avaliação de severidade e priorização}\label{subsec:priorizacao-metodologia}
+
+A presença de uma indicação de severidade será reportada para todas as condições. A correção da priorização será comparada com a categoria de severidade publicada em cada entrada vulnerável do RealVuln. As categorias produzidas pelas ferramentas serão normalizadas para a mesma escala ordinal do benchmark (baixa, média, alta e crítica), mantendo-se também o valor bruto fornecido pela ferramenta.
+
+Serão calculadas a cobertura de priorização, a concordância exata com a categoria de referência, a concordância com tolerância de uma categoria e o Kappa ponderado. Achados sem severidade receberão valor ausente e reduzirão a cobertura, mas não terão sua categoria inferida pelo \textit{harness}. Essa delimitação impede que a capacidade de exibir uma etiqueta seja confundida com a capacidade de priorizar corretamente.
+
+\section{Protocolo Experimental}\label{sec:protocolo-experimental}
+
+O protocolo será executado na seguinte ordem:
+
+\begin{enumerate}
+\item Fixar o \textit{commit} da versão 1.0 do RealVuln e registrar os \textit{hashes} do manifesto, do \textit{ground truth} e do avaliador oficial.
+\item Executar o validador do benchmark e baixar os 26 repositórios nos \textit{commits} indicados pelo manifesto.
+\item Gerar cópias sanitizadas com identificadores opacos e verificar que as áreas de trabalho não expõem o diretório \texttt{ground-truth}, o avaliador ou os manifestos internos.
+\item Construir a imagem Docker, fixar versões e regras, e validar os adaptadores com saídas artificiais externas ao corpus.
+\item Confirmar no estudo-piloto a disponibilidade do GPT-5.6 Luna nos dois produtos, fixar suas opções e decidir, antes de examinar os resultados principais, se as cotas e o limite de tokens permitem executar integralmente o bloco complementar.
+\item Criar a fila completa de combinações entre condição, repositório e repetição, com ordem aleatorizada dentro de cada bloco.
+\item Executar C1 e C2 em contêineres efêmeros, preservando comandos, duração, metadados e JSON bruto.
+\item Normalizar e deduplicar os alertas SAST, sem consultar os resultados das condições de IA.
+\item Executar C3 e C4 em três sessões independentes por repositório, sem acesso aos alertas SAST ou ao \textit{ground truth}.
+\item Executar C5 e C6 em três sessões independentes por repositório, fornecendo apenas os alertas SAST normalizados e o código correspondente.
+\item Se aprovado no estudo-piloto, repetir C3--C6 em bloco complementar completo, usando Cursor Auto e GPT-5.6 Terra no Codex, sem alterar as demais instruções ou permissões.
+\item Converter as seis condições para o esquema comum e executar o avaliador oficial do RealVuln no modo estrito.
+\item Calcular métricas de detecção, estabilidade, tempo, consumo de tokens, intervalos de confiança e comparações pareadas.
+\item Sortear a amostra qualitativa da primeira execução, aplicar a rubrica e calcular a concordância entre avaliadores.
+\item Reportar resultados por condição, repositório, CWE e severidade, preservando tanto os dados agregados quanto as falhas de execução.
+\end{enumerate}
+
+Prompts, configurações, imagem Docker, regras do Semgrep, versão do Bandit, scripts de normalização, manifestos permitidos pela licença dos dados e resultados brutos serão versionados como artefatos de reprodução do estudo. O \texttt{oracle/} será preservado para auditoria, mas permanecerá separado das áreas de trabalho usadas durante a coleta.
+
+\section{Viabilidade da Pesquisa}\label{sec:viabilidade-pesquisa}
+
+A adoção integral de uma versão publicada do RealVuln elimina a construção manual do corpus e do \textit{ground truth}. Os manifestos permitem baixar os projetos uma vez, verificar sua integridade e retomar execuções interrompidas sem reconstruir cada alvo. A conteinerização reduz o esforço de reinstalação e a variação do ambiente SAST. A viabilidade das condições de IA depende de licenças, cotas e limites de uso existentes no período da coleta; por serem características mutáveis dos produtos, elas serão verificadas e registradas no estudo-piloto, sem pressupor disponibilidade ilimitada. O bloco Luna constitui o núcleo obrigatório; a expansão para Cursor Auto e Codex com GPT-5.6 Terra somente será incorporada se o limite de tokens reservado comportar sua execução integral.
+
+Os principais fatores de esforço passam a ser a integração dos formatos de saída, as três repetições das condições de IA e a avaliação qualitativa. O corpus quantitativo permanecerá completo; para controlar o esforço humano, somente a avaliação qualitativa utilizará a amostra estratificada definida na Seção~\ref{subsec:metricas-qualitativas-metodologia}.
+
+\section{Validade e Limitações}\label{sec:validade-limitacoes}
+
+A Tabela~\ref{tab:ameacas-validade} sintetiza as principais ameaças e os controles previstos.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:ameacas-validade}Ameaças à validade e estratégias de mitigação}
+\centering
+\begin{tabularx}{\textwidth}{|X|X|}
+\hline
+\textbf{Ameaça} & \textbf{Mitigação} \\
+\hline
+Variação do ambiente SAST & Imagem Docker imutável, regras locais, código somente leitura e registro de comandos e \textit{hashes} \\
+\hline
+Estado residual entre repositórios & Área de trabalho, contêiner e sessão novos para cada execução, com retomada controlada por manifesto \\
+\hline
+Exposição direta da resposta esperada & Identificadores opacos e separação física do \textit{ground truth} e do avaliador \\
+\hline
+Mudança de modelo ou produto de IA & Coleta em blocos curtos, registro de versão/modelo/data e reinício ou separação de blocos afetados \\
+\hline
+Confundimento entre ferramenta e modelo & GPT-5.6 Luna fixado nos dois produtos no bloco principal; configurações nativas examinadas apenas em bloco complementar separado \\
+\hline
+Uso inadvertido de SAST pelo braço IA & Restrições explícitas de ferramentas, inspeção dos registros de ações e descarte documentado de execução contaminada \\
+\hline
+Não determinismo & Três sessões independentes, ordem aleatorizada e reporte da frequência de detecção por entrada \\
+\hline
+Rótulos ruidosos ou incompletos & Versão e \textit{hash} fixados, validador oficial e análise de sensibilidade para correções documentadas \\
+\hline
+Memorização do benchmark por modelos & Código opaco no ambiente de execução e reconhecimento explícito de que o isolamento não elimina possível exposição durante o treinamento \\
+\hline
+Viés na adjudicação e na rubrica & Cegamento da ferramenta, descritores prévios, segundo avaliador e reporte da concordância \\
+\hline
+Granularidades diferentes de alerta & Adaptadores para o esquema comum e reutilização do algoritmo de correspondência do RealVuln \\
+\hline
+Alta densidade de vulnerabilidades & Resultados interpretados como desempenho no benchmark, sem inferir a prevalência ou a precisão esperada em projetos de produção \\
+\hline
+Generalização limitada & Conclusões restritas a Python, ao RealVuln v1.0, às versões, regras, prompts e ferramentas efetivamente avaliados \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+A validade interna é fortalecida pelo uso dos mesmos repositórios e do mesmo avaliador em todas as condições, pelo controle do ambiente SAST, pelo modelo comum no bloco principal e pela preservação das saídas brutas. A validade de construto depende de não reduzir ``qualidade'' a uma única métrica: por isso, detecção, estabilidade, explicação e priorização são avaliadas separadamente, enquanto tempo e consumo de tokens caracterizam operacionalmente as execuções. A validade da medida de tokens depende dos contadores expostos pelos produtos e de suas definições, que podem não ser diretamente equivalentes. No bloco complementar, a diferença entre Cursor Auto e Codex com GPT-5.6 Terra representa a configuração conjunta produto--modelo e não permite isolar causalmente a camada da ferramenta. A validade externa permanece limitada por o RealVuln v1.0 ser composto por aplicações educacionais e CTF deliberadamente vulneráveis, com densidade superior à de projetos de produção, além da rápida evolução dos produtos comerciais. Consequentemente, o estudo sustentará conclusões sobre o benchmark e as configurações observadas durante a coleta, e não sobre uma capacidade permanente ou universal de Cursor, Codex, Bandit, Semgrep ou de todas as abordagens híbridas.

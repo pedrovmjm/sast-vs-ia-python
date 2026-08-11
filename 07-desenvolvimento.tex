@@ -1,0 +1,227 @@
+\chapter{Desenvolvimento}\label{cap:desenvolvimento}
+\addcontentsline{toc}{chapter}{Desenvolvimento}
+
+Este capítulo transforma o protocolo definido no Capítulo~\ref{cap:metodologia} em uma especificação técnica executável. Enquanto a metodologia estabelece o corpus, as condições, os controles, as métricas e os critérios de avaliação, o desenvolvimento descreve como serão construídos o repositório controlador, o \textit{harness}, os adaptadores, a imagem Docker e os artefatos de rastreabilidade necessários à coleta.
+
+Como a coleta principal ainda não foi executada, não são antecipados identificadores que dependem da implementação efetiva, como \textit{commits}, versões de clientes, modelos exibidos, \textit{hashes} e identificadores de imagem. Em vez de manter o capítulo inteiro como um esqueleto, as decisões técnicas que independem da coleta são definidas nas seções seguintes, e os poucos registros variáveis são reunidos na Seção~\ref{sec:registro-configuracao-desenvolvimento}. Os resultados produzidos pela execução pertencem ao Capítulo~\ref{cap:avaliacao}.
+
+\section{Visão Geral da Implementação}\label{sec:visao-geral-desenvolvimento}
+
+O artefato será um repositório controlador implementado predominantemente em Python. Ele não incorporará alterações nos projetos vulneráveis e não substituirá os componentes oficiais do RealVuln. Sua função será coordenar seis etapas: adquirir e verificar o corpus; produzir cópias sanitizadas; criar a fila de execuções; acionar os analisadores ou preparar sessões dos agentes; preservar e normalizar as saídas; e invocar o avaliador oficial antes do cálculo das métricas complementares.
+
+O fluxo manterá três domínios separados. O domínio de entrada conterá apenas as cópias de código entregues às ferramentas. O domínio de controle conterá configurações, fila, \textit{prompts}, adaptadores e metadados. O domínio de avaliação conterá o \textit{ground truth} e o avaliador do RealVuln, acessíveis somente depois que a saída bruta de uma execução tiver sido encerrada. Essa separação implementa o cegamento descrito na Seção~\ref{sec:repositorio-experimental} e reduz o risco de uma ferramenta alcançar as respostas por meio de caminhos ancestrais ou arquivos auxiliares.
+
+\section{Organização do Repositório Controlador}\label{sec:organizacao-repositorio-desenvolvimento}
+
+A estrutura lógica prevista é apresentada na Tabela~\ref{tab:estrutura-repositorio-experimental}. Os nomes podem sofrer ajustes mecânicos durante a implementação, mas as fronteiras de acesso deverão ser preservadas. Em particular, \texttt{oracle/} não poderá ser descendente de uma área montada ou aberta para Cursor, Codex, Bandit ou Semgrep.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:estrutura-repositorio-experimental}Estrutura lógica do repositório controlador}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+\textbf{Diretório} & \textbf{Conteúdo} & \textbf{Regra de acesso} \\
+\hline
+\texttt{benchmark/} & Versão fixada do RealVuln, manifesto e avaliador oficial & Acesso somente pelos módulos de preparação e pontuação \\
+\hline
+\texttt{alvos/} & Exportações sanitizadas dos repositórios nos \textit{commits} definidos pelo benchmark & Uma cópia nova é fornecida a cada execução \\
+\hline
+\texttt{oracle/} & \textit{Ground truth}, índices auxiliares e \textit{hashes} de integridade & Acesso exclusivo da etapa de pontuação \\
+\hline
+\texttt{runner/} & Código do \textit{harness}, esquemas, adaptadores, \textit{prompts} e testes & Acesso do controlador; somente os arquivos necessários são entregues às ferramentas \\
+\hline
+\texttt{docker/} & Arquivo de construção, dependências fixadas e regras locais do Semgrep & Usado para construir a imagem e executar C1 e C2 \\
+\hline
+\texttt{execucoes/} & Fila, manifestos por execução e áreas temporárias & Metadados internos não são expostos às ferramentas \\
+\hline
+\texttt{resultados/brutos/} & Saídas originais, transcrições, logs, duração e códigos de saída & Escrita anexada por execução; conteúdo preservado sem edição \\
+\hline
+\texttt{resultados/normalizados/} & Achados no esquema comum, correspondências e métricas derivadas & Gerado somente após o encerramento da saída bruta \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+Arquivos grandes ou projetos obtidos de terceiros não precisarão ser duplicados no histórico principal do controlador. O repositório publicará os manifestos, os \textit{commits}, os \textit{hashes} e o procedimento de aquisição, observando as licenças aplicáveis. Dessa forma, o corpus poderá ser reconstruído sem confundir os artefatos autorais do estudo com o código dos projetos avaliados.
+
+\section{Preparação do Corpus Experimental}\label{sec:preparacao-corpus}
+
+\subsection{Fixação do RealVuln e verificação de integridade}\label{subsec:fixacao-realvuln}
+
+O módulo de aquisição receberá como entrada um \textit{commit} explícito do RealVuln v1.0. A partir do manifesto dessa revisão, ele obterá os 26 projetos nos \textit{commits} indicados, impedindo o uso acidental da ramificação mais recente de qualquer repositório. Antes da preparação dos alvos, serão executadas as verificações distribuídas pelo próprio benchmark. O processo será interrompido se houver revisão ausente, divergência no manifesto ou falha no validador.
+
+Para permitir auditoria, será produzido um manifesto de integridade com: URL de origem; \textit{commit} esperado e observado; \textit{hash} do manifesto; \textit{hash} do \textit{ground truth}; \textit{hash} do avaliador; data de aquisição; e resultado da validação. Os valores efetivos serão registrados antes da coleta na tabela de configuração indicada na Seção~\ref{sec:registro-configuracao-desenvolvimento}, sem modificar os rótulos públicos.
+
+\subsection{Sanitização e identificadores opacos}\label{subsec:sanitizacao-alvos}
+
+Cada revisão será exportada para uma árvore nova, sem transportar o diretório \texttt{.git}. Serão preservados código-fonte, arquivos de configuração, manifestos de dependência e testes pertencentes à revisão. Serão removidos ambientes virtuais, dependências instaladas, \textit{caches}, artefatos de compilação e documentos de solução ou \textit{walkthroughs} que revelem explicitamente as vulnerabilidades. A lista de inclusão e exclusão será versionada e congelada antes do estudo-piloto; uma alteração posterior invalidará as cópias existentes e exigirá sua regeneração para todas as condições.
+
+Os alvos receberão identificadores sequenciais, como \texttt{ALVO-0001}, sem CWE, nome da aplicação ou indicação de vulnerabilidade. A tabela de correspondência permanecerá fora das áreas de trabalho. Para comparar as entradas entre condições, o \textit{harness} gerará um inventário ordenado por caminho relativo contendo o tamanho e o SHA-256 de cada arquivo. O \textit{hash} desse inventário, e não datas ou outros metadados dependentes do sistema de arquivos, identificará o conteúdo entregue a cada ferramenta.
+
+Uma área temporária independente será criada para cada combinação de condição, alvo e repetição. A área conterá somente a árvore sanitizada e os arquivos explicitamente exigidos pela condição. Ao final, ela poderá ser descartada depois que o inventário, a saída bruta e os metadados tiverem sido persistidos.
+
+\section{Arquitetura do \textit{Harness}}\label{sec:arquitetura-harness}
+
+\subsection{Módulos e responsabilidades}\label{subsec:modulos-harness}
+
+A Tabela~\ref{tab:modulos-harness} distribui as responsabilidades em módulos lógicos. Essa decomposição impede que o código que prepara ou executa as ferramentas consulte o \textit{ground truth} e torna os resultados normalizados reproduzíveis a partir das saídas brutas.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:modulos-harness}Módulos lógicos do \textit{harness}}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+\textbf{Módulo} & \textbf{Responsabilidade} & \textbf{Saída principal} \\
+\hline
+Aquisição & Fixar revisões, validar o benchmark e obter os projetos & Manifesto de integridade \\
+\hline
+Preparação & Sanitizar, atribuir identificadores opacos e criar áreas temporárias & Inventário e área de trabalho \\
+\hline
+Orquestração & Criar a fila, aplicar limites, registrar estados e retomar tarefas interrompidas & Manifesto de execução \\
+\hline
+Executores & Acionar Docker ou preparar e encerrar sessões dos agentes & Saída bruta e metadados \\
+\hline
+Adaptadores & Interpretar formatos nativos sem consultar o \textit{ground truth} & Achados no esquema comum \\
+\hline
+Pontuação & Invocar o avaliador oficial e calcular métricas complementares & Correspondências e tabelas de métricas \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+Cada tarefa será identificada pela condição, pelo alvo e pela repetição, por exemplo \texttt{C4-ALVO-0001-R02}. Os estados possíveis serão \texttt{pendente}, \texttt{em\_execucao}, \texttt{concluida} e \texttt{falha}. Uma tarefa somente será marcada como concluída depois que a saída e os metadados tiverem sido gravados. Se o processo controlador for interrompido, tarefas que estavam em execução retornarão à fila com uma nova área de trabalho e uma nova sessão; saídas parciais serão preservadas como tentativa malsucedida, não sobrescritas.
+
+As medições temporais não serão executadas concorrentemente na mesma máquina. A fila processará uma tarefa por vez, evitando que contenção local de CPU, memória ou disco seja confundida com diferença entre Bandit e Semgrep. Para serviços remotos, o horário de início e término continuará registrado, mas a latência externa será reconhecida como parte da condição observada.
+
+\subsection{Esquema comum e preservação dos dados}\label{subsec:esquema-comum-achados}
+
+Toda saída será preservada primeiro em seu formato original. O adaptador produzirá depois um documento JSON normalizado, sem editar o original. A Tabela~\ref{tab:esquema-achado-comum} define os grupos de campos; campos que a ferramenta não informar receberão valor nulo, e não um valor inferido pelo controlador.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:esquema-achado-comum}Esquema comum dos achados normalizados}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+\textbf{Grupo} & \textbf{Campos} & \textbf{Tratamento} \\
+\hline
+Proveniência & condição, ferramenta, alvo, repetição, identificador da execução e referência à saída bruta & Obrigatórios e gerados pelo controlador \\
+\hline
+Localização & caminho relativo, linha inicial e linha final & Normalização apenas sintática do caminho; ausências permanecem nulas \\
+\hline
+Classificação & regra nativa, CWE informado, severidade e confiança & Valor bruto preservado juntamente com a forma normalizada \\
+\hline
+Relatório & descrição, evidência, recomendação e texto original & Não resumido nem completado pelo \textit{harness} \\
+\hline
+Operação & início, término, duração, código de saída, estado e consumo de tokens de entrada, saída e total & Registrado por execução; contadores indisponíveis permanecem nulos \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+O caminho será relativo à raiz do alvo e terá separadores normalizados. Linhas serão representadas por inteiros positivos; um intervalo ausente não será reconstruído a partir da evidência textual. A CWE permanecerá nula quando não for informada ou quando não existir um mapeamento público definido antes da coleta. Essas regras impedem que o normalizador aumente artificialmente a possibilidade de correspondência com o RealVuln.
+
+\section{Execução das Condições SAST (C1 e C2)}\label{sec:execucao-sast-desenvolvimento}
+
+\subsection{Imagem Docker e isolamento}\label{subsec:construcao-imagem-docker}
+
+Uma única imagem conterá o Python, o Bandit, o Semgrep Community Edition e as regras locais necessárias. A imagem-base será referenciada por \textit{digest}; as dependências Python serão fixadas por versão e verificação de integridade. A construção não copiará o corpus nem o \textit{ground truth} para nenhuma camada. O \textit{digest} da imagem resultante será registrado e a imagem não será reconstruída durante um bloco de coleta.
+
+O executor criará um contêiner efêmero para cada par ferramenta--alvo. A árvore do alvo será montada como somente leitura, e apenas um diretório de saída será gravável. A execução utilizará usuário sem privilégios, remoção de capacidades, impedimento de novos privilégios, rede desativada e limites fixos de CPU, memória e tempo. Quando a ferramenta precisar de arquivos temporários, será fornecido um \textit{tmpfs} limitado e descartável. Nenhum pacote será instalado durante a análise, e o código do projeto não será executado.
+
+\subsection{Adaptador do Bandit}\label{subsec:execucao-bandit}
+
+O Bandit será invocado recursivamente sobre a raiz sanitizada e emitirá JSON. A forma-base do comando será:
+
+\begin{verbatim}
+bandit -r /entrada -f json -o /saida/bandit.json
+\end{verbatim}
+
+O comando efetivo, incluindo opções de exclusão indispensáveis ao funcionamento, será armazenado no manifesto. O conjunto nativo de \textit{plugins} será mantido e nenhum filtro de severidade ou confiança será aplicado depois de conhecidos os resultados. O adaptador preservará identificador do teste, mensagem, arquivo, intervalo, severidade, confiança e CWE fornecido pelo Bandit.
+
+\subsection{Adaptador do Semgrep Community Edition}\label{subsec:execucao-semgrep}
+
+As regras públicas de segurança para Python serão copiadas para a imagem antes da coleta e identificadas por origem, revisão e \textit{hash}. Durante as análises não haverá consulta ao registro remoto do Semgrep. A forma-base do comando será:
+
+\begin{verbatim}
+semgrep scan --config /opt/regras-semgrep --json --metrics=off \
+  --output /saida/semgrep.json /entrada
+\end{verbatim}
+
+O adaptador preservará identificador da regra, mensagem, caminho, intervalo, metadados CWE, severidade e conteúdo adicional emitido pela ferramenta. Erros de análise e arquivos ignorados serão mantidos no registro bruto, pois podem explicar perda de cobertura mesmo quando o processo terminar com saída parcial.
+
+\section{Execução das Condições de IA (C3 e C4)}\label{sec:execucao-ia-desenvolvimento}
+
+\subsection{Adaptadores de sessão}\label{subsec:adaptadores-sessao-ia}
+
+Cursor e Codex possuem interfaces e mecanismos de autenticação próprios; portanto, o controlador não presumirá que ambos oferecem a mesma API. Para cada produto, o adaptador preparará a área sanitizada e a instrução, iniciará ou orientará a criação de uma sessão nova, capturará a resposta final e os metadados observáveis e encerrará a sessão. Caso alguma etapa exija operação manual, ela será registrada em um roteiro fixo, sem decisões discricionárias sobre quais arquivos a ferramenta deve examinar.
+
+Nas condições C3 e C4, a sessão poderá ler e pesquisar texto dentro da raiz do alvo. Ficará impedida de acessar diretórios externos do experimento, alterar o corpus, executar o projeto ou testes e chamar Bandit, Semgrep ou outro analisador de segurança. A resposta será capturada fora da árvore do alvo. Para cada sessão serão preservados produto, versão do cliente, bloco de modelos, estratégia de seleção, modelo solicitado, modelo efetivamente exibido, nível de raciocínio, modo de contexto, data e hora, identificador disponível, permissões, instrução, duração, resposta bruta e consumo de tokens informado.
+
+O adaptador implementará dois perfis de configuração. O perfil principal solicitará explicitamente GPT-5.6 Luna no Cursor e no Codex. O perfil complementar, habilitado somente se aprovado no estudo-piloto conforme a Seção~\ref{sec:viabilidade-pesquisa}, selecionará Auto no Cursor e GPT-5.6 Terra no Codex. O manifesto impedirá a mistura dos perfis na mesma fila e recusará iniciar uma tarefa quando o modelo fixo solicitado não estiver disponível. No modo Auto, a denominação Auto e qualquer identificação do modelo efetivamente apresentada pelo produto serão preservadas; na ausência dessa identificação, o campo permanecerá nulo.
+
+\subsection{Instrução e contrato de saída}\label{subsec:padronizacao-prompts}
+
+A instrução terá um núcleo idêntico nas quatro condições baseadas em IA. Ela solicitará a inspeção de todo o repositório Python, a identificação de vulnerabilidades justificadas pelo código e a emissão exclusiva de uma lista JSON. Cada item deverá conter \texttt{arquivo}, \texttt{linha\_inicial}, \texttt{linha\_final}, \texttt{cwe}, \texttt{severidade}, \texttt{descricao} e \texttt{recomendacao}; os campos textuais serão redigidos em português brasileiro para viabilizar a avaliação de clareza definida na metodologia. Quando nenhum problema for encontrado, a resposta esperada será \texttt{[]}. O texto também informará que não se deve executar o projeto, testes ou ferramentas SAST e que não se deve modificar arquivos.
+
+O \textit{prompt} completo será versionado como arquivo, evitando diferenças introduzidas por cópia manual. Se um produto exigir uma instrução específica apenas para satisfazer sua interface ou formato de resposta, o trecho adicional será documentado e não poderá fornecer conhecimento de segurança indisponível à outra ferramenta. Uma resposta com JSON inválido será preservada e submetida somente a extração sintática determinística; se isso não for possível, a execução será marcada como falha de formato de acordo com o modo estrito.
+
+\section{Construção das Condições Híbridas (C5 e C6)}\label{sec:condicao-hibrida-desenvolvimento}
+
+Depois de concluídas C1 e C2, seus alertas normalizados serão unidos sem consultar o \textit{ground truth}. Alertas com o mesmo caminho, localizações sobrepostas e a mesma CWE serão consolidados em um registro. Quando a CWE estiver ausente, a consolidação exigirá também mecanismo ou mensagem normalizada compatível, evitando fundir problemas diferentes na mesma linha. O registro resultante preservará as ferramentas de origem, as regras nativas, as severidades e as referências às saídas brutas.
+
+Os alertas serão ordenados por caminho e linha, não por ferramenta ou suposta correção, e gravados em um arquivo neutro chamado \texttt{alertas-sast.json}. Esse arquivo não conterá correspondência com o benchmark, rótulo de verdadeiro ou falso positivo nem evidência proveniente de \texttt{oracle/}. Exatamente o mesmo arquivo será fornecido ao Cursor e ao Codex para um determinado alvo.
+
+Além do núcleo comum, a instrução de C5 e C6 explicará que os alertas são pistas não validadas: o agente deverá confirmar ou rejeitar cada pista com base no código e poderá relatar vulnerabilidades adicionais não encontradas pelos SAST. Essa decisão é necessária para avaliar uma abordagem realmente híbrida, e não apenas uma reformatação dos alertas de C1 e C2. C5 e C6 serão sessões novas; não continuarão as sessões nem reutilizarão as respostas de C3 e C4.
+
+\section{Pontuação e Preparação das Métricas}\label{sec:adjudicacao-desenvolvimento}
+
+Somente após o encerramento das saídas brutas, o módulo de pontuação terá acesso ao \textit{ground truth}. Os adaptadores converterão os achados ao formato de entrada aceito pelo avaliador oficial do RealVuln, que realizará a correspondência por caminho, CWE aceitável e tolerância de linha. O controlador não substituirá uma decisão automática com base em leitura manual do código. Correções justificadas de rótulo, se necessárias, serão tratadas apenas na análise de sensibilidade definida na metodologia.
+
+Para cada execução serão produzidos: arquivo de entrada do avaliador; saída completa de correspondências; contagens TP, FP, FN e TN; e métricas derivadas. Precisão, \textit{recall}, F1, F2, F3 e taxa de falsos positivos serão calculados a partir das mesmas contagens, com testes que comparem os resultados derivados aos valores emitidos pelo benchmark quando estes estiverem disponíveis.
+
+O relógio monotônico do controlador medirá a duração total. C1 e C2 registrarão também a inicialização do contêiner e o tempo do analisador quando observável. C3--C6 registrarão o intervalo entre o envio da tarefa e a resposta final, além dos tokens de entrada, de saída e totais informados pelo produto. Contadores adicionais, como tokens em cache ou de raciocínio, serão preservados separadamente no registro bruto. O sistema não estimará valores que a ferramenta não disponibilizar; nesses casos, os campos permanecerão nulos e a indisponibilidade será explicitada na análise.
+
+A avaliação qualitativa não será executada pelo normalizador. Depois do sorteio definido na Seção~\ref{subsec:metricas-qualitativas-metodologia}, um exportador removerá a identificação direta da ferramenta, aleatorizará a ordem e gerará formulários com os descritores da rubrica. As notas dos dois avaliadores serão preservadas individualmente, e qualquer consenso posterior será registrado sem apagar as avaliações originais.
+
+\section{Verificação do Artefato Antes da Coleta}\label{sec:verificacao-artefato-desenvolvimento}
+
+Os adaptadores serão testados com casos artificiais externos ao corpus. O conjunto mínimo conterá: um achado correspondente a uma vulnerabilidade; um achado sobre armadilha segura; um achado sem correspondência; alertas duplicados; caminho com separadores diferentes; CWE ausente; JSON vazio; JSON inválido; processo com código de erro; e execução interrompida. Os testes deverão confirmar a preservação da saída original, o tratamento de nulos, a idempotência da retomada e a compatibilidade com o avaliador oficial.
+
+Uma execução de fumaça verificará a integração de ponta a ponta em um repositório do benchmark. Seu resultado não integrará a análise principal. Antes da coleta, a área de trabalho, a sessão e a saída derivada dessa execução serão descartadas, e o alvo será regenerado a partir da revisão fixada. Também serão verificados a ausência de \texttt{oracle/} nas áreas entregues, o bloqueio de rede dos contêineres, a igualdade do \textit{hash} de entrada entre as seis condições e a correspondência entre o perfil de modelo solicitado e o exibido pelo produto quando essa informação estiver disponível.
+
+\section{Registro da Configuração Efetiva}\label{sec:registro-configuracao-desenvolvimento}
+
+A Tabela~\ref{tab:registro-configuracao-efetiva} substitui os campos genéricos que antes apareciam espalhados neste capítulo. Os valores não são preenchidos antecipadamente porque devem ser extraídos do ambiente real, mas seu momento de fixação e sua fonte ficam definidos antes da coleta.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:registro-configuracao-efetiva}Registros variáveis da implementação e da coleta}
+\centering
+\begin{tabularx}{\textwidth}{|X|X|X|}
+\hline
+\textbf{Registro} & \textbf{Momento de fixação} & \textbf{Fonte de evidência} \\
+\hline
+\textit{Commit} do RealVuln, projetos e \textit{hashes} do manifesto, avaliador e \textit{ground truth} & Antes da preparação do corpus & Manifesto de integridade \\
+\hline
+Sistema hospedeiro, Docker, Python, Bandit, Semgrep, imagem-base e \textit{digest} da imagem final & Antes do estudo-piloto & Comandos de versão, arquivo de construção e inspeção da imagem \\
+\hline
+Origem, revisão e \textit{hash} das regras do Semgrep e comandos completos de C1 e C2 & Antes do estudo-piloto & Diretório de regras e manifesto do executor \\
+\hline
+Versão dos clientes, bloco, estratégia de seleção, modelo solicitado e exibido, nível de raciocínio, modo de contexto, permissões e texto final das instruções & No início de cada bloco de C3--C6 & Metadados, configuração e transcrição da sessão \\
+\hline
+Identificador, horário, duração, estado e consumo de tokens de entrada, saída e total de cada execução & Durante cada execução & Manifesto, relógio do controlador e contadores informados pelo produto \\
+\hline
+Falhas, reinícios e alterações de configuração & No momento da ocorrência & Registro de eventos e relatório de desvios \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{table}
+
+\section{Desvios em Relação ao Protocolo Planejado}\label{sec:desvios-protocolo}
+
+Todo desvio será registrado com data, tarefas afetadas, diferença em relação ao protocolo, justificativa, decisão adotada e impacto esperado. Exemplos incluem mudança de modelo durante um bloco, indisponibilidade de produto, regra SAST que não pôde ser carregada, execução contaminada por ferramenta proibida ou alteração indispensável do mapeamento entre regra e CWE. A decisão não poderá depender de a execução ter produzido resultado favorável.
+
+Até a versão atual deste capítulo, a coleta principal ainda não foi executada e, portanto, não há desvios observados a relatar. Após a execução, esta seção deverá distinguir explicitamente entre ausência de desvios, falhas contabilizadas pelo modo estrito e modificações reais do protocolo; nenhuma dessas situações deverá ser ocultada por exclusão silenciosa de tarefas.

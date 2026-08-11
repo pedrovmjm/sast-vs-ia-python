@@ -1,0 +1,45 @@
+# Credenciais e configuração local
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Artefatos de terceiros e dados sensíveis/gerados do experimento
+/benchmark/
+/alvos/
+/oracle/
+/execucoes/
+/resultados/
+
+# Saídas de construção e cobertura
+/build/
+/dist/
+/htmlcov/
+.coverage
+
+# Sistema operacional e metadados de download
+.DS_Store
+Thumbs.db
+*Zone.Identifier
+
+# LaTeX/MiKTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.pdf
