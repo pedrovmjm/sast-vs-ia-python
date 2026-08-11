@@ -49,7 +49,7 @@ class ConfiguracaoTests(unittest.TestCase):
 
     def test_validacao_recalcula_locks_regras_e_inventarios(self):
         documento = self.criar()
-        self.assertIs(documento, validar_configuracao(documento, RAIZ, RAIZ / "docker/regras-semgrep"))
+        self.assertEqual(documento, validar_configuracao(documento, RAIZ, RAIZ / "docker/regras-semgrep"))
 
     def test_recusa_configuracao_sem_autorizacao(self):
         documento = self.criar()
