@@ -142,21 +142,21 @@ T05 e T06 podem ser implementadas em paralelo depois do esquema comum. Os gates 
 **Gate:** quick.
 **Commit:** `feat(adaptadores): normalizar saída do Semgrep`.
 
-### T07: Implementar executor SAST endurecido
+### T07: Implementar executor SAST endurecido — ✅ CONCLUÍDA
 
 **O que:** executar uma ferramenta por contêiner, serialmente, com entrada `ro`, saída `rw` e controles do design.
-**Onde:** `runner/executor_sast.py`, `tests/test_executor_sast.py`.
+**Onde:** `docker/Dockerfile`, `runner/executor_sast.py`, `scripts/executar-sast.ps1`, `scripts/test-executar-sast.ps1`, `scripts/test-executor-integracao.ps1`, `tests/test_executor_sast.py`, `scripts/gate.ps1`.
 **Depende de:** T05, T06.
 **Requisitos:** AMB-05, AMB-06.
 **Ferramentas:** filesystem, Docker e PowerShell.
 
 **Concluída quando:**
 
-- [ ] testes inspecionam rede, usuário, capabilities, `no-new-privileges`, mounts, recursos e timeout;
-- [ ] bruto e metadados são escritos antes da normalização;
-- [ ] falha/timeout preservam tentativa;
-- [ ] pelo menos 6 testes de integração passam;
-- [ ] gate full verde.
+- [x] testes inspecionam rede, usuário, capabilities, `no-new-privileges`, mounts, recursos e timeout;
+- [x] bruto e metadados são escritos antes da normalização;
+- [x] falha/timeout preservam tentativa;
+- [x] 8 testes de integração Docker passam, além de 18 testes do wrapper e 23 testes próprios do executor;
+- [x] gate full verde com 110 testes Python.
 
 **Testes:** integração, não segura em paralelo.
 **Gate:** full.

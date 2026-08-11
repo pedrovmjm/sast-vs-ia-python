@@ -20,6 +20,19 @@ function Invoke-DockerStep {
     }
 }
 
+function Invoke-PowerShellStep {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Script
+    )
+
+    Write-Host "powershell -NoProfile -ExecutionPolicy Bypass -File $Script"
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $Script
+    if ($LASTEXITCODE -ne 0) {
+        throw "Falha no script PowerShell (código $LASTEXITCODE): $Script"
+    }
+}
+
 Invoke-DockerStep -Arguments @("compose", "config", "--quiet")
 
 if ($Gate -in @("full", "build")) {
@@ -38,6 +51,15 @@ Invoke-DockerStep -Arguments @(
     "python", "-m", "unittest", "discover", "-v",
     "-s", "tests", "-p", "test_*.py"
 )
+
+if ($Gate -in @("full", "build")) {
+    Invoke-PowerShellStep -Script (
+        Join-Path $PSScriptRoot "test-executar-sast.ps1"
+    )
+    Invoke-PowerShellStep -Script (
+        Join-Path $PSScriptRoot "test-executor-integracao.ps1"
+    )
+}
 
 if ($Gate -eq "build") {
     Invoke-DockerStep -Arguments @(

@@ -85,8 +85,8 @@ O TCC define um protocolo comparativo e uma arquitetura, mas ainda não possui a
 | AMB-02 | RealVuln v1.0 fixado e validado | `06:64-70`, `07:50-54` | Verificado em T02 |
 | AMB-03 | Proveniência/licença/hash antes do download | `06:70`, `07:46,54,130` | Verificado em T02/T03 |
 | AMB-04 | Python e ferramentas em imagem imutável | `06:118`, `07:128-132` | Verificado em T03 |
-| AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Parcial em T03; executor em T07 |
-| AMB-06 | Saída bruta preservada antes da normalização | `07:98-124` | Parcial em T04; persistência em T07 |
+| AMB-05 | Execução SAST endurecida e offline | `06:118`, `07:132` | Verificado em T03/T07; scanner real em T08 |
+| AMB-06 | Saída bruta preservada antes da normalização | `07:98-124` | Verificado em T04/T07 |
 | AMB-07 | Esquema comum sem inferência | `06:126-130`, `07:100-124` | Verificado em T04 |
 | AMB-08 | Adaptador Bandit | `07:134-142` | Verificado em T05 |
 | AMB-09 | Adaptador Semgrep com regras locais fixadas | `07:144-153` | Adaptador verificado em T06; execução em T07/T08 |

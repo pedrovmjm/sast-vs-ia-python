@@ -49,6 +49,13 @@
 **Trade-off:** o contrato possui mais campos nulos explícitos e validações condicionais.
 **Impacto:** T05/T06 devem preencher valores originais diretamente da saída nativa e deixar normalizações sem regra congelada como `null`.
 
+### AD-007: Orquestrar Docker no host e montar regras somente em C2 (2026-08-10)
+
+**Decisão:** o PowerShell do host cria o contêiner pelo ID local da imagem; `runner.executor_sast` roda dentro dele e chama somente Bandit ou Semgrep. As regras Semgrep verificadas permanecem fora da imagem e são montadas como somente leitura apenas em C2.
+**Razão:** o host não possui Python, o contêiner não deve receber `docker.sock` e a licença das regras impede redistribuir sua cópia no remoto ou na imagem compartilhável.
+**Trade-off:** C2 possui uma montagem adicional e o hash do bundle precisa ser validado em cada execução; o texto prospectivo de `07-desenvolvimento.tex` que promete copiar regras para a imagem deve ser corrigido em T10.
+**Impacto:** a imagem é reconstruída com o executor atualizado, executada com `--pull never`, recebe somente `/entrada:ro`, `/saida:rw` e, em C2, `/opt/regras-semgrep:ro`; timeout interno e watchdog total do host impedem bloqueio indefinido.
+
 ## Bloqueadores ativos
 
 Nenhum bloqueador técnico impede o primeiro marco.
@@ -79,6 +86,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 004 | Definir Achado v1 e ManifestoExecucao v1 | 2026-08-10 | `feat(esquema): definir achado e execução versionados` | ✅ Concluída |
 | 005 | Normalizar saída Bandit 1.9.4 sem inferência | 2026-08-10 | `feat(adaptadores): normalizar saída do Bandit` | ✅ Concluída |
 | 006 | Normalizar saída Semgrep CE 1.172.0 sem inferência | 2026-08-10 | `feat(adaptadores): normalizar saída do Semgrep` | ✅ Concluída |
+| 007 | Isolar C1/C2 em contêiner endurecido e preservar tentativas | 2026-08-11 | `feat(execucao): isolar condições SAST em Docker` | ✅ Concluída |
 
 ## Ideias adiadas
 

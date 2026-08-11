@@ -10,6 +10,7 @@ ENV HOME=/tmp/tcc-home \
     PIP_NO_CACHE_DIR=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONNOUSERSITE=1 \
+    PYTHONSAFEPATH=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/opt/tcc \
     SEMGREP_ENABLE_VERSION_CHECK=0 \
@@ -34,6 +35,6 @@ COPY --chown=10001:10001 runner/ /opt/tcc/runner/
 COPY --chown=10001:10001 config/ /opt/tcc/config/
 
 USER 10001:10001
-WORKDIR /workspace
+WORKDIR /opt/tcc
 
 CMD ["python", "-c", "import platform; print(platform.python_version())"]

@@ -84,8 +84,12 @@ No Semgrep, o mapa congelado é `INFO/WARNING/ERROR` para `baixa/media/alta`. A 
 ### Executor Docker
 
 - **Finalidade:** criar contêiner efêmero por ferramenta/alvo e preservar comando, tempos, estado e bruto.
-- **Localização:** `runner/executor_sast.py`.
+- **Localização:** `scripts/executar-sast.ps1` no host e `runner/executor_sast.py` dentro do contêiner.
 - **Controles:** `--network none`, `--read-only`, `--cap-drop ALL`, `--security-opt no-new-privileges`, usuário não root, alvo `ro`, saída dedicada `rw`, `tmpfs`, CPU/memória/PIDs/timeout fixados.
+- **Topologia:** o PowerShell é o único componente que chama Docker; o executor Python inicia apenas o scanner. O socket Docker nunca é montado e não há Python no host.
+- **Identidade da imagem:** o host inspeciona a tag, exige `linux/amd64`, executa pelo `.Id` local `sha256:...` com `--pull never` e registra tag e ID separadamente.
+- **Montagens:** `/entrada:ro` e `/saida:rw` são as únicas comuns; C2 recebe adicionalmente o bundle local verificado em `/opt/regras-semgrep:ro`.
+- **Timeouts:** o processo interno encerra o grupo do scanner no limite fixado; um watchdog PowerShell limita o contêiner inteiro ao timeout interno mais 120 segundos e preserva `watchdog-host.json` se precisar interrompê-lo.
 
 ### Evidência de fumaça
 
@@ -133,7 +137,7 @@ Os JSON Schemas fecham campos, tipos e implicações estruturais. Comparações 
 | Python do host | não instalar | Docker existente é suficiente e mais reproduzível |
 | Dependências do harness | biblioteca padrão | reduz cadeia de suprimentos; ferramentas SAST continuam fixadas |
 | RealVuln | tag v1.0 desembrulhada para commit | a branch atual é v2 e mudaria o corpus |
-| Regras Semgrep | commit upstream, caminho e hash canônico fixados; arquivos fora do Git autoral | licença proíbe redistribuição |
+| Regras Semgrep | commit upstream, caminho e hash canônico fixados; bundle local ignorado montado `ro` somente em C2 | licença proíbe redistribuição; a imagem e o remoto não recebem uma cópia |
 | Versões atuais do host | continuar pela exceção AD-005 | risco aceito pelo usuário; controles compensatórios permanecem |
 | Resultados de fumaça | separados e `descartavel` | impede contaminação da coleta principal |
 | Escrita de evidência | arquivo temporário + rename | evita manifesto parcialmente gravado |
