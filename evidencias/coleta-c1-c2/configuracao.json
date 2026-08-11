@@ -1,0 +1,262 @@
+{
+  "comandos": {
+    "C1": [
+      "/usr/local/bin/python",
+      "-P",
+      "-m",
+      "runner.executor_sast",
+      "--condicao",
+      "C1"
+    ],
+    "C2": [
+      "/usr/local/bin/python",
+      "-P",
+      "-m",
+      "runner.executor_sast",
+      "--condicao",
+      "C2"
+    ]
+  },
+  "controlador_commit": "04c911aa0fb72eb74e76c61f50a649d323a96eb2",
+  "corpus": {
+    "alvos": [
+      {
+        "alvo": "ALVO-0001",
+        "commit": "55f63201c85190e760a8fa34a580a9bf918dbf36",
+        "entrada_sha256": "fd824e2a073f0b02ba628ebb112b9a06f9347698927697e6b6591ef6704e8ea5",
+        "inventario_sha256": "e5958826dee3c9f24873d29f7efd5c5dfa382679a8324581250bb788db51f44c"
+      },
+      {
+        "alvo": "ALVO-0002",
+        "commit": "a961308c02d1fb462b192681c336b0739e432da7",
+        "entrada_sha256": "5cf3885877b3d63fe1f09e550d084daf6748cd2ebdf32c3f91fc3a2448ef5454",
+        "inventario_sha256": "448571fc68efb5983cfa5ae9ff49fbb32d32973738b2f81025857c9df49feb68"
+      },
+      {
+        "alvo": "ALVO-0003",
+        "commit": "082c88bfefced508ae083b92b459c808f95e905e",
+        "entrada_sha256": "cc553cf0774536dc6586307d5f82f1cc7ed9b02c0663e7806d5ddb2bcfd36c6d",
+        "inventario_sha256": "e165de4b117be90d843f88e7591d8f0367a83c853a4eb51f4ea4ccec9f6dfbca"
+      },
+      {
+        "alvo": "ALVO-0004",
+        "commit": "a06abb306ed3699bb2f073e3f41d3d9c57012819",
+        "entrada_sha256": "0288f05e2a7e04c7988263268b7453adb4e49892f0a0561ecf9355c58a4eb433",
+        "inventario_sha256": "f6eab662a1d1257039acd94e1afa0ed0c5e69563b004de208d04c6ef4f044e78"
+      },
+      {
+        "alvo": "ALVO-0005",
+        "commit": "7d40f4b7939c901610ed9b85724552d60e7d63fa",
+        "entrada_sha256": "60913ac90d496cf087a5fe6e9a4dbb04882c862a93f7d094eebb692d41467206",
+        "inventario_sha256": "568e3b8f02e799012fd343f5111c9a864329ca09e0a39d8f7018055bad2a3c26"
+      },
+      {
+        "alvo": "ALVO-0006",
+        "commit": "25bdef1e32055bfb6366856acc5db829e61e3647",
+        "entrada_sha256": "c3a3ca1c23c9970d5a51ac60e544c1798adb6963cf64ac0e16a747e309b24b7c",
+        "inventario_sha256": "b764ad9de626316bc6e5f29a762d9015a8f47407368c449ac3cfabd7cf518e4c"
+      },
+      {
+        "alvo": "ALVO-0007",
+        "commit": "a1d8f89fac2e57093189853c6527c2b01fc1d9c1",
+        "entrada_sha256": "48768e4c5d80ec67c770ea9fd1bd5cb359619ebffaff6ae73c07f0d82b395719",
+        "inventario_sha256": "a64ffc45c7e1871fba00343ab1521915ce28ea9de5576140a67d2586ae47f8fa"
+      },
+      {
+        "alvo": "ALVO-0008",
+        "commit": "d5d8875559e21222bbbaadb7b9f0af592c6eb7fa",
+        "entrada_sha256": "c8889b657d313114870620cc663f7e0aab4d4e3020f446c1e5411139a5f38c10",
+        "inventario_sha256": "9ee5580aaf61eab5d09eef6366acac72aeeca5a2fe00775b14091322b4d01c6a"
+      },
+      {
+        "alvo": "ALVO-0009",
+        "commit": "4d6f500246696d9078e141d7eabcc34087c54faa",
+        "entrada_sha256": "81bed03016372c47fcf9f82688440bc1ff9e8236928b70deaa9204174d10c793",
+        "inventario_sha256": "c32f4e10a7b1a68ebae413c0703913873886903cd1053324ac73087b63fced97"
+      },
+      {
+        "alvo": "ALVO-0010",
+        "commit": "5d1b791bb6c2d1397843f29ee6a0d5c9386dd667",
+        "entrada_sha256": "e6c8736ba737e8ca9ec9b70395c7d07cca36db6e1041aa35db8463b70239c777",
+        "inventario_sha256": "b07259a4d373b77159cfdff4707c3ba0f818ef074ed81f1a87011ef841c5ade0"
+      },
+      {
+        "alvo": "ALVO-0011",
+        "commit": "3804a18ae666b296675f9a60bc617e527beae520",
+        "entrada_sha256": "7606a016f976cedee532b72b40b4143d8b69054609a653a62e61a5b2ca611f5a",
+        "inventario_sha256": "7e6c337f04972f60a6c9b2d5e950329f327c00d33a048259013a890271850632"
+      },
+      {
+        "alvo": "ALVO-0012",
+        "commit": "7cbf11014bfc6dc9e199dc0b8a64e4597bc2338f",
+        "entrada_sha256": "a45bfabe3142d79019154cfe44959f5b3299d423790cb5caffe0119894733d15",
+        "inventario_sha256": "844b59f9f3d5ca1eb8d4aeb7d75e0121d8a03a174930450d97c32385482ddd11"
+      },
+      {
+        "alvo": "ALVO-0013",
+        "commit": "5e682aca1b58e03362a5fbd9fc88c37626e429ce",
+        "entrada_sha256": "71e8435f06e788978bc92c55c57f96f2ac2b5de09238f0fe517c49d3f74ee9b0",
+        "inventario_sha256": "9e38a842769a2ac8f8b425fa0512c2255f1d73289699a1ea688e46a30b70a38e"
+      },
+      {
+        "alvo": "ALVO-0014",
+        "commit": "2fb0c600245f50670e8b9233c784afe61e8b340b",
+        "entrada_sha256": "27bf852cbcf680894bd56783c4c6419117205526e69aad5502c355322e22b605",
+        "inventario_sha256": "d027eb82877ea831d4b22af4a4af2872d1240f78894998fe00786be488aa4b0c"
+      },
+      {
+        "alvo": "ALVO-0015",
+        "commit": "a33452268ef7489ebeb44f65a1bae06eda2072ab",
+        "entrada_sha256": "80ceb1831fa0f73e3c5fd30689bec8fe1ac3dacf2e8de3ad5c09cc93f680dd23",
+        "inventario_sha256": "9a051f5edf9514b87b65ba6ff00a337882599c7bbca15f532deab73729c50cf5"
+      },
+      {
+        "alvo": "ALVO-0016",
+        "commit": "80b894a2f754590747a31c92b2088be086421953",
+        "entrada_sha256": "713ec3ad81d2acbbca9c2b61e06a5d48808280a148353e32a2007ba9cd978360",
+        "inventario_sha256": "70c4635d2b5758e30cc8a687bb17167f365fb7b2d74ec71d90dc7d98f27493a6"
+      },
+      {
+        "alvo": "ALVO-0017",
+        "commit": "76339c27d5a870c0a81bad6aee5f9bd516592145",
+        "entrada_sha256": "83ee392a8bd8f4c2240c8e97cdab8d8f8872a7bd01f519f77b97d712ea32adb7",
+        "inventario_sha256": "710319abd29bdae396b9e50387985572c08b6f4ccdb827ade17ee482ea22fa28"
+      },
+      {
+        "alvo": "ALVO-0018",
+        "commit": "c4db46f72586c4ecb65859051ea037018dbf0e5e",
+        "entrada_sha256": "251142129f056d88f65a06a4c97ac2761d69c28c886de48f907dcbdc0afe779a",
+        "inventario_sha256": "5cd88a97beadba195534cc276e7746bc3a9cf622e0d3c851a8cc10cae1200d95"
+      },
+      {
+        "alvo": "ALVO-0019",
+        "commit": "1713b54b601ad29582581eeda4b31fceb1319874",
+        "entrada_sha256": "31e7f5bcd351ce505755c1d0d0aa19256988af9ff4a85314b02585d661ef4f20",
+        "inventario_sha256": "7151fc9789116b8721f47956f7220e2c61f1196acdfd0575eeed511ecf10f368"
+      },
+      {
+        "alvo": "ALVO-0020",
+        "commit": "f36f177e1a32aa49272f4eb52f8be0af3e8f6bc3",
+        "entrada_sha256": "3887888edc975be4c8b50ca696868e38db590af7720b72364c101cf313ae7de3",
+        "inventario_sha256": "cda88a9948632c14930d0b798bb953f01638f3a5d52e018e0e1be983ae85358c"
+      },
+      {
+        "alvo": "ALVO-0021",
+        "commit": "f7797964e1cd63a1cbcc8ced721fa41db674c8e0",
+        "entrada_sha256": "21122409b2c8ab10c99af946fbd53991ead7ee5daace66e836da17c985bbdc57",
+        "inventario_sha256": "5c34ad829d63f7245c12c9f2e0d490c133ab27ac43277a87498c62b24eea45e4"
+      },
+      {
+        "alvo": "ALVO-0022",
+        "commit": "b6a4f97afd466e83e1f60781494252dec1c37039",
+        "entrada_sha256": "d48bee2fa970226f9763b21c0a5bcc9711e72137578bb1ed7220db0c8c8783aa",
+        "inventario_sha256": "23ec7006aea2492fba4336e110b06ea61f76589dfe88d1ebae9a3bab889f42b9"
+      },
+      {
+        "alvo": "ALVO-0023",
+        "commit": "6336c77e6db523a5df34c4b628dff4159110797a",
+        "entrada_sha256": "670ff425242766189558f3d0ce33443f67f0f3c183322f718a878179621c182a",
+        "inventario_sha256": "2863ceaa4b1568a3eee7be55b6e262801e9c124a5047537d3b58150ac5311573"
+      },
+      {
+        "alvo": "ALVO-0024",
+        "commit": "7aca8b78ba948c841d6cb1cc2a244922a27e842b",
+        "entrada_sha256": "876dc0769e8ab39482f4f085b17b51b213e1d090330bbf119794da06b32bd7e5",
+        "inventario_sha256": "deab9ac4ed1a0eaa0426099251654ac09b96cd96009636c85fe42b403127806e"
+      },
+      {
+        "alvo": "ALVO-0025",
+        "commit": "d1d0f64c06f038fe59a049e0e6001bfaf9839697",
+        "entrada_sha256": "a72183b75a74c84a8e183a633ea049f7ebc4e596120a74174abed4993d72bb68",
+        "inventario_sha256": "1c7104163a7e116f12bbe6a06fe9bfba4a989a27cb658758a54cbe175dfc4a6c"
+      },
+      {
+        "alvo": "ALVO-0026",
+        "commit": "5249cc8b05a1c37f6b2f757b1cf16a509c327122",
+        "entrada_sha256": "8ab2fec30309ec9e0fd8b454cba7242ace30b959ee3e192fd16361f3f641186a",
+        "inventario_sha256": "e773a1a650b034d4375b1ec5e11058f9126882b31ef83ccc039f088820297fba"
+      }
+    ],
+    "quantidade_alvos": 26
+  },
+  "criada_em": "2026-08-11T14:42:32.884718Z",
+  "hashes": {
+    "corpus_lock_sha256": "54e98c0d00980ed9baba9943a8fa5f82734739dd037632909ca19c6eef980168",
+    "fila_lock_sha256": "4399d4a95ba35de18f337043f781e55802304627c6c62f41cea3a59d8bb0983f",
+    "host_risk_decision_sha256": "05175f3a9fe22a4c58d1b3f6ad214a8c2f507039b00926e3a9e8167ff2d53eed",
+    "politica_sha256": "89e9f3c94267b5b28041b016bb8eb8e88a88972a5ad15ea5d3bfcd8d182c7e62",
+    "regras_bundle_sha256": "e552ad9297bb2bbf2d9e0221382e8e91e477c9e46ed9106dbfe64b2f84f92ad1"
+  },
+  "imagem": {
+    "arquitetura": "amd64",
+    "id": "sha256:3aab47b08e5defe0a01b869d710d3b8fdfe315673c73560bcb7b4c9b95a8cd51",
+    "os": "linux",
+    "tag": "tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0"
+  },
+  "limites": {
+    "capabilities": "ALL-dropped",
+    "cpus": 2,
+    "memoria": "3g",
+    "no_new_privileges": true,
+    "pids": 256,
+    "rede": "none",
+    "rootfs": "read-only",
+    "usuario": "10001:10001"
+  },
+  "risco": {
+    "autorizacao_coleta": true,
+    "decisao": {
+      "allowed_actions": [
+        "M2-T06-freeze",
+        "M2-T07-coleta-c1-c2",
+        "M2-T08-auditoria"
+      ],
+      "approval": {
+        "authorization_message_date": "2026-08-11",
+        "reference": ".specs/project/STATE.md#AD-013"
+      },
+      "authorization": true,
+      "authorized_by": "usuário do projeto",
+      "decided_at": "2026-08-11",
+      "decision": "accept-residual-risk-m2",
+      "reason": "O usuário autorizou explicitamente continuar a coleta M2 aceitando o risco residual das versões atuais de Docker, Git e WSL e a permanência local dos aplicativos vulneráveis do corpus.",
+      "required_controls": [
+        "validar_origem_commit_sha256",
+        "nao_executar_codigo_alvo",
+        "container_sem_rede",
+        "alvo_somente_leitura",
+        "usuario_nao_root",
+        "capabilities_removidas",
+        "no_new_privileges",
+        "imagem_local_por_id",
+        "sem_docker_socket",
+        "preservar_brutos_e_falhas",
+        "nao_publicar_corpus_oracle_ou_regras"
+      ],
+      "schema_version": "1.0",
+      "scope": "M2",
+      "status": "accepted",
+      "tipo": "host-risk-waiver-m2",
+      "versions": {
+        "docker_desktop": "4.38.0",
+        "docker_engine": "27.5.1",
+        "git": "2.46.2.windows.1",
+        "wsl": "2.0.14.0"
+      }
+    },
+    "host_observado": {
+      "capturado_em_utc": "2026-08-11T17:35:00Z",
+      "docker_context": "desktop-linux",
+      "docker_desktop": "4.38.0.181591",
+      "docker_engine": "27.5.1",
+      "docker_platform": "linux/amd64",
+      "fonte": "observacao local durante gate M2",
+      "git_for_windows": "2.46.2.windows.1",
+      "wsl": "2.0.14.0",
+      "wsl_kernel": "5.15.133.1-1"
+    }
+  },
+  "schema_version": "1.0",
+  "timeout_segundos": 900,
+  "tipo": "configuracao-coleta-c1-c2"
+}
