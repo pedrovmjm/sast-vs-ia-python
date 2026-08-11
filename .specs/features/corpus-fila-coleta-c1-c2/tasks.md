@@ -84,6 +84,8 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 **Concluída quando:** ausência/versões e riscos estão documentados; decisão tem data, escopo M2 e commit de aprovação; worktree está limpo; gate build verde; imagem/regras/locks/comandos/limites possuem hashes; nenhuma saída de coleta existe antes do freeze.
 **Commit:** `chore(coleta): congelar ambiente C1 C2`.
 
+**Registro de conclusao M2-T06 (2026-08-11):** configuracao `ebe3418e8465bbaf1644845431337c40af3873e3689d7ebbfc1904bc1e8b4435`, imagem `sha256:3aab47b08e5defe0a01b869d710d3b8fdfe315673c73560bcb7b4c9b95a8cd51`; gate build verde (250 testes Python, wrapper 18, Docker 8, aquisicao 15, coleta seca), worktree limpo e nenhuma fila/saida de coleta criada antes do freeze.
+
 ### M2-T07: Executar as 52 tarefas C1/C2
 
 **O que:** executar a fila completa serialmente e preservar todas as tentativas/terminais.
