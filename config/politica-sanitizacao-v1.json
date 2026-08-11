@@ -32,6 +32,11 @@
     "thumbs.db",
     "zone.identifier"
   ],
+  "caminhos_excluidos": [
+    "bad/payloads/payload.js",
+    "good/payloads/payload.js",
+    "ui/static/css/fonts"
+  ],
   "sufixos_excluidos": [
     ".class",
     ".pyc",

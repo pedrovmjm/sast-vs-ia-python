@@ -54,15 +54,18 @@ A política opera somente por caminho e tipo de objeto, nunca por conteúdo ou r
 - respostas: componentes `ground-truth`, `oracle`, `solution(s)`, `walkthrough(s)`, `writeup(s)`;
 - ambientes/dependências instaladas: `.venv`, `venv`, `env`, `node_modules`;
 - caches/gerados: `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.ruff_cache`, `.tox`, `.nox`, `htmlcov`, `dist`, e extensões `pyc`, `pyo`, `class`;
-- metadados de sistema/download: `.DS_Store`, `Thumbs.db`, `Zone.Identifier`.
+- metadados de sistema/download: `.DS_Store`, `Thumbs.db`, `Zone.Identifier`;
+- caminhos exatos `ui/static/css/fonts` no ALVO-0020 e `bad/payloads/payload.js`/`good/payloads/payload.js` no ALVO-0026, versionados como links Git internos para conteúdo já presente.
 
 `build/` não é excluído genericamente porque pode conter fonte pertencente ao projeto; somente padrões inequivocamente gerados entram na v1. README, documentação e testes são preservados salvo quando o próprio caminho identifica explicitamente solução/walkthrough. Qualquer alteração cria uma nova versão e invalida todos os inventários, nunca apenas um alvo.
 
-O exportador Git recusa árvores com submódulos (`160000`), symlinks (`120000`) ou modos diferentes de blobs regulares (`100644`/`100755`). Essa escolha evita materialização dependente do host; se um alvo oficial usar objeto recusado, a coleta para e o design é revisto antes de qualquer scanner.
+O exportador Git recusa submódulos (`160000`), modos diferentes de blobs regulares (`100644`/`100755`) e links (`120000`) não publicados. Os três links conhecidos são omitidos por pathspec antes da extração; modo, objeto, destino textual e ação ficam na evidência, e nenhum link é seguido ou materializado. Essa escolha evita materialização dependente do host; qualquer novo objeto recusado interrompe a coleta e exige revisão antes de scanner.
 
 ## Ground truth e validador
 
 O RealVuln fixado é exportado para `oracle/realvuln-v1/` com o validador e os 26 arquivos de ground truth. O validador oficial é executado sem modificação em contêiner separado, sem rede, com origem somente leitura e sem mounts de alvos/resultados. Sua saída, exit code e hash do script são preservados. Uma validação autoral adicional contabiliza arquivos, entradas, vulnerabilidades e armadilhas e calcula SHA-256 completo por arquivo; ela não modifica rótulos.
+
+Quando uma URL primária não anuncia mais o commit, o transporte pode recorrer somente a `config/espelhos-corpus-realvuln-v1.lock.json`. O fetch continua exigindo o SHA-1 completo do manifesto; o resumo preserva URL oficial, URL de transporte e indicador de espelho. Branches e commits substitutos permanecem proibidos.
 
 Esse passo ocorre antes da preparação e não compartilha contêiner ou mount com C1/C2.
 

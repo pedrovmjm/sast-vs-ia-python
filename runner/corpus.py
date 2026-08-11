@@ -2,10 +2,17 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
+import os
 import re
+import shutil
+import sys
+import tarfile
+import uuid
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Any, Mapping, Sequence
 from urllib.parse import urlsplit
 
@@ -37,6 +44,7 @@ _CAMPOS_POLITICA = frozenset(
         "politica_id",
         "segmentos_excluidos",
         "arquivos_excluidos",
+        "caminhos_excluidos",
         "sufixos_excluidos",
         "modos_git_permitidos",
     }
@@ -71,6 +79,12 @@ _CAMPOS_FILA = frozenset(
         "quantidade_execucoes",
         "ordem",
     }
+)
+_CAMPOS_ESPELHOS = frozenset(
+    {"schema_version", "verificado_em", "metodo_descoberta", "espelhos"}
+)
+_CAMPOS_ESPELHO = frozenset(
+    {"alvo", "url_oficial", "url_espelho", "commit", "motivo"}
 )
 
 
@@ -108,6 +122,9 @@ def validar_politica(documento: Mapping[str, Any]) -> Mapping[str, Any]:
     sufixos = _lista_textos_unicos(
         politica["sufixos_excluidos"], "sufixos_excluidos"
     )
+    caminhos = _lista_textos_unicos(
+        politica["caminhos_excluidos"], "caminhos_excluidos"
+    )
     modos = _lista_textos_unicos(
         politica["modos_git_permitidos"], "modos_git_permitidos"
     )
@@ -115,6 +132,7 @@ def validar_politica(documento: Mapping[str, Any]) -> Mapping[str, Any]:
         ("segmentos_excluidos", segmentos),
         ("arquivos_excluidos", arquivos),
         ("sufixos_excluidos", sufixos),
+        ("caminhos_excluidos", caminhos),
     ):
         if list(valores) != sorted(valores, key=lambda item: item.encode("utf-8")):
             raise ErroCorpus(f"{nome} deve usar ordem UTF-8 canônica")
@@ -122,6 +140,13 @@ def validar_politica(documento: Mapping[str, Any]) -> Mapping[str, Any]:
             raise ErroCorpus(f"{nome} deve conter somente valores casefold")
     if modos != ("100644", "100755"):
         raise ErroCorpus("modos Git permitidos devem ser exatamente 100644 e 100755")
+    if any(
+        caminho.startswith("/")
+        or "\\" in caminho
+        or any(parte in {"", ".", ".."} for parte in caminho.split("/"))
+        for caminho in caminhos
+    ):
+        raise ErroCorpus("caminhos_excluidos contém caminho inseguro")
     obrigatorios = {".git", "ground-truth", "oracle", "__pycache__"}
     if not obrigatorios.issubset(segmentos):
         raise ErroCorpus("política omite segmento de segurança obrigatório")
@@ -259,6 +284,47 @@ def validar_lock_fila(
     return fila
 
 
+def validar_lock_espelhos(
+    documento: Mapping[str, Any], lock_corpus: Mapping[str, Any]
+) -> Mapping[str, Any]:
+    lock = _objeto(documento, "lock de espelhos")
+    _chaves(lock, _CAMPOS_ESPELHOS, "lock de espelhos")
+    if lock["schema_version"] != "1.0":
+        raise ErroCorpus("schema_version dos espelhos deve ser 1.0")
+    if lock["verificado_em"] != "2026-08-11":
+        raise ErroCorpus("data de verificação dos espelhos diverge")
+    if lock["metodo_descoberta"] != "GitHub Search Commits API por SHA-1 completo":
+        raise ErroCorpus("método de descoberta dos espelhos diverge")
+    corpus = validar_lock_corpus(lock_corpus)
+    por_alvo = {item["alvo"]: item for item in corpus["alvos"]}
+    espelhos = lock["espelhos"]
+    if not isinstance(espelhos, list) or len(espelhos) != 3:
+        raise ErroCorpus("lock deve conter exatamente três espelhos necessários")
+    ids: list[str] = []
+    urls: set[str] = set()
+    for indice, item in enumerate(espelhos):
+        espelho = _objeto(item, f"espelhos[{indice}]")
+        _chaves(espelho, _CAMPOS_ESPELHO, f"espelhos[{indice}]")
+        alvo_id = espelho["alvo"]
+        if alvo_id not in por_alvo:
+            raise ErroCorpus(f"espelho referencia alvo desconhecido: {alvo_id}")
+        alvo = por_alvo[alvo_id]
+        if espelho["url_oficial"] != alvo["url"] or espelho["commit"] != alvo["commit"]:
+            raise ErroCorpus(f"espelho de {alvo_id} diverge do corpus oficial")
+        _https(espelho["url_espelho"], f"url_espelho de {alvo_id}")
+        if espelho["url_espelho"] == alvo["url"]:
+            raise ErroCorpus(f"espelho de {alvo_id} não pode repetir URL oficial")
+        if espelho["motivo"] != "fonte_primaria_indisponivel":
+            raise ErroCorpus(f"motivo inválido no espelho de {alvo_id}")
+        ids.append(alvo_id)
+        urls.add(espelho["url_espelho"])
+    if ids != sorted(ids) or len(set(ids)) != 3 or len(urls) != 3:
+        raise ErroCorpus("espelhos devem ter alvos/URLs únicos em ordem canônica")
+    if set(ids) != {"ALVO-0015", "ALVO-0021", "ALVO-0023"}:
+        raise ErroCorpus("conjunto de espelhos diverge das fontes indisponíveis observadas")
+    return lock
+
+
 def caminho_excluido(caminho_relativo: str, politica: Mapping[str, Any]) -> bool:
     """Decide exclusão apenas pelo caminho POSIX e pela política validada."""
 
@@ -278,9 +344,201 @@ def caminho_excluido(caminho_relativo: str, politica: Mapping[str, Any]) -> bool
     if any(parte in documento["segmentos_excluidos"] for parte in normalizadas):
         return True
     nome = normalizadas[-1]
+    normalizado = "/".join(normalizadas)
+    if normalizado in documento["caminhos_excluidos"]:
+        return True
     if nome in documento["arquivos_excluidos"]:
         return True
     return any(nome.endswith(sufixo) for sufixo in documento["sufixos_excluidos"])
+
+
+def auditar_ground_truth(
+    raiz_oracle: str | Path, lock_corpus: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Confere identidade e contagens do GT, sem expor seu conteúdo no resultado."""
+
+    corpus = validar_lock_corpus(lock_corpus)
+    raiz = Path(raiz_oracle)
+    if raiz.is_symlink() or not raiz.is_dir():
+        raise ErroCorpus(f"oracle deve ser diretório real: {raiz}")
+    ground_truth = raiz / "ground-truth"
+    if ground_truth.is_symlink() or not ground_truth.is_dir():
+        raise ErroCorpus("oracle não contém ground-truth real")
+
+    esperados = {item["realvuln_id"]: item for item in corpus["alvos"]}
+    observados: dict[str, Path] = {}
+    try:
+        with os.scandir(ground_truth) as entradas:
+            for entrada in entradas:
+                path = Path(entrada.path)
+                if entrada.is_symlink() or _eh_juncao(path):
+                    raise ErroCorpus(f"link ou junção proibido no oracle: {path}")
+                if not entrada.is_dir(follow_symlinks=False):
+                    raise ErroCorpus(f"entrada inesperada em ground-truth: {path.name}")
+                if path.name not in esperados:
+                    raise ErroCorpus(f"repositório inesperado no ground-truth: {path.name}")
+                with os.scandir(path) as arquivos:
+                    conteudo = list(arquivos)
+                if len(conteudo) != 1 or conteudo[0].name != "ground-truth.json":
+                    raise ErroCorpus(f"estrutura inesperada no ground-truth de {path.name}")
+                arquivo = Path(conteudo[0].path)
+                if conteudo[0].is_symlink() or not conteudo[0].is_file(follow_symlinks=False):
+                    raise ErroCorpus(f"ground-truth.json deve ser arquivo regular: {path.name}")
+                observados[path.name] = arquivo
+    except OSError as exc:
+        raise ErroCorpus(f"não foi possível percorrer ground-truth: {exc}") from exc
+    if set(observados) != set(esperados):
+        ausentes = sorted(set(esperados) - set(observados))
+        raise ErroCorpus(f"ground-truth incompleto; ausentes={ausentes}")
+
+    itens: list[dict[str, Any]] = []
+    ground_truth_ids: set[str] = set()
+    total_vulneraveis = 0
+    total_armadilhas = 0
+    divergencias_url = 0
+    for repo_id in sorted(esperados, key=lambda item: item.encode("utf-8")):
+        alvo = esperados[repo_id]
+        arquivo = observados[repo_id]
+        documento = carregar_json(arquivo)
+        ground_truth_id = documento.get("repo_id")
+        if (
+            not isinstance(ground_truth_id, str)
+            or not ground_truth_id
+            or len(ground_truth_id.encode("utf-8")) > 200
+            or ground_truth_id in ground_truth_ids
+        ):
+            raise ErroCorpus(f"{repo_id}.repo_id é ausente, inválido ou duplicado")
+        ground_truth_ids.add(ground_truth_id)
+        ground_truth_url = documento.get("repo_url")
+        _https(ground_truth_url, f"{repo_id}.repo_url")
+        url_confere = ground_truth_url == alvo["url"]
+        if not url_confere:
+            divergencias_url += 1
+        if documento.get("commit_sha") != alvo["commit"]:
+            raise ErroCorpus(f"{repo_id}.commit_sha diverge do lock do corpus")
+        findings = documento.get("findings")
+        if not isinstance(findings, list) or not findings:
+            raise ErroCorpus(f"{repo_id}.findings deve ser lista não vazia")
+        vulneraveis = 0
+        armadilhas = 0
+        for indice, finding in enumerate(findings):
+            if not isinstance(finding, Mapping):
+                raise ErroCorpus(f"{repo_id}.findings[{indice}] deve ser objeto")
+            valor = finding.get("is_vulnerable")
+            if valor is True:
+                vulneraveis += 1
+            elif valor is False:
+                armadilhas += 1
+            else:
+                raise ErroCorpus(
+                    f"{repo_id}.findings[{indice}].is_vulnerable deve ser booleano"
+                )
+        total_vulneraveis += vulneraveis
+        total_armadilhas += armadilhas
+        itens.append(
+            {
+                "alvo": alvo["alvo"],
+                "realvuln_id": repo_id,
+                "ground_truth_repo_id": ground_truth_id,
+                "ground_truth_repo_url": ground_truth_url,
+                "repo_url_confere": url_confere,
+                "arquivo_sha256": hashlib.sha256(arquivo.read_bytes()).hexdigest(),
+                "vulnerabilidades": vulneraveis,
+                "armadilhas_fp": armadilhas,
+                "entradas": vulneraveis + armadilhas,
+            }
+        )
+    total = total_vulneraveis + total_armadilhas
+    if (len(itens), total, total_vulneraveis, total_armadilhas) != (26, 817, 697, 120):
+        raise ErroCorpus(
+            "contagens do ground-truth divergem de 26/817/697/120; "
+            f"observado={len(itens)}/{total}/{total_vulneraveis}/{total_armadilhas}"
+        )
+    return {
+        "schema_version": "1.0",
+        "benchmark_version": BENCHMARK_VERSION,
+        "ground_truth_content_identifier": corpus["realvuln"][
+            "ground_truth_content_identifier"
+        ],
+        "repositorios": len(itens),
+        "entradas": total,
+        "vulnerabilidades": total_vulneraveis,
+        "armadilhas_fp": total_armadilhas,
+        "divergencias_url_ground_truth": divergencias_url,
+        "itens": itens,
+    }
+
+
+def extrair_tar_git(arquivo_tar: str | Path, destino: str | Path) -> int:
+    """Extrai um `git archive` sem seguir links nem aceitar caminhos ambíguos."""
+
+    origem = Path(arquivo_tar)
+    saida = Path(destino)
+    if origem.is_symlink() or not origem.is_file():
+        raise ErroCorpus(f"archive deve ser arquivo regular: {origem}")
+    if saida.exists() or saida.is_symlink():
+        raise ErroCorpus("destino da exportação deve ser novo")
+    pai = saida.parent
+    if pai.is_symlink() or not pai.is_dir():
+        raise ErroCorpus("pai da exportação deve ser diretório real")
+    temporario = pai / f".{saida.name}.extraindo-{uuid.uuid4().hex}"
+    temporario.mkdir(mode=0o700)
+    vistos: set[str] = set()
+    arquivos = 0
+    try:
+        with tarfile.open(origem, mode="r:") as pacote:
+            for membro in pacote:
+                nome = membro.name.removesuffix("/")
+                partes = PurePosixPath(nome).parts
+                if (
+                    not nome
+                    or nome.startswith("/")
+                    or "\\" in nome
+                    or "\x00" in nome
+                    or any(ord(caractere) < 32 for caractere in nome)
+                    or any(parte in {"", ".", ".."} for parte in partes)
+                ):
+                    raise ErroCorpus(f"caminho inseguro no archive: {membro.name!r}")
+                reservados_windows = {"con", "prn", "aux", "nul"} | {
+                    f"{prefixo}{indice}"
+                    for prefixo in ("com", "lpt")
+                    for indice in range(1, 10)
+                }
+                if any(
+                    ":" in parte
+                    or parte.endswith((" ", "."))
+                    or parte.split(".", 1)[0].casefold() in reservados_windows
+                    for parte in partes
+                ):
+                    raise ErroCorpus(f"caminho incompatível com o host: {nome}")
+                chave = nome.casefold()
+                if chave in vistos:
+                    raise ErroCorpus(f"caminho duplicado ou ambíguo no archive: {nome}")
+                vistos.add(chave)
+                alvo = temporario.joinpath(*partes)
+                if membro.isdir():
+                    alvo.mkdir(parents=True, exist_ok=False)
+                    continue
+                # `git archive` representa blobs 100644/100755 como 0664/0775.
+                if not membro.isfile() or membro.mode not in (0o644, 0o664, 0o755, 0o775):
+                    raise ErroCorpus(f"entrada não regular ou modo proibido no archive: {nome}")
+                alvo.parent.mkdir(parents=True, exist_ok=True)
+                fonte = pacote.extractfile(membro)
+                if fonte is None:
+                    raise ErroCorpus(f"conteúdo ausente no archive: {nome}")
+                with fonte, alvo.open("xb") as destino_aberto:
+                    while bloco := fonte.read(1024 * 1024):
+                        destino_aberto.write(bloco)
+                arquivos += 1
+        if arquivos == 0:
+            raise ErroCorpus("archive Git não pode estar vazio")
+        temporario.replace(saida)
+        return arquivos
+    except (tarfile.TarError, OSError) as exc:
+        raise ErroCorpus(f"archive Git inválido: {exc}") from exc
+    finally:
+        if temporario.exists():
+            shutil.rmtree(temporario, ignore_errors=True)
 
 
 def _https(valor: Any, campo: str) -> str:
@@ -360,3 +618,74 @@ def _objeto_sem_duplicatas(pares: Sequence[tuple[str, Any]]) -> dict[str, Any]:
 
 def _constante_invalida(valor: str) -> None:
     raise ErroCorpus(f"constante JSON não finita proibida: {valor}")
+
+
+def _eh_juncao(path: Path) -> bool:
+    detector = getattr(path, "is_junction", None)
+    return bool(detector()) if detector is not None else False
+
+
+def _escrever_json_novo(caminho: str | Path, documento: Mapping[str, Any]) -> None:
+    destino = Path(caminho)
+    if destino.exists() or destino.is_symlink():
+        raise ErroCorpus(f"saída já existe: {destino}")
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    temporario = destino.with_name(f".{destino.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        dados = (
+            json.dumps(
+                documento,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
+            )
+            + "\n"
+        ).encode("utf-8")
+        with temporario.open("xb") as arquivo:
+            arquivo.write(dados)
+            arquivo.flush()
+            os.fsync(arquivo.fileno())
+        temporario.replace(destino)
+    except Exception:
+        temporario.unlink(missing_ok=True)
+        raise
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    subparsers = parser.add_subparsers(dest="comando", required=True)
+    auditar = subparsers.add_parser("auditar-ground-truth")
+    auditar.add_argument("--oracle", required=True)
+    auditar.add_argument("--corpus-lock", required=True)
+    auditar.add_argument("--saida", required=True)
+    exportar = subparsers.add_parser("extrair-tar-git")
+    exportar.add_argument("--arquivo", required=True)
+    exportar.add_argument("--destino", required=True)
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    argumentos = _parser().parse_args(argv)
+    try:
+        if argumentos.comando == "auditar-ground-truth":
+            resumo = auditar_ground_truth(
+                argumentos.oracle, carregar_json(argumentos.corpus_lock)
+            )
+            _escrever_json_novo(argumentos.saida, resumo)
+            print(
+                f"repositorios={resumo['repositorios']} entradas={resumo['entradas']} "
+                f"vulnerabilidades={resumo['vulnerabilidades']} "
+                f"armadilhas_fp={resumo['armadilhas_fp']}"
+            )
+        elif argumentos.comando == "extrair-tar-git":
+            quantidade = extrair_tar_git(argumentos.arquivo, argumentos.destino)
+            print(f"arquivos={quantidade}")
+        return 0
+    except (ErroCorpus, OSError, ValueError) as exc:
+        print(f"erro de corpus: {exc}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

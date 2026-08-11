@@ -1,7 +1,7 @@
 # Estado
 
-**Última atualização:** 2026-08-11T10:35:00-03:00
-**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T03
+**Última atualização:** 2026-08-11T13:50:00-03:00
+**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T04
 
 ---
 
@@ -20,6 +20,27 @@
 **Razão:** `host-risk-waiver.json` e AD-005 autorizam somente `ambiente-e-primeira-execucao-sast`, enquanto o próprio estado exige reavaliação antes da coleta definitiva.
 **Trade-off:** implementação e aquisição segura podem avançar, mas a coleta para em M2-T06 sem decisão válida.
 **Impacto:** nenhum resultado com `finalidade=coleta` será criado sob autorização ambígua.
+
+### AD-010: Arquivos machine-readable prevalecem sobre a contagem do README (2026-08-11)
+
+**Decisão:** usar integralmente os 26 arquivos de ground truth do commit fixado, que totalizam 817 entradas (697 vulnerabilidades e 120 armadilhas), e registrar a divergência ante 796/676/120 anunciados no README do mesmo commit.
+**Razão:** o validador oficial aprova e contabiliza 817 entradas; remover 21 rótulos para reproduzir a manchete alteraria o oracle oficial sem critério publicado.
+**Trade-off:** os números de população dos capítulos precisarão ser corrigidos, preservando a rastreabilidade da mudança.
+**Impacto:** aquisição, fila e futura avaliação usam o conteúdo machine-readable integral e hasheado; nenhuma seleção retroativa é feita.
+
+### AD-011: Espelhos servem apenas como transporte do commit exato (2026-08-11)
+
+**Decisão:** para ALVO-0015, ALVO-0021 e ALVO-0023, cujas URLs do manifesto estão indisponíveis, permitir os espelhos publicados no lock específico somente quando a fonte primária falhar e somente se o objeto adquirido tiver o SHA-1 completo oficial.
+**Razão:** a busca de commits do GitHub localizou o mesmo objeto em repositórios públicos; os outros 23 repositórios primários permanecem disponíveis.
+**Trade-off:** a URL de transporte difere da fonte histórica, mas identidade e árvore do commit permanecem verificáveis pelo hash Git e são registradas por alvo.
+**Impacto:** `config/espelhos-corpus-realvuln-v1.lock.json` é validado e hasheado; não se aceita branch, revisão alternativa ou fallback não publicado.
+
+### AD-012: Links Git conhecidos são omitidos sem resolução (2026-08-11)
+
+**Decisão:** omitir por caminho exato os três blobs Git `120000` observados: `ui/static/css/fonts` no ALVO-0020 e `bad/payloads/payload.js`/`good/payloads/payload.js` no ALVO-0026; registrar modo, objeto, destino textual e ação `omitido_sem_seguir`.
+**Razão:** os links apontam para `../fonts` e `keylogger.js`, conteúdos já presentes nas respectivas árvores; segui-los ou materializá-los mudaria a semântica de segurança, enquanto recusar os alvos quebraria o censo.
+**Trade-off:** as cópias sanitizadas não contêm os três aliases, mas mantêm os destinos reais e todo o código regular.
+**Impacto:** qualquer outro link continua bloqueando a aquisição; os três links conhecidos nunca são seguidos, extraídos ou disponibilizados ao analisador.
 
 ### AD-001: Capítulos como especificação aprovada (2026-08-10)
 
@@ -106,6 +127,7 @@ Nenhum bloqueador técnico impede o primeiro marco.
 | 010 | Publicar execução reproduzível e transpor evidências para os capítulos | 2026-08-11 | `docs(tcc): registrar ambiente e primeira execução SAST` | ✅ Concluída |
 | 011 | Congelar manifesto RealVuln v1, política de sanitização e ordem 26×2 | 2026-08-11 | `feat(corpus): congelar manifesto RealVuln v1` | ✅ Concluída |
 | 012 | Sanitizar exportações por política fechada e inventário regenerável | 2026-08-11 | `feat(corpus): sanitizar alvos por política congelada` | ✅ Concluída |
+| 013 | Adquirir 26 commits e validar integralmente corpus/oracle RealVuln v1 | 2026-08-11 | `feat(corpus): adquirir e validar censo RealVuln v1` | ✅ Concluída |
 
 ## Ideias adiadas
 

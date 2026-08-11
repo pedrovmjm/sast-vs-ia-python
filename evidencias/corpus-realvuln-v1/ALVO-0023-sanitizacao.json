@@ -1,0 +1,1 @@
+{"arquivos_incluidos":35,"entradas_excluidas":2,"exclusoes":[{"caminho":"SQLI/__pycache__","tipo":"diretorio"},{"caminho":"__pycache__","tipo":"diretorio"}],"politica_id":"sanitizacao-v1","schema_version":"1.0"}

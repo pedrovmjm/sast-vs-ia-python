@@ -36,8 +36,8 @@ O M1 comprovou o ambiente e C1/C2 em fumaça, mas o corpus completo ainda não f
 **História:** Como pesquisador, quero preparar exatamente os 26 snapshots do RealVuln v1.0 para que todas as condições futuras recebam o mesmo censo aprovado.
 
 1. QUANDO o manifesto for importado ENTÃO deverão existir exatamente 26 entradas, URLs HTTPS simples e commits Git completos, sem duplicatas.
-2. QUANDO um repositório for adquirido ENTÃO origem e commit observado deverão coincidir com o manifesto fixado; branch padrão, tag móvel, submódulo, hook ou objeto especial não serão aceitos como substitutos.
-3. QUANDO o ground truth for adquirido ENTÃO o validador oficial fixado deverá aprovar os 26 arquivos e o sistema deverá registrar hashes completos, total de 796 entradas, 676 vulnerabilidades e 120 armadilhas.
+2. QUANDO um repositório for adquirido ENTÃO origem oficial e commit observado deverão coincidir com o manifesto fixado; se a origem estiver indisponível, somente um espelho previamente publicado no lock de transporte poderá fornecer o mesmo objeto de commit completo; branch padrão, tag móvel, revisão diferente, submódulo, hook ou objeto especial não serão aceitos como substitutos.
+3. QUANDO o ground truth for adquirido ENTÃO o validador oficial fixado deverá aprovar os 26 arquivos e o sistema deverá registrar hashes completos e as contagens observadas nos arquivos machine-readable fixados: 817 entradas, 697 vulnerabilidades e 120 armadilhas; a divergência ante 796/676/120 anunciados no README deverá permanecer explícita.
 4. QUANDO o corpus for preparado ENTÃO cada alvo deverá receber exatamente um ID `ALVO-NNNN`; a correspondência original ficará fora das áreas montadas nos scanners.
 5. QUANDO a política de sanitização for aplicada ENTÃO ela deverá ser única, versionada e anterior aos resultados; metadados VCS, caches, ambientes, artefatos gerados e caminhos de solução/walkthrough serão removidos sem regra específica por alvo.
 6. QUANDO um alvo for regenerado ENTÃO seu inventário ordenado de caminhos, tamanhos e SHA-256 deverá ser byte a byte idêntico ao inventário congelado.
@@ -74,7 +74,7 @@ O M1 comprovou o ambiente e C1/C2 em fumaça, mas o corpus completo ainda não f
 ## Casos extremos
 
 - URL ou commit do manifesto divergente bloqueia o alvo e impede armar a coleta.
-- Repositório indisponível não é substituído por fork/branch diferente; a aquisição permanece incompleta.
+- Repositório indisponível só admite espelho publicado que contenha o commit exato; fork com revisão diferente mantém a aquisição incompleta.
 - Symlink, submódulo, caminho absoluto, travessia, dispositivo ou reparse point é recusado antes da preparação.
 - Alvo sanitizado vazio, inventário divergente ou colisão de ID bloqueia o corpus inteiro.
 - Imagem/regras alteradas depois do congelamento bloqueiam a próxima tarefa e não alteram as já preservadas.

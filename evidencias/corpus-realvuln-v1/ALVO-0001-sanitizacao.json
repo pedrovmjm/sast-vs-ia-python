@@ -1,0 +1,1 @@
+{"arquivos_incluidos":31,"entradas_excluidas":3,"exclusoes":[{"caminho":"static/.DS_Store","tipo":"arquivo"},{"caminho":"static/styles/.DS_Store","tipo":"arquivo"},{"caminho":"templates/.DS_Store","tipo":"arquivo"}],"politica_id":"sanitizacao-v1","schema_version":"1.0"}

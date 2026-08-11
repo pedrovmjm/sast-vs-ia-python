@@ -6,7 +6,7 @@
     "tag_object": "aa9f7321c8c53fe417b8faa517f1c4308b69b389",
     "commit": "d98e9fc91273702c9547663b6906d1fc494d4fcc",
     "benchmark_version": "1.0.0",
-    "manifesto_sha256": "477169e7852e4a405fc01c7f19aa663cf55447875f166018abbfcf1cd05e4247",
+    "manifesto_sha256": "8d1a6453c2efe58d1b5c56402a50f8c33e61625c4edb93da58318e6e4b65cdc2",
     "ground_truth_content_identifier": "sha256:a57347fbdf2a"
   },
   "politica_sanitizacao": "sanitizacao-v1",

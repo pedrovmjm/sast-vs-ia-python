@@ -62,6 +62,9 @@ if ($Gate -in @("full", "build")) {
     Invoke-PowerShellStep -Script (
         Join-Path $PSScriptRoot "test-fumaca-sintetica.ps1"
     )
+    Invoke-PowerShellStep -Script (
+        Join-Path $PSScriptRoot "test-adquirir-corpus.ps1"
+    )
 }
 
 if ($Gate -eq "build") {

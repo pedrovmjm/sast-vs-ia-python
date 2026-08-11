@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "verificado_em": "2026-08-11",
+  "metodo_descoberta": "GitHub Search Commits API por SHA-1 completo",
+  "espelhos": [
+    {
+      "alvo": "ALVO-0015",
+      "url_oficial": "https://github.com/RiieCco/owasp-bay-area",
+      "url_espelho": "https://github.com/TmmmmmR/python-app.git",
+      "commit": "a33452268ef7489ebeb44f65a1bae06eda2072ab",
+      "motivo": "fonte_primaria_indisponivel"
+    },
+    {
+      "alvo": "ALVO-0021",
+      "url_oficial": "https://github.com/kolega-ai/realvuln-Vulnerable-API",
+      "url_espelho": "https://github.com/michealkeines/Vulnerable-API.git",
+      "commit": "f7797964e1cd63a1cbcc8ced721fa41db674c8e0",
+      "motivo": "fonte_primaria_indisponivel"
+    },
+    {
+      "alvo": "ALVO-0023",
+      "url_oficial": "https://github.com/realvuln/Vulnerable-Python-Apps",
+      "url_espelho": "https://github.com/LinuxUser255/Vulnerable_Python_Apps.git",
+      "commit": "6336c77e6db523a5df34c4b628dff4159110797a",
+      "motivo": "fonte_primaria_indisponivel"
+    }
+  ]
+}

@@ -33,20 +33,22 @@ O corpus, o estado da fila e a coleta compartilham artefatos mutáveis ignorados
 **Depende de:** M2-T01.
 **Requisitos:** M2-03, M2-04.
 
-**Concluída quando:** somente arquivos regulares permitidos são copiados; exclusões são determinísticas; duas preparações produzem inventários idênticos; sobreposição, links e especiais são recusados; gate quick verde.
+**Concluída quando:** somente arquivos regulares permitidos são copiados; exclusões são determinísticas; duas preparações produzem inventários idênticos; sobreposição e especiais são recusados; links não são seguidos e somente o caminho Git explicitamente publicado na política pode ser omitido; gate quick verde.
 **Commit:** `feat(corpus): sanitizar alvos por política congelada`.
 
 **Evidência:** 29 testes de preparação e 171 testes no gate quick, todos aprovados em 2026-08-11.
 
-### M2-T03: Adquirir e validar o corpus completo
+### M2-T03: Adquirir e validar o corpus completo — CONCLUÍDA
 
 **O que:** adquirir RealVuln/26 commits, executar o validador oficial isolado, preparar/regenerar 26 alvos e publicar evidência do corpus.
 **Onde:** `scripts/adquirir-corpus.ps1`, `oracle/`, `benchmark/`, `alvos/corpus-v1/`, `evidencias/corpus-realvuln-v1/`, testes PowerShell/Docker.
 **Depende de:** M2-T02.
 **Requisitos:** M2-01, M2-02, M2-03, M2-04, M2-09.
 
-**Concluída quando:** 26 commits conferem; validador informa 26 arquivos/796 entradas sem erro; contagens 676/120 conferem; 26 regenerações são idênticas; nenhum alvo contém caminho proibido; resumo/hashes são auditáveis; gate build verde.
+**Concluída quando:** 26 commits conferem; validador informa 26 arquivos/817 entradas sem erro; contagens 697/120 conferem e a divergência do README é registrada; 26 regenerações são idênticas; nenhum alvo contém caminho proibido; resumo/hashes são auditáveis; gate build verde.
 **Commit:** `feat(corpus): adquirir e validar censo RealVuln v1`.
+
+**Evidência:** 26 alvos e suas regenerações idênticos; validador oficial `ALL PASSED` para 817 entradas; 697 vulnerabilidades/120 armadilhas; três espelhos e três links omitidos registrados; 193 testes Python, 15 testes de aquisição, 18 do wrapper, oito integrações Docker e fumaça aprovados no gate build de 2026-08-11.
 
 ### M2-T04: Implementar fila retomável
 
