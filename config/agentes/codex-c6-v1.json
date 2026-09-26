@@ -1,13 +1,16 @@
 {
   "schema_version": "1.0",
   "tipo": "configuracao-agente-ia",
-  "condicao": "C4",
+  "condicao": "C6",
   "produto": "Codex",
-  "perfil": "principal",
+  "perfil": "hibrido-sast",
   "modelo_solicitado": "GPT-5.6 Luna",
   "repeticoes": 3,
   "alvos": 26,
   "entrada": "alvos/corpus-v1/ALVO-NNNN",
+  "entrada_adicional": "execucoes/ia/alertas/ALVO-NNNN-alertas-sast.json",
+  "alertas_sast_lock": "config/agentes/alertas-sast-c6-v1.lock.json",
+  "alertas_sast_lock_sha256": "0bf2846dd4bd316852ae820525c7cde678eb34bfd0a8ea576af5c5b6112b2068",
   "prompt": "config/agentes/prompt-relatorio-ia-v1.txt",
   "prompt_sha256": "1d3e269aa36dd7f95e8d42923e19dfbc453b1b04e769fac45de82c323dc17c63",
   "schema_saida": "config/agentes/schema-relatorio-ia-v1.json",
@@ -23,7 +26,7 @@
     "sessao_nova_por_repeticao": true,
     "mesma_instrucao": true
   },
-  "metadados_obrigatorios": ["produto", "versao_cliente", "modelo_solicitado", "modelo_exibido", "modelo_verificacao", "sessao_id", "inicio_utc", "termino_utc", "duracao_segundos", "tokens_entrada", "tokens_saida", "tokens_total", "resposta_bruta_sha256"],
+  "metadados_obrigatorios": ["produto", "versao_cliente", "modelo_solicitado", "modelo_exibido", "modelo_verificacao", "sessao_id", "inicio_utc", "termino_utc", "duracao_segundos", "tokens_entrada", "tokens_saida", "tokens_total", "resposta_bruta_sha256", "alertas_sast_sha256"],
   "metadados_nulos_permitidos": ["modelo_exibido"],
-  "estado": "coleta-c4-concluida-auditoria-legado-pendente"
+  "estado": "aguarda-piloto"
 }

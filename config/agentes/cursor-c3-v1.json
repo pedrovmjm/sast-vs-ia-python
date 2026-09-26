@@ -9,7 +9,7 @@
   "alvos": 26,
   "entrada": "alvos/corpus-v1/ALVO-NNNN",
   "prompt": "config/agentes/prompt-relatorio-ia-v1.txt",
-  "prompt_sha256": "64ed79243a9d0dfcc7588a823b88612b04533438d969d2e7aa5978d25a238ca7",
+  "prompt_sha256": "1d3e269aa36dd7f95e8d42923e19dfbc453b1b04e769fac45de82c323dc17c63",
   "schema_saida": "config/agentes/schema-relatorio-ia-v1.json",
   "schema_saida_sha256": "6e0b2f29d5f3275d05fb52a2b207cfc8aa1a842264e5f53fd42d7cb600f3a189",
   "restricoes": {
@@ -23,6 +23,7 @@
     "sessao_nova_por_repeticao": true,
     "mesma_instrucao": true
   },
-  "metadados_obrigatorios": ["produto", "versao_cliente", "modelo_solicitado", "modelo_exibido", "sessao_id", "inicio_utc", "termino_utc", "duracao_segundos", "tokens_entrada", "tokens_saida", "tokens_total", "resposta_bruta_sha256"],
+  "metadados_obrigatorios": ["produto", "versao_cliente", "modelo_solicitado", "modelo_exibido", "modelo_verificacao", "sessao_id", "inicio_utc", "termino_utc", "duracao_segundos", "tokens_entrada", "tokens_saida", "tokens_total", "resposta_bruta_sha256"],
+  "metadados_nulos_permitidos": [],
   "estado": "aguarda-piloto"
 }
