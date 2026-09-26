@@ -3,7 +3,7 @@
 ## M3-T01 — Congelar protocolo e configurações
 
 - [ ] Revisar `prompt-relatorio-ia-v1.txt` e schema.
-- [ ] Registrar hashes de prompt, schema e configurações.
+- [x] Registrar hashes de prompt, schema e configurações.
 - [ ] Confirmar modelo principal GPT-5.6 Luna nos dois produtos.
 
 ## M3-T02 — Executar piloto
@@ -19,11 +19,15 @@
 - [ ] Executar três repetições por alvo, preservando falhas e tentativas.
 - [ ] Não misturar Cursor e Codex na mesma sessão ou manifesto.
 
+**Estado em 2026-09-26:** C4 possui 78 unidades válidas e zero chamadas pendentes após as novas tentativas. C3 ainda não foi executada. Setenta manifestos C4 preservam o formato anterior do harness; a compatibilidade desses metadados deve ser descrita na auditoria, sem reescrever os originais.
+
 ## M3-T04 — Preparar C5/C6
 
-- [ ] Gerar `alertas-sast.json` por alvo a partir de C1/C2, sem oracle.
-- [ ] Validar deduplicação e preservar origem Bandit/Semgrep.
-- [ ] Confirmar que C5/C6 recebem bytes idênticos para cada alvo.
+- [x] Gerar `alertas-sast.json` por alvo a partir de C1/C2, sem oracle.
+- [x] Validar deduplicação e preservar origem Bandit/Semgrep.
+- [x] Confirmar que C5/C6 recebem bytes idênticos para cada alvo.
+
+**Estado em 2026-09-26:** 26 arquivos, 1.410 alertas após deduplicação e hashes congelados em `config/agentes/alertas-sast-c6-v1.lock.json`. O lote C6 completo planeja 78 chamadas; nenhuma foi executada.
 
 ## M3-T05 — Executar C5/C6
 

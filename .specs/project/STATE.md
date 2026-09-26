@@ -2,10 +2,28 @@
 
 **Freeze M2-T06 (2026-08-11):** configuracao congelada em `evidencias/coleta-c1-c2/configuracao.json`, com imagem `sha256:3aab47b08e5defe0a01b869d710d3b8fdfe315673c73560bcb7b4c9b95a8cd51`; o hash canonico e o commit controlador estao registrados no proprio arquivo. Gate build verde e nenhuma fila/saida de coleta criada no freeze.
 
-**Última atualização:** 2026-08-11T14:30:00-03:00
-**Trabalho atual:** corpus-fila-coleta-c1-c2 — M2-T08 (auditoria)
+**Última atualização:** 2026-09-26T18:55:00-03:00
+**Trabalho atual:** agentes-cursor-codex-c3-c6 — preparação do piloto C6
 
 **Coleta M2-T07 concluida (2026-08-11):** fila com 52 itens terminais (52 concluidas e 0 falhas), 26 pares C1/C2; as nove falhas iniciais de formato Bandit foram corrigidas e reexecutadas. Auditoria em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`.
+
+### AD-014: Corrigir C4 por revalidação e novas tentativas (2026-09-17)
+
+**Decisão:** preservar todas as primeiras tentativas de C4, revalidar a resposta bruta com o validador atual e criar `attempt-002` somente para as oito unidades inválidas. Quando o JSONL do Codex não expuser o modelo efetivamente servido, `modelo_exibido` permanece `null` e `modelo_verificacao` registra `nao_exposto_jsonl_codex`.
+
+**Razão:** dois relatórios referenciavam arquivos inexistentes e outros seis ultrapassavam o limite real de linhas do arquivo. Inferir um modelo não observado criaria evidência falsa.
+
+**Trade-off:** as novas tentativas terão hash de configuração diferente por causa da correção do harness; prompt, schema, modelo solicitado, alvo e repetição permanecem congelados e comparáveis.
+
+**Impacto:** as oito unidades foram reexecutadas e o plano atual confirma 78 unidades válidas e zero chamadas pendentes. Nenhuma evidência antiga foi sobrescrita. Os 70 manifestos reutilizados permanecem no formato anterior do harness (`cli_versao`, hash da resposta dentro de `artefatos_sha256` e ausência de `modelo_verificacao`); a auditoria deve normalizar essa leitura sem alterar os arquivos históricos.
+
+### AD-015: Congelar alertas C1/C2 antes do piloto C6 (2026-09-26)
+
+**Decisão:** gerar a união deduplicada de C1/C2 para os 26 alvos, congelar SHA-256, contagens e tentativas-fonte em `config/agentes/alertas-sast-c6-v1.lock.json` e exigir correspondência com o lock tanto no planejamento quanto na execução de C6.
+
+**Razão:** C6 deve receber exatamente os alertas produzidos pela coleta SAST já encerrada. Aceitar um arquivo regenerado com conteúdo divergente confundiria o efeito do Codex com mudança de entrada.
+
+**Impacto:** foram preparados 26 arquivos com 1.410 alertas. O lote C6 planeja 78 tarefas e não reutiliza uma unidade concluída se o hash dos alertas diferir. Nenhuma chamada externa de C6 foi feita.
 
 ### AD-013: Reavaliação do risco do host M2 autorizada (2026-08-11)
 
@@ -105,7 +123,9 @@
 
 ## Bloqueadores ativos
 
-Nenhum bloqueador técnico impede o primeiro marco.
+Nenhum bloqueador técnico impede o piloto C6. A chamada externa permanece condicionada a `-ConfirmarExecucao` e ainda não foi autorizada neste checkpoint.
+
+C4 está operacionalmente concluída. Seu fechamento documental deve explicitar a compatibilidade dos 70 manifestos legados; não é necessário repetir as 70 análises para acrescentar campos que podem ser auditados nos artefatos preservados.
 
 ## Lições aprendidas
 

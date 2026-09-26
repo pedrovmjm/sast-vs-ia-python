@@ -1,7 +1,7 @@
 # Especificação: agentes Cursor/Codex e condições C3--C6
 
-**Status:** preparada para estudo-piloto
-**Dependências:** M2 concluído; `config/agentes/` versionado; disponibilidade dos produtos ainda deve ser verificada no piloto.
+**Status:** em execução; C4 coletada e C6 preparada para piloto
+**Dependências:** M2 concluído; `config/agentes/` versionável; disponibilidade do Cursor ainda deve ser verificada no piloto. A coleta C4 possui 78 unidades válidas e zero chamadas pendentes. Os 26 arquivos de alertas de C6 foram gerados e congelados por hash.
 
 ## Objetivo
 
