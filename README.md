@@ -34,6 +34,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/executar-fumaca-real
 
 Consulte `docs/EXECUCAO.md` para preparação completa, artefatos e controles. A proveniência, licenças e riscos conhecidos estão em `docs/FONTES_E_INTEGRIDADE.md`.
 
+## Documentação
+
+Comece por [`docs/README.md`](docs/README.md), que é o índice e a visão geral do artefato:
+
+- [`docs/ESTRUTURA.md`](docs/ESTRUTURA.md): o que é cada pasta, quem a gera e o que pode ser apagado;
+- [`docs/ARTEFATOS_JSON.md`](docs/ARTEFATOS_JSON.md): o significado de cada arquivo `.json`, campo a campo;
+- [`docs/EXECUCAO-IA.md`](docs/EXECUCAO-IA.md): configuração e execução separada dos cenários C3–C6 com Cursor e Codex;
+- [`docs/AUDITORIA-CAPITULO-06.md`](docs/AUDITORIA-CAPITULO-06.md) e [`docs/AUDITORIA-CAPITULO-07.md`](docs/AUDITORIA-CAPITULO-07.md): onde os capítulos divergem do repositório atual.
+
 ## Estrutura essencial
 
 - `config/`: lock de fontes e exceção auditável do host;
@@ -44,4 +53,13 @@ Consulte `docs/EXECUCAO.md` para preparação completa, artefatos e controles. A
 - `evidencias/`: manifestos e resumos pequenos, próprios para auditoria;
 - `benchmark/`, `alvos/` e `resultados/`: terceiros ou artefatos gerados, ignorados pelo Git.
 
-O corpus completo, o oracle e a coleta principal ainda pertencem aos marcos seguintes.
+## Estado atual
+
+O corpus dos 26 alvos foi adquirido e validado, e a coleta censitária de C1 e C2 foi concluída em 11 de agosto de 2026: 52 execuções terminais, 26 pares C1/C2, nenhuma falha na fila final e 11 tentativas malsucedidas preservadas em disco. A auditoria de fechamento está em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`.
+
+As condições de IA estão especificadas em `config/agentes/`. A coleta C4 foi
+executada em 17 de setembro de 2026 e possui 78 unidades válidas, com todas as
+tentativas anteriores preservadas. C3, C5 e C6 ainda não foram coletadas. Para
+C6, os 26 arquivos de alertas C1/C2 já foram gerados e congelados por hash; o
+próximo passo é o piloto `C6-ALVO-0001-R01`. A pontuação contra o oracle e as
+métricas do Capítulo 8 pertencem ao marco seguinte.
