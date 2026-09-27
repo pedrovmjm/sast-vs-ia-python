@@ -1,10 +1,14 @@
-# Harness experimental do TCC
+# SAST tradicional vs. desenvolvimento assistido por IA
 
-Este repositório contém o texto do TCC e o harness usado para comparar seis
-condições de análise de segurança sobre 26 aplicações Python do RealVuln v1.0.
-As coletas C1–C6 estão concluídas. As saídas brutas permanecem locais e
-imutáveis; o Git guarda código, contratos congelados e evidências compactas de
-auditoria.
+Infraestrutura experimental do TCC **“Análise Comparativa entre SAST
+Tradicional e Ferramentas Empresariais de Desenvolvimento Assistido por IA para
+Detecção de Vulnerabilidades em Aplicações Python”**.
+
+O experimento compara seis condições de análise de segurança sobre 26
+aplicações Python do RealVuln v1.0. As coletas C1–C6 estão concluídas. As saídas
+brutas permanecem locais e imutáveis; o Git guarda código, contratos congelados
+e evidências compactas de auditoria. Os fontes da monografia ficam separados em
+`monografia/`, onde podem ser substituídos pela versão atualizada.
 
 O host usa Git, PowerShell, Docker Desktop e as CLIs autenticadas de Cursor e
 Codex. Python, Bandit e Semgrep são executados na imagem
@@ -38,7 +42,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-executores-ia.p
 - [`docs/EXECUCAO-IA.md`](docs/EXECUCAO-IA.md): preparação, planejamento e
   execução de C3–C6;
 - [`docs/ARTEFATOS_JSON.md`](docs/ARTEFATOS_JSON.md): contratos e artefatos
-  produzidos pelo harness;
+  produzidos pela infraestrutura experimental;
 - [`docs/FONTES_E_INTEGRIDADE.md`](docs/FONTES_E_INTEGRIDADE.md): proveniência,
   licenças e controles de integridade.
 
@@ -50,6 +54,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-executores-ia.p
 - `scripts/`: gates, testes de integração e executores C1–C6;
 - `tests/`: testes unitários e fixtures próprias;
 - `evidencias/`: inventários e auditorias pequenas, próprias para Git;
+- `monografia/`: fontes LaTeX da monografia, separados do artefato experimental;
 - `benchmark/`, `alvos/`, `oracle/`, `execucoes/` e `resultados/`: dados de
   terceiros ou saídas geradas, mantidos localmente e ignorados pelo Git.
 
@@ -80,6 +85,4 @@ TP, FP, FN, TN e métricas derivadas pertencem à etapa de avaliação.
 
 O repositório remoto recebe somente o necessário para reprodução e auditoria.
 Saídas brutas, corpus, oracle, regras adquiridas e artefatos de build continuam
-locais por volume, licença, cegamento ou possibilidade de regeneração. O
-histórico de planejamento (`.specs/`), a skill usada para produzi-lo e auditorias
-editoriais transitórias não fazem parte do artefato final.
+locais por volume, licença, cegamento ou possibilidade de regeneração.
