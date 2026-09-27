@@ -1,0 +1,1 @@
+{"codigo_saida":1,"codigos_saida_esperados":[0,1],"comando":["/usr/local/bin/bandit","--recursive","/entrada","--format","json","--output","/saida/bruto.json.part"],"duracao_monotonica_segundos":0.679734212,"inicio_utc":"2026-08-11T15:16:14.948301Z","termino_utc":"2026-08-11T15:16:15.628059Z","timeout":false,"timeout_segundos":900}

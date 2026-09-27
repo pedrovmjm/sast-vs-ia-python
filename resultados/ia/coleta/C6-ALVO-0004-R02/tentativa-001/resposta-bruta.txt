@@ -1,0 +1,119 @@
+[
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 39,
+    "linha_final": 39,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O parâmetro HTTP id é concatenado diretamente à consulta SQL em SELECT ... WHERE id=, permitindo que um atacante autenticado ou não, conforme a exposição da rota, altere a consulta e leia dados arbitrários da tabela users.",
+    "recomendacao": "Use consulta parametrizada, por exemplo, WHERE id = ?, passando o valor de id como parâmetro."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 72,
+    "linha_final": 72,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro msg controlado pelo cliente é retornado sem escape e inserido no conteúdo HTML da resposta, permitindo XSS refletido quando a vítima acessa uma URL preparada.",
+    "recomendacao": "Escape msg no contexto HTML antes de inseri-lo na resposta."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 95,
+    "linha_final": 95,
+    "cwe": "CWE-79",
+    "severidade": "alta",
+    "descricao": "Comentários controlados pelo cliente são armazenados no banco e posteriormente inseridos sem escape em células HTML, permitindo XSS armazenado contra usuários que visualizam o guestbook.",
+    "recomendacao": "Escape os comentários ao renderizá-los em HTML."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 122,
+    "linha_final": 122,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro path é interpolado diretamente dentro de uma string JavaScript delimitada por aspas simples. Um atacante pode encerrá-la e inserir código JavaScript executado no navegador.",
+    "recomendacao": "Não interpole entrada em JavaScript; serialize o valor com json.dumps ou valide-o contra uma allowlist de destinos."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 165,
+    "linha_final": 170,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "Quando o risco está configurado como 3, o parâmetro domain é concatenado em um comando shell e executado com shell=True. Um atacante pode fornecer metacaracteres para executar comandos arbitrários no processo do servidor.",
+    "recomendacao": "Execute host/nslookup com shell=False e argumentos em lista, validando domain como nome de domínio permitido."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 199,
+    "linha_final": 199,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "Quando o risco é 3, o valor object fornecido pelo cliente é decodificado e desserializado com pickle.loads. Um payload pickle especialmente construído pode executar código arbitrário no servidor.",
+    "recomendacao": "Substitua pickle por um formato não executável, como JSON, e valide rigorosamente a estrutura recebida."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 211,
+    "linha_final": 211,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O parâmetro path controla diretamente o caminho passado a open após apenas uma chamada a abspath, sem confinamento a um diretório permitido. Caminhos relativos com ../ ou caminhos absolutos podem permitir leitura arbitrária de arquivos acessíveis ao processo.",
+    "recomendacao": "Restrinja o caminho a um diretório base com resolução realpath e verificação de prefixo, ou use uma allowlist de arquivos."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 213,
+    "linha_final": 213,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "Quando path contém ://, seu valor é passado diretamente a urllib.request.urlopen. Um atacante pode fazer o servidor realizar requisições para destinos arbitrários, inclusive serviços internos e esquemas como file://, expondo respostas ao cliente.",
+    "recomendacao": "Aceite somente esquemas e destinos explicitamente permitidos; bloqueie redes internas e esquemas locais."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 285,
+    "linha_final": 285,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A autenticação aceita as credenciais fixas dsvpwa/dsvpwa e, em caso de sucesso, associa a sessão ao usuário. Qualquer pessoa que conheça essas credenciais pode obter uma sessão autenticada.",
+    "recomendacao": "Remova as credenciais fixas e exija credenciais configuradas de forma segura, com senha armazenada usando hash adequado."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": 289,
+    "linha_final": 289,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O valor password, controlado pelo cliente, é concatenado diretamente à consulta SQL de autenticação. Um atacante pode alterar a condição da consulta e contornar a autenticação ou acessar outra conta.",
+    "recomendacao": "Use consulta parametrizada para username e password e compare senhas com hashes."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": null,
+    "linha_final": null,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A rota de atualização de e-mail altera dados da conta autenticada mediante uma requisição GET contendo apenas o cookie de sessão; não há token anti-CSRF nem outra validação de intenção. Um site externo pode induzir o navegador de uma vítima autenticada a enviar a alteração.",
+    "recomendacao": "Use POST para a alteração e valide um token anti-CSRF associado à sessão."
+  },
+  {
+    "arquivo": "dsvpwa/attacks.py",
+    "linha_inicial": null,
+    "linha_final": null,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A exclusão da conta é realizada por GET quando o parâmetro delete está presente, usando apenas o cookie de sessão como autorização. Uma página externa pode induzir uma vítima autenticada a enviar a requisição destrutiva.",
+    "recomendacao": "Exija POST ou DELETE com token anti-CSRF e confirmação apropriada antes de remover a conta."
+  },
+  {
+    "arquivo": "dsvpwa/handlers.py",
+    "linha_inicial": 237,
+    "linha_final": 237,
+    "cwe": "CWE-1021",
+    "severidade": "media",
+    "descricao": "As respostas não definem X-Frame-Options nem frame-ancestors na política CSP, enquanto a aplicação expõe operações autenticadas e destrutivas. Um site de terceiro pode enquadrar a aplicação e induzir cliques da vítima.",
+    "recomendacao": "Envie Content-Security-Policy com frame-ancestors 'none' ou uma allowlist restrita, e/ou X-Frame-Options apropriado."
+  }
+]

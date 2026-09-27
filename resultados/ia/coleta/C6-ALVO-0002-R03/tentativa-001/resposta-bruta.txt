@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 9,
+    "linha_final": 9,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "run_cmd executa os comandos recebidos por os.popen com shell. O fluxo alcança essa função a partir de ImportPaste, que concatena host, porta, caminho e esquema controlados pelo cliente, e de system_debug, cujo argumento cmd também é controlado pelo cliente. Um atacante pode injetar metacaracteres de shell e executar comandos com os privilégios do processo.",
+    "recomendacao": "Substitua os comandos construídos por chamadas subprocess.run com lista de argumentos e shell=False; para ImportPaste, valide separadamente esquema, host, porta e caminho usando uma allowlist."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 21,
+    "linha_final": 21,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "get_identity decodifica o token fornecido pelo argumento token de me com verify_signature=False e verify_exp=False. O atacante pode fabricar um JWT com identity arbitrária, que é usado para selecionar o usuário e para permitir a resolução da senha quando a identidade é admin, resultando em falsificação de identidade e exposição de credenciais.",
+    "recomendacao": "Valide a assinatura e a expiração do JWT com a chave configurada antes de usar identity, e aplique autorização server-side ao usuário identificado."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 25,
+    "linha_final": 26,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "save_file concatena WEB_UPLOADDIR com filename controlado pela mutação UploadPaste e abre o caminho resultante para escrita. Sequências como ../ permitem escapar do diretório de upload e criar ou sobrescrever arquivos acessíveis ao processo.",
+    "recomendacao": "Use um nome gerado pelo servidor ou secure_filename, resolva o caminho com pathlib e confirme que o caminho final permanece dentro de WEB_UPLOADDIR antes de abrir o arquivo."
+  },
+  {
+    "arquivo": "core/security.py",
+    "linha_inicial": 13,
+    "linha_final": 13,
+    "cwe": "CWE-400",
+    "severidade": "media",
+    "descricao": "system_update chama simulate_load, que mantém a requisição bloqueada por dezenas de segundos com time.sleep. O campo GraphQL é acessível sem autenticação visível; múltiplas requisições concorrentes podem consumir workers e causar indisponibilidade.",
+    "recomendacao": "Remova o atraso da requisição síncrona e, se a simulação for necessária, execute-a em tarefa limitada por fila, com autenticação, rate limiting e timeout."
+  },
+  {
+    "arquivo": "core/view_override.py",
+    "linha_inicial": 53,
+    "linha_final": 55,
+    "cwe": "CWE-209",
+    "severidade": "media",
+    "descricao": "format_custom_error inclui stack trace, traceback de debug e caminho completo do arquivo na resposta GraphQL para erros. Um cliente que provoque erro no endpoint GraphiQL pode obter informações internas sobre código, caminhos e contexto de execução.",
+    "recomendacao": "Retorne somente mensagens de erro genéricas em produção e registre detalhes exclusivamente no servidor."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 213,
+    "linha_final": 214,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "ImportPaste constrói uma URL com esquema, host, porta e caminho fornecidos pelo cliente e faz curl a partir do servidor. Um atacante pode induzir o servidor a acessar serviços internos ou outros destinos arbitrários e armazenar a resposta no banco.",
+    "recomendacao": "Restrinja destinos por allowlist, aceite apenas HTTPS quando aplicável, bloqueie endereços privados e de loopback após resolução DNS e use um cliente HTTP sem shell com timeouts."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 247,
+    "linha_final": 253,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "As mutações createUser, createPaste, editPaste, deletePaste, uploadPaste, importPaste e login são registradas no schema sem controles de autorização, e os resolvers de operações sensíveis como deleteAllPastes, audits, users e readAndBurn também não verificam identidade ou permissões. Um cliente não autenticado pode alterar, excluir ou consultar dados conforme os argumentos fornecidos.",
+    "recomendacao": "Exija autenticação e autorização por operação e por objeto antes de executar cada resolver, especialmente para alterações, exclusões, auditoria e dados de usuários."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 320,
+    "linha_final": 320,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O argumento filter de pastes é interpolado diretamente em uma expressão SQL passada a text(). Um atacante pode inserir sintaxe SQL e alterar a cláusula WHERE, obtendo registros adicionais ou manipulando a consulta.",
+    "recomendacao": "Substitua a SQL concatenada por expressões SQLAlchemy parametrizadas, como filtros com igualdade, or_ e bind parameters."
+  },
+  {
+    "arquivo": "setup.py",
+    "linha_inicial": 49,
+    "linha_final": 50,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A inicialização cria contas utilizáveis com credenciais previsíveis: random_password sempre retorna changeme para o administrador, e o operador recebe password123. Como login aceita essas credenciais e operações sensíveis não possuem autorização adicional, qualquer atacante que conheça os valores pode autenticar-se como conta privilegiada.",
+    "recomendacao": "Não inicialize contas com senhas fixas; gere credenciais aleatórias fora do código, exija troca no primeiro acesso e armazene somente hashes de senha."
+  }
+]

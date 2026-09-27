@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 11,
+    "linha_final": 11,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada para assinar a sessão Flask é literal e previsível. Qualquer atacante que obtenha o código pode forjar cookies de sessão e assumir identidades autenticadas, sujeito ao funcionamento padrão do Flask-Login.",
+    "recomendacao": "Carregue uma chave criptograficamente aleatória a partir de um segredo externo à aplicação e altere a chave atualmente exposta."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 31,
+    "linha_final": 33,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "request.path é controlável pelo cliente e é interpolado diretamente em render_template_string. Um atacante pode enviar uma URL 404 contendo expressões Jinja, que serão avaliadas no servidor, possibilitando SSTI e potencial execução de código conforme o ambiente Jinja.",
+    "recomendacao": "Não concatene entrada da requisição em templates; passe o caminho como variável para um template estático e mantenha o autoescape habilitado."
+  },
+  {
+    "arquivo": "db_seed.py",
+    "linha_inicial": 15,
+    "linha_final": 17,
+    "cwe": "CWE-798",
+    "severidade": "critica",
+    "descricao": "Na inicialização de um banco sem usuários, é criado um usuário administrador com email e senha fixos e conhecidos no código. Se a inicialização ocorrer em ambiente acessível, qualquer atacante pode autenticar como administrador usando essas credenciais.",
+    "recomendacao": "Não crie credenciais administrativas fixas; gere uma senha inicial aleatória e exija configuração segura e rotação no primeiro acesso."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 33,
+    "linha_final": 34,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "search_param vem diretamente do parâmetro HTTP search e é interpolado em uma expressão SQL usada por sqlalchemy.text. Um usuário autenticado pode quebrar a string SQL e alterar a condição da consulta, potencialmente obtendo notas fora do escopo pretendido.",
+    "recomendacao": "Use operadores SQLAlchemy ou parâmetros vinculados, por exemplo text(\"text LIKE :pattern\").bindparams(pattern=f\"%{search_param}%\")."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 45,
+    "linha_final": 47,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O user_id da URL controla diretamente a consulta em /accounts/<user_id>/notes, sem verificar se corresponde a current_user.id ou a uma autorização administrativa. Qualquer usuário autenticado pode consultar notas de outros usuários, inclusive privadas.",
+    "recomendacao": "Ignore o identificador fornecido pelo cliente e consulte apenas current_user.id, ou aplique uma verificação explícita de autorização antes da consulta."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 76,
+    "linha_final": 81,
+    "cwe": "CWE-269",
+    "severidade": "critica",
+    "descricao": "Todos os campos do AccountForm, incluindo is_admin, são copiados para current_user.__dict__ e persistidos por session.merge. Um usuário autenticado pode enviar is_admin=true e elevar a própria conta a administrador.",
+    "recomendacao": "Use uma allowlist explícita de campos editáveis e nunca aceite is_admin em uma atualização de conta comum; alterações administrativas devem exigir autorização separada."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 118,
+    "linha_final": 118,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O cookie preferences é controlado pelo cliente, apenas codificado em Base64 e desserializado com pickle.loads em before_request. Um atacante pode enviar um payload pickle malicioso e obter execução arbitrária de código no processo da aplicação antes do tratamento da requisição.",
+    "recomendacao": "Substitua pickle por JSON validado ou por valores server-side assinados, rejeitando qualquer estrutura que não corresponda ao esquema esperado."
+  },
+  {
+    "arquivo": "routes/notes.py",
+    "linha_inicial": 43,
+    "linha_final": 47,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O note_id fornecido pelo cliente é usado para buscar e excluir a nota sem verificar note.user_id == current_user.id nem autorização administrativa. Qualquer usuário autenticado pode excluir notas de outros usuários se souber o identificador.",
+    "recomendacao": "Busque a nota combinando o identificador com current_user.id, ou valide explicitamente a autorização antes de executar session.delete."
+  },
+  {
+    "arquivo": "utils/profile_image.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "A URL fornecida pelo usuário é passada diretamente a urllib.request.urlopen. Um usuário autenticado pode fazer o servidor realizar requisições para destinos arbitrários, incluindo serviços internos e esquemas como file, sem allowlist de protocolos ou hosts.",
+    "recomendacao": "Permita somente HTTPS e hosts aprovados, valide o destino após resolução DNS e bloqueie endereços locais, privados e esquemas não HTTP."
+  }
+]

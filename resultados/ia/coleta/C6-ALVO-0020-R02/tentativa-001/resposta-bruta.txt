@@ -1,0 +1,65 @@
+[
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 182,
+    "linha_final": 182,
+    "cwe": "CWE-89",
+    "severidade": "media",
+    "descricao": "O parâmetro username controlado pelo cliente é interpolado diretamente na consulta SELECT. Um atacante pode encerrar o literal e alterar a cláusula WHERE, manipulando a consulta e obtendo dados de outros usuários.",
+    "recomendacao": "Use consultas parametrizadas com placeholder para o valor de username."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 187,
+    "linha_final": 187,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "A senha fornecida pelo cliente é armazenada como MD5 sem salt, permitindo recuperação offline por tabelas pré-computadas ou tentativa em alta velocidade caso o banco seja obtido.",
+    "recomendacao": "Armazene senhas com um KDF apropriado, como Argon2id, scrypt, bcrypt ou PBKDF2, usando salt aleatório por senha."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 188,
+    "linha_final": 204,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Todos os campos do objeto User são controlados pelo cliente e interpolados diretamente em um INSERT SQL. Valores contendo aspas e sintaxe SQL podem alterar a instrução e manipular os dados persistidos.",
+    "recomendacao": "Substitua a interpolação por uma instrução parametrizada para todos os valores inseridos."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 225,
+    "linha_final": 225,
+    "cwe": "CWE-943",
+    "severidade": "media",
+    "descricao": "O JSON enviado pelo cliente é usado diretamente como consulta no banco NoSQL. Um atacante pode fornecer operadores ou critérios de consulta não previstos para ampliar ou alterar a seleção de registros, expondo dados de usuários.",
+    "recomendacao": "Defina um esquema de consulta permitido, rejeite operadores e campos não autorizados e construa a consulta a partir de uma allowlist."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 231,
+    "linha_final": 231,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O username controlado pelo cliente é interpolado diretamente em uma instrução DELETE. Um valor especialmente construído pode alterar a cláusula WHERE e excluir múltiplos ou todos os usuários.",
+    "recomendacao": "Use DELETE parametrizado e valide o identificador conforme o formato esperado."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 238,
+    "linha_final": 238,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O endereço fornecido no objeto User é inserido sem parametrização na instrução DELETE. O cliente pode injetar expressão SQL e modificar a operação de exclusão.",
+    "recomendacao": "Use uma instrução DELETE parametrizada para o endereço e valide o campo antes da execução."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 249,
+    "linha_final": 253,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /reset permite que qualquer cliente acione a remoção dos bancos SQL e NoSQL e a reinicialização dos dados, sem autenticação ou autorização visível. Um atacante remoto pode apagar o estado persistido e causar indisponibilidade ou perda de dados.",
+    "recomendacao": "Restrinja o endpoint a administradores autenticados e autorizados; se não for necessário em produção, remova-o ou desabilite-o."
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 11,
+    "linha_final": 11,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada pelo Flask para assinar sessões é um valor literal previsível no código. Um atacante que conheça o código pode forjar cookies de sessão e assumir identidades autenticadas, com impacto potencial sobre contas e autorização.",
+    "recomendacao": "Carregue uma chave aleatória e exclusiva de um segredo externo à aplicação, com rotação quando necessário."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 31,
+    "linha_final": 32,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "request.path é controlável pelo atacante e é interpolado diretamente em render_template_string. Em uma resposta 404, expressões Jinja inseridas no caminho podem ser avaliadas como template, permitindo injeção de template no servidor e potencial execução de código conforme o ambiente.",
+    "recomendacao": "Não compile entrada controlada pelo usuário como template; passe a mensagem como variável para um template estático e aplique escape apropriado."
+  },
+  {
+    "arquivo": "db_seed.py",
+    "linha_inicial": 9,
+    "linha_final": 9,
+    "cwe": "CWE-798",
+    "severidade": "media",
+    "descricao": "Um código de registro fixo é inserido no banco de dados. Qualquer atacante que obtenha o código-fonte pode utilizá-lo no endpoint público de cadastro para criar contas, contornando a finalidade de um código de convite secreto.",
+    "recomendacao": "Gere códigos imprevisíveis por operação administrativa e não inclua códigos válidos fixos no código-fonte."
+  },
+  {
+    "arquivo": "db_seed.py",
+    "linha_inicial": 18,
+    "linha_final": 19,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A conta administrativa é criada com a senha literal conhecida admin. Após a inicialização, um atacante pode autenticar diretamente como administrador usando essas credenciais.",
+    "recomendacao": "Remova credenciais administrativas padrão e exija uma senha aleatória definida por segredo externo durante a implantação."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 33,
+    "linha_final": 33,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O parâmetro search da query string é concatenado em uma expressão SQL passada a text. Um atacante autenticado pode injetar SQL para alterar o predicado e obter notas de outros usuários, inclusive privadas, ou modificar o comportamento da consulta.",
+    "recomendacao": "Use comparação parametrizada do SQLAlchemy, como Note.text.like(f'%{search_param}%'), ou bindparam para valores em SQL textual."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 46,
+    "linha_final": 47,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O endpoint autenticado /accounts/<user_id>/notes consulta notas usando apenas o user_id fornecido na URL e não verifica se ele pertence ao usuário atual nem se as notas são públicas. Qualquer usuário autenticado pode ler notas privadas de outras contas.",
+    "recomendacao": "Restrinja a consulta a current_user.id ou autorize explicitamente o acesso ao proprietário; filtre notas privadas quando o solicitante não tiver permissão."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 62,
+    "linha_final": 67,
+    "cwe": "CWE-915",
+    "severidade": "alta",
+    "descricao": "Dados arbitrários do AccountForm são copiados para current_user, incluindo is_admin, e o objeto é persistido. Um usuário autenticado pode enviar is_admin=true e elevar a própria conta a administrador.",
+    "recomendacao": "Defina explicitamente os campos editáveis pelo usuário e exclua is_admin; alterações de privilégios devem ser realizadas somente por uma rotina administrativa autorizada."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 101,
+    "linha_final": 102,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O cookie preferences é controlável pelo cliente, apenas codificado em Base64 e desserializado com pickle.loads. Um atacante pode enviar um pickle malicioso e obter execução de código no processo do servidor ao processar qualquer requisição.",
+    "recomendacao": "Substitua pickle por um formato de dados não executável, como JSON, e valide os campos; se o cookie precisar ser confiável, use assinatura e não desserialize objetos arbitrários."
+  },
+  {
+    "arquivo": "routes/notes.py",
+    "linha_inicial": 43,
+    "linha_final": 48,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint de exclusão aceita qualquer note_id e verifica apenas se o usuário está autenticado. Não há validação de que a nota pertença a current_user nem autorização administrativa; qualquer usuário autenticado pode excluir notas de outras contas.",
+    "recomendacao": "Busque a nota com uma condição de propriedade, como Note.id == note_id e Note.user_id == current_user.id, e permita exceção apenas para administradores autorizados."
+  },
+  {
+    "arquivo": "utils/profile_image.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "A URL fornecida pelo usuário no formulário de imagem chega a urlopen sem allowlist de esquema, host ou bloqueio de endereços internos. Um atacante autenticado pode induzir o servidor a realizar requisições para serviços internos ou outros destinos acessíveis pelo servidor.",
+    "recomendacao": "Permita somente esquemas e hosts aprovados, resolva e bloqueie endereços privados e de loopback, limite redirecionamentos e aplique timeouts e limites de resposta."
+  }
+]

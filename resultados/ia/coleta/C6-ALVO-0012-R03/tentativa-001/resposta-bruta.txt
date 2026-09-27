@@ -1,0 +1,56 @@
+[
+  {
+    "arquivo": "badguys/settings.py",
+    "linha_inicial": 10,
+    "linha_final": 10,
+    "cwe": "CWE-209",
+    "severidade": "media",
+    "descricao": "DEBUG está fixado como True e a rota pública misconfiguration/boom provoca uma exceção não tratada; em uma execução acessível, o Django pode retornar a página detalhada de erro com informações internas da aplicação.",
+    "recomendacao": "Defina DEBUG como False fora de desenvolvimento e mantenha páginas de erro genéricas em produção."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 39,
+    "linha_final": 51,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "O parâmetro GET p controla diretamente o caminho fornecido a os.path.join() e open(). Um atacante pode usar componentes de travessia ou caminho absoluto para ler arquivos arbitrários acessíveis ao processo, retornados na resposta HTTP.",
+    "recomendacao": "Resolva o caminho final e verifique que ele permanece dentro de um diretório fixo de imagens, preferencialmente usando uma allowlist de nomes de arquivo."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 72,
+    "linha_final": 76,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O valor controlado pelo atacante em request.POST['first_name'] é decodificado de Base64 e executado com exec(), incluindo a ramificação de compatibilidade. Um POST para a rota pode executar código Python arbitrário com os privilégios do processo.",
+    "recomendacao": "Remova a execução dinâmica e substitua-a por uma operação fixa que valide e processe somente os dados esperados."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 129,
+    "linha_final": 140,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O userid fornecido na URL seleciona diretamente qualquer entrada do dicionário users, sem autenticação ou autorização. O atacante pode consultar dados de outros usuários e, via POST, alterar seus nomes e e-mails.",
+    "recomendacao": "Associe o objeto ao usuário autenticado e verifique autorização antes de exibi-lo ou modificá-lo; não use um identificador fornecido pelo cliente como única referência de autorização."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 154,
+    "linha_final": 157,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A função renderiza a página administrativa quando o parâmetro GET action possui o valor admin, sem qualquer verificação de autenticação ou autorização. Qualquer visitante pode selecionar esse fluxo privilegiado.",
+    "recomendacao": "Exija autenticação e uma verificação explícita de permissão administrativa antes de renderizar a página."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 177,
+    "linha_final": 178,
+    "cwe": "CWE-601",
+    "severidade": "media",
+    "descricao": "O parâmetro GET url é passado diretamente a redirect(). Um atacante pode criar um link para a aplicação que redireciona o navegador da vítima para um domínio externo controlado por ele.",
+    "recomendacao": "Aceite somente destinos locais ou valide o destino contra uma allowlist de esquemas e hosts permitidos."
+  }
+]

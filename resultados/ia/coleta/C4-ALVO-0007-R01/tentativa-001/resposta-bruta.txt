@@ -1,0 +1,74 @@
+[
+  {
+    "arquivo": "sqli/app.py",
+    "linha_inicial": 27,
+    "linha_final": 27,
+    "cwe": "CWE-352",
+    "severidade": "baixa",
+    "descricao": "O middleware de CSRF está comentado e não é registrado na aplicação. Assim, uma página externa pode induzir um navegador autenticado a enviar POST para /logout/, removendo o user_id da sessão e causando logout forçado.",
+    "recomendacao": "Habilitar e registrar csrf_middleware antes de aceitar requisições POST que alterem estado."
+  },
+  {
+    "arquivo": "sqli/app.py",
+    "linha_inicial": 32,
+    "linha_final": 35,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "A aplicação configura o Jinja2 com autoescape=False. Valores controláveis por usuários são persistidos por estudantes, cursos e avaliações e posteriormente entregues aos templates; se esses campos forem interpolados, HTML e JavaScript serão renderizados sem escape, permitindo XSS armazenado. A exploração requer que o atacante consiga inserir conteúdo e que outro usuário visualize o registro.",
+    "recomendacao": "Remover autoescape=False e habilitar escape automático para templates HTML; usar escape contextual adicional quando necessário."
+  },
+  {
+    "arquivo": "sqli/dao/student.py",
+    "linha_inicial": 42,
+    "linha_final": 43,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O nome recebido em sqli/views.py é incorporado diretamente à instrução SQL por interpolação de string antes de cur.execute. Um atacante pode enviar um nome com sintaxe SQL e alterar a consulta, desde que consiga acessar o POST de criação de estudantes.",
+    "recomendacao": "Usar parâmetros do driver, por exemplo INSERT ... VALUES (%(name)s), passando name em um dicionário separado, sem interpolação da consulta."
+  },
+  {
+    "arquivo": "sqli/dao/user.py",
+    "linha_inicial": 40,
+    "linha_final": 41,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "As senhas são comparadas usando MD5 simples e sem salt. Se um atacante obtiver os valores pwd_hash armazenados, poderá realizar ataques offline de dicionário ou força bruta com baixo custo e recuperar senhas reutilizadas.",
+    "recomendacao": "Armazenar senhas com um KDF adaptativo e salgado, como Argon2id, bcrypt ou scrypt, usando verificação fornecida pela biblioteca."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 54,
+    "linha_final": 57,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint POST /students/ cria estudantes sem autenticação ou verificação de autorização. Qualquer cliente que alcance a rota pode inserir registros arbitrários, afetando a integridade dos dados.",
+    "recomendacao": "Aplicar autorização ao POST /students/ antes de chamar Student.create, restringindo a operação a usuários com a permissão apropriada."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 85,
+    "linha_final": 89,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint POST /courses/ cria cursos sem autenticação ou verificação de autorização. Qualquer cliente pode inserir cursos arbitrários e modificar o conteúdo apresentado pela aplicação.",
+    "recomendacao": "Aplicar autorização ao POST /courses/ antes de chamar Course.create, restringindo a operação a usuários autorizados."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 118,
+    "linha_final": 128,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint POST /courses/{course_id}/review aceita e persiste avaliações sem autenticação ou autorização. Qualquer cliente pode publicar conteúdo em qualquer curso existente, afetando a integridade e o conteúdo exibido.",
+    "recomendacao": "Exigir autenticação e autorização antes de chamar Review.create, validando também que o usuário possui permissão para publicar avaliações."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 138,
+    "linha_final": 152,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint POST de avaliação permite criar notas para qualquer combinação de estudante e curso sem autenticação ou autorização. Um atacante pode alterar a integridade dos registros acadêmicos enviando pontos válidos de 0 a 5.",
+    "recomendacao": "Exigir autenticação e autorização específica para lançamento ou alteração de notas antes de executar Mark.create."
+  }
+]

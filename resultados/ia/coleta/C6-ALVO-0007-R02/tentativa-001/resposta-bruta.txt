@@ -1,0 +1,56 @@
+[
+  {
+    "arquivo": "sqli/dao/student.py",
+    "linha_inicial": 42,
+    "linha_final": 43,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O nome do estudante, controlável por uma requisição POST em sqli/views.py, é interpolado diretamente na instrução INSERT antes da execução. Um atacante pode fornecer sintaxe SQL no campo name e alterar a consulta, obtendo potencial leitura, alteração ou destruição de dados conforme as permissões da conexão.",
+    "recomendacao": "Use parâmetros vinculados diretamente em cur.execute, por exemplo: INSERT INTO students (name) VALUES (%(name)s), passando name em um dicionário separado."
+  },
+  {
+    "arquivo": "sqli/dao/user.py",
+    "linha_inicial": 41,
+    "linha_final": 41,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "As senhas são verificadas contra um hash MD5 rápido e sem salt. Se um atacante obtiver os hashes armazenados, poderá realizar ataques offline de dicionário ou força bruta com baixo custo e recuperar credenciais reutilizadas.",
+    "recomendacao": "Armazene senhas usando um KDF específico para senhas, como Argon2id, scrypt, bcrypt ou PBKDF2, com salt aleatório individual e parâmetros de custo adequados."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 57,
+    "linha_final": 57,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A criação de estudantes é executada para qualquer requisição POST, sem authorize ou outra verificação de identidade e permissão. Um atacante não autenticado pode inserir registros arbitrários no banco.",
+    "recomendacao": "Exija autenticação e autorização apropriada antes de executar Student.create, preferencialmente restringindo a operação a usuários administradores."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 90,
+    "linha_final": 90,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A criação de cursos é executada para qualquer requisição POST, sem controle de acesso. Um atacante não autenticado pode inserir cursos arbitrários no banco.",
+    "recomendacao": "Exija autenticação e autorização apropriada antes de executar Course.create, preferencialmente restringindo a operação a usuários administradores."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 131,
+    "linha_final": 131,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A criação de avaliações textuais é executada sem autenticação ou autorização. Qualquer atacante pode publicar reviews arbitrários associados a cursos existentes.",
+    "recomendacao": "Exija autenticação e aplique a autorização correspondente antes de executar Review.create."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 153,
+    "linha_final": 153,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A criação de notas é executada sem authorize ou outra verificação de permissão. Um atacante não autenticado que conheça IDs válidos pode atribuir pontuações arbitrárias a estudantes e cursos.",
+    "recomendacao": "Exija autenticação e autorização de usuário responsável pela avaliação ou administrador antes de executar Mark.create."
+  }
+]

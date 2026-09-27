@@ -1,0 +1,74 @@
+[
+  {
+    "arquivo": "bad/db.py",
+    "linha_inicial": 9,
+    "linha_final": 11,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A inicialização cria contas, incluindo admin, com senhas conhecidas e fracas embutidas no código. Qualquer implantação que mantenha essas credenciais permite autenticação direta e comprometimento das contas correspondentes.",
+    "recomendacao": "Remover credenciais padrão e criar senhas aleatórias fortes durante o provisionamento, armazenando somente hashes adequados."
+  },
+  {
+    "arquivo": "bad/db_init.py",
+    "linha_inicial": 10,
+    "linha_final": 12,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A rotina de inicialização cria usuários com senhas em texto claro e conhecidas no código, incluindo a conta admin. Se essas contas forem usadas sem troca obrigatória, um atacante pode autenticar-se diretamente.",
+    "recomendacao": "Eliminar senhas embutidas e exigir credenciais únicas geradas ou definidas com segurança, armazenadas apenas por meio de um KDF apropriado."
+  },
+  {
+    "arquivo": "bad/libsession.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-565",
+    "severidade": "critica",
+    "descricao": "O cookie de sessão contém apenas JSON codificado em Base64, sem assinatura ou criptografia. A função load confia no campo username fornecido pelo cliente; assim, um atacante pode fabricar o cookie e obter uma sessão de qualquer usuário, alcançando rotas protegidas como posts e MFA.",
+    "recomendacao": "Usar sessões assinadas pelo framework ou tokens autenticados com chave secreta mantida fora do código, validando integridade e expiração antes de aceitar o username."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-89",
+    "severidade": "critica",
+    "descricao": "Username e password controlados pela requisição são interpolados diretamente na consulta SQL de login. Um atacante pode alterar a cláusula WHERE e contornar a autenticação ou manipular a consulta, comprometendo as contas e os dados do banco.",
+    "recomendacao": "Substituir a interpolação por parâmetros vinculados e comparar a senha usando um verificador de hash apropriado."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 27,
+    "linha_final": 27,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os valores de username e password recebidos durante a criação de usuários são interpolados diretamente em um INSERT SQL. Uma requisição ao fluxo de criação pode injetar SQL e alterar a operação ou os dados persistidos.",
+    "recomendacao": "Usar uma instrução parametrizada para o INSERT e validar os campos conforme as regras de identidade da aplicação."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 54,
+    "linha_final": 54,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "A alteração de senha monta a consulta UPDATE por interpolação direta de password e username. Um atacante que alcance esse fluxo pode injetar condições ou valores SQL e alterar credenciais de usuários além do alvo pretendido.",
+    "recomendacao": "Executar o UPDATE com parâmetros vinculados e manter a autorização do usuário autenticado separada dos valores fornecidos pela requisição."
+  },
+  {
+    "arquivo": "bad/mod_api.py",
+    "linha_inicial": 60,
+    "linha_final": 65,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O username autenticado é colocado em data, mas depois data é atualizado integralmente com o JSON controlado pelo cliente. Como post_schema não rejeita propriedades adicionais, o cliente pode enviar username de outra conta e fazer um post atribuído a esse usuário usando uma chave válida.",
+    "recomendacao": "Não aceitar username no corpo da requisição; usar exclusivamente o principal retornado por authenticate e rejeitar propriedades adicionais no schema."
+  },
+  {
+    "arquivo": "bad/mod_mfa.py",
+    "linha_inicial": 63,
+    "linha_final": 69,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A desativação de MFA é executada por uma requisição GET sem token CSRF ou outra confirmação de intenção. Um atacante pode induzir um navegador autenticado a acessar essa URL e remover a segunda etapa de autenticação da própria conta da vítima.",
+    "recomendacao": "Alterar a operação para POST, exigir token CSRF e solicitar reautenticação ou confirmação adicional antes de desativar o MFA."
+  }
+]

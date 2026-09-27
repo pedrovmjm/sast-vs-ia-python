@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 9,
+    "linha_final": 9,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "run_cmd executa os argumentos recebidos por os.popen em um shell. O fluxo alcança essa função a partir de systemDebug, cujo argumento cmd é controlado pelo cliente, e de ImportPaste, que incorpora host, path e scheme controlados pelo cliente, permitindo execução de comandos no servidor.",
+    "recomendacao": "Substitua os.popen por subprocess.run com lista de argumentos e shell=False; para ImportPaste, valide separadamente os componentes da URL e não os concatene em comandos."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 21,
+    "linha_final": 21,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "get_identity decodifica o token fornecido pelo cliente com verify_signature=False e verify_exp=False. Em resolve_me, a identidade resultante seleciona o usuário e habilita a exposição da senha quando a identidade é admin; um atacante pode alterar o payload do JWT sem possuir a chave.",
+    "recomendacao": "Valide assinatura, algoritmo, expiração e demais claims do JWT com uma chave mantida em configuração segura antes de usar a identidade."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "save_file concatena WEB_UPLOADDIR com filename controlado pelo cliente e abre o caminho resultante sem normalização ou restrição. A mutação UploadPaste permite usar componentes como ../ para gravar fora do diretório de uploads, sujeito às permissões do processo.",
+    "recomendacao": "Use werkzeug.utils.secure_filename, normalize o caminho e verifique que o caminho final permanece dentro de WEB_UPLOADDIR; idealmente gere o nome do arquivo no servidor."
+  },
+  {
+    "arquivo": "core/view_override.py",
+    "linha_inicial": 20,
+    "linha_final": 55,
+    "cwe": "CWE-209",
+    "severidade": "media",
+    "descricao": "format_custom_error inclui stack trace, traceback.format_exc e caminho de arquivo em respostas GraphQL para erros. Um cliente pode provocar erros de validação ou execução e obter detalhes internos do servidor, da estrutura de arquivos e do fluxo de execução.",
+    "recomendacao": "Retorne mensagens genéricas em produção e registre detalhes apenas no servidor; remova stack, debug e caminhos de arquivo da resposta ao cliente."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 163,
+    "linha_final": 168,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A mutação deletePaste aceita qualquer id e exclui o registro sem autenticação, verificação de proprietário ou autorização. Qualquer cliente que alcance o endpoint pode apagar pastas de outros usuários.",
+    "recomendacao": "Exija autenticação e autorize a exclusão comparando o proprietário do paste com a identidade autenticada antes de executar o DELETE."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 209,
+    "linha_final": 210,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "ImportPaste monta uma URL a partir de scheme, host, port e path controlados pelo cliente e faz o servidor requisitá-la com curl. Isso permite que um atacante faça o servidor acessar destinos arbitrários, inclusive serviços internos, além de retornar o conteúdo obtido.",
+    "recomendacao": "Restrinja destinos por allowlist de esquemas, hosts e portas, bloqueie endereços internos e faça a requisição com uma biblioteca HTTP sem shell."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 320,
+    "linha_final": 320,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O argumento filter controlado pelo cliente é interpolado diretamente em uma expressão SQL passada a text(). Um valor contendo aspas e sintaxe SQL altera a consulta e permite ler registros que não corresponderiam ao filtro.",
+    "recomendacao": "Construa o filtro com operadores SQLAlchemy parametrizados, como and_, or_ e igualdade, sem interpolar entrada do cliente na instrução SQL."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": null,
+    "linha_final": null,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O schema GraphQL expõe operações sensíveis sem qualquer controle de autorização visível: criação e edição de pastes, criação de usuários, upload, importação, exclusão, deleteAllPastes, auditoria, leitura de usuários e execução de diagnósticos. As resolvers não verificam identidade nem permissões antes de alterar dados, revelar informações ou executar operações administrativas.",
+    "recomendacao": "Aplique autenticação e autorização por operação e por recurso nas resolvers, negando por padrão operações administrativas e verificando o proprietário antes de acessar ou alterar dados."
+  },
+  {
+    "arquivo": "setup.py",
+    "linha_inicial": 63,
+    "linha_final": 64,
+    "cwe": "CWE-798",
+    "severidade": "media",
+    "descricao": "A inicialização cria contas operacionais com credenciais fixas e previsíveis: admin/changeme e operator/password123. Como essas contas são inseridas no banco em tempo de execução e o login aceita essas senhas, quem conhecer os valores pode autenticar-se como esses usuários.",
+    "recomendacao": "Não crie credenciais fixas; gere credenciais fortes no provisionamento, exija alteração no primeiro acesso e armazene senhas usando hash adaptativo com salt."
+  }
+]

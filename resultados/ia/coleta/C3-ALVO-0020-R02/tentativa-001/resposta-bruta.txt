@@ -1,0 +1,65 @@
+[
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 184,
+    "linha_final": 184,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O parâmetro username controlado pelo cliente é interpolado diretamente na consulta SQL e retornado ao cliente. Um atacante pode alterar a cláusula WHERE para ler registros arbitrários, incluindo hashes de senha, por meio de técnicas de injeção compatíveis com SQLite.",
+    "recomendacao": "Usar uma consulta parametrizada, como `WHERE username = ?`, passando username separadamente como parâmetro."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 190,
+    "linha_final": 206,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Campos fornecidos no corpo da requisição são interpolados diretamente em uma instrução INSERT SQL. Um atacante pode inserir sintaxe SQL nos valores e modificar a instrução executada, comprometendo a integridade dos dados ou provocando erros controlados.",
+    "recomendacao": "Substituir a interpolação por uma instrução INSERT parametrizada para todos os campos."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 233,
+    "linha_final": 233,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O username controlado pelo cliente é interpolado diretamente em uma instrução DELETE. Um atacante pode alterar a condição da consulta e excluir registros além do usuário pretendido.",
+    "recomendacao": "Usar uma instrução DELETE parametrizada, como `WHERE username = ?`."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 237,
+    "linha_final": 237,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O endereço fornecido pelo cliente é interpolado diretamente em uma instrução DELETE sem parametrização nem delimitação segura. Um atacante pode injetar uma expressão SQL e excluir múltiplos registros.",
+    "recomendacao": "Usar uma instrução DELETE parametrizada, como `WHERE address = ?`, passando user.address como parâmetro."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 189,
+    "linha_final": 189,
+    "cwe": "CWE-328",
+    "severidade": "media",
+    "descricao": "A senha fornecida pelo cliente é armazenada como um hash MD5 sem salt. Além disso, o endpoint /select retorna todos os campos do registro, incluindo esse hash, permitindo que um atacante obtenha hashes e tente recuperar as senhas offline.",
+    "recomendacao": "Armazenar senhas com um algoritmo adaptativo específico para senhas, como Argon2id, bcrypt ou scrypt, usando salt único por senha, e nunca retornar o hash em endpoints de consulta."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 225,
+    "linha_final": 227,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint POST /find aceita um objeto de consulta arbitrário e retorna os usuários correspondentes sem autenticação ou autorização. Uma requisição com uma consulta vazia pode recuperar os dados de todos os usuários, incluindo nome, username, endereço, email e contato.",
+    "recomendacao": "Exigir autenticação e autorização antes da consulta, limitar a consulta a campos permitidos e aplicar controle de acesso por registro e por campo."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 246,
+    "linha_final": 249,
+    "cwe": "CWE-306",
+    "severidade": "alta",
+    "descricao": "A função de reset do banco está exposta por POST sem qualquer autenticação ou autorização e remove os bancos SQL e NoSQL antes de recriá-los. Qualquer cliente capaz de alcançar o endpoint pode destruir os dados existentes e causar indisponibilidade.",
+    "recomendacao": "Restringir o endpoint a administradores autenticados e autorizados; idealmente removê-lo da superfície pública de produção."
+  }
+]

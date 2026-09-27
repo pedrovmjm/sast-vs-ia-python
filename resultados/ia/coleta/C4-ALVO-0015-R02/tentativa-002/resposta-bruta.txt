@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "target/project/__init__.py",
+    "linha_inicial": 5,
+    "linha_final": 5,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave de assinatura de sessão é fixa e conhecida como 'random'. Um atacante pode forjar cookies de sessão Flask contendo loggedin, contornando a verificação de autenticação usada pelo endpoint /confidential.",
+    "recomendacao": "Carregue uma chave aleatória, longa e exclusiva a partir de um segredo externo, sem valor padrão conhecido."
+  },
+  {
+    "arquivo": "target/project/controllers/404.py",
+    "linha_inicial": 87,
+    "linha_final": 88,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "request.url, controlável pelo atacante ao solicitar uma URL inexistente, é incorporada diretamente ao texto de um template e posteriormente processada por render_template_string. Expressões Jinja inseridas na URL podem ser avaliadas no servidor, permitindo acesso a dados expostos ao contexto do template e potencial execução adicional conforme os recursos disponíveis.",
+    "recomendacao": "Passe request.url como variável para um template estático e deixe o mecanismo de escape renderizá-la; não concatene entrada do usuário ao código do template."
+  },
+  {
+    "arquivo": "target/project/controllers/About.py",
+    "linha_inicial": 22,
+    "linha_final": 27,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /about/sync aceita data_obj arbitrário, converte seu conteúdo hexadecimal em bytes, grava esses bytes em arquivo e executa pickle.load. Um atacante não autenticado pode enviar um pickle criado para executar código durante a desserialização, desde que o endpoint esteja acessível.",
+    "recomendacao": "Não desserialize pickle de dados controlados pelo cliente; use um formato de dados seguro, como JSON, com validação explícita de esquema."
+  },
+  {
+    "arquivo": "target/project/controllers/Confidential.py",
+    "linha_inicial": 8,
+    "linha_final": 8,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O acesso a /confidential depende apenas de session['loggedin'] ser avaliado como verdadeiro, sem verificar identidade, validade ou autorização específica. Em conjunto com a criação incondicional dessa sessão em /webmaster, qualquer usuário pode obter acesso ao conteúdo confidencial.",
+    "recomendacao": "Valide uma sessão autenticada emitida pelo fluxo de login e aplique uma autorização explícita antes de retornar o conteúdo."
+  },
+  {
+    "arquivo": "target/project/controllers/Dashboard.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "pageId vem diretamente do segmento da URL e é concatenado à consulta SQL sem parametrização. Um atacante pode injetar expressões SQL na rota /dashboard/<pageId> para alterar a consulta e ler dados de outras tabelas, sujeito ao comportamento do SQLite e ao formato da consulta.",
+    "recomendacao": "Use uma consulta parametrizada, como '... WHERE pageId=?', passando pageId como parâmetro após validar que ele é um inteiro."
+  },
+  {
+    "arquivo": "target/project/controllers/Information.py",
+    "linha_inicial": 17,
+    "linha_final": 18,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "O parâmetro input da URL é decodificado de Base64 e passado diretamente a yaml.load sem loader seguro. Em versões do PyYAML que aceitam o loader padrão permissivo, um atacante pode fornecer YAML com objetos especialmente construídos, causando execução de código durante a desserialização.",
+    "recomendacao": "Use yaml.safe_load para dados não confiáveis e valide o resultado antes de acessar a chave yaml."
+  },
+  {
+    "arquivo": "target/project/controllers/Login.py",
+    "linha_inicial": 11,
+    "linha_final": 14,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "O login concede uma sessão autenticada quando username e password são simultaneamente iguais a 'admin'. Essas credenciais estão embutidas no código e permitem acesso direto a qualquer pessoa que conheça ou obtenha o código.",
+    "recomendacao": "Remova credenciais fixas do código e valide usuários contra uma fonte de identidade apropriada, armazenando senhas com hash resistente e comparação segura."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 23,
+    "linha_final": 25,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "example_file é controlado pelo cliente e usado diretamente em open e send_file. Um atacante pode fornecer um caminho arbitrário, incluindo traversal, para ler arquivos acessíveis ao processo e devolvê-los como download.",
+    "recomendacao": "Restrinja o arquivo a uma raiz fixa usando resolução canônica e uma allowlist de identificadores ou nomes, em vez de aceitar caminhos fornecidos pelo cliente."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 42,
+    "linha_final": 44,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "Embora haja uma allowlist apenas da extensão, file.filename continua controlável pelo atacante e é concatenado diretamente a uploads/. Um nome contendo traversal pode gravar ou sobrescrever arquivos fora do diretório de uploads, desde que termine com uma extensão permitida.",
+    "recomendacao": "Use um nome de arquivo gerado pelo servidor, ou secure_filename combinado com resolução canônica e verificação de que o destino permanece dentro do diretório de uploads."
+  },
+  {
+    "arquivo": "target/project/controllers/Webmaster.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "Qualquer requisição GET ou POST para /webmaster atribui um valor verdadeiro a session['loggedin'], sem autenticação ou autorização. O atacante pode então acessar /confidential, cujo único controle visível é essa flag.",
+    "recomendacao": "Remova a atribuição de autenticação desse endpoint e exija uma sessão autenticada validada por um mecanismo de login antes de conceder acesso."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 33,
+    "linha_final": 33,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os valores controlados por username e password são interpolados diretamente na consulta SQL executada no login. Um atacante pode manipular os parâmetros POST para alterar a lógica da consulta, contornar a autenticação e potencialmente consultar dados da tabela users.",
+    "recomendacao": "Use uma consulta parametrizada, por exemplo c.execute(\"SELECT * FROM users WHERE username = ? AND password = ?\", (username, password)), e armazene senhas usando hash apropriado."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 47,
+    "linha_final": 47,
+    "cwe": "CWE-862",
+    "severidade": "baixa",
+    "descricao": "A rota /dashboard não verifica autenticação nem valida o cookie session; qualquer cliente pode enviar esse cookie com um valor arbitrário e acessar a página como qualquer usuário. O impacto demonstrável no código fornecido é a representação de identidade não autenticada no dashboard.",
+    "recomendacao": "Exija uma sessão autenticada e validada no servidor antes de atender /dashboard, usando sessão assinada ou armazenada no servidor em vez de confiar diretamente no valor fornecido pelo cliente."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 53,
+    "linha_final": 53,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro q, controlado pelo atacante via requisição GET, é inserido diretamente no HTML retornado pela rota /search sem escape. Um atacante pode enviar um link contendo HTML ou JavaScript e executar script no navegador de um usuário que o abrir.",
+    "recomendacao": "Renderize o valor por meio de um template com escape automático ou aplique escape contextual de HTML antes de inseri-lo na resposta."
+  }
+]

@@ -1,0 +1,119 @@
+[
+  {
+    "arquivo": "app/models/Analytics/analytics.py",
+    "linha_inicial": 55,
+    "linha_final": 58,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O IP e as colunas selecionadas são interpolados diretamente em uma consulta SQL. A rota administrativa fornece esses valores a partir de parâmetros controlados pelo cliente, permitindo injeção SQL e leitura de dados arbitrários.",
+    "recomendacao": "Use consultas parametrizadas e uma allowlist fixa de nomes de colunas; não concatene valores recebidos da requisição."
+  },
+  {
+    "arquivo": "app/models/Benefits/benefits.py",
+    "linha_inicial": 65,
+    "linha_final": 65,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O nome do arquivo enviado pelo cliente é incorporado ao comando shell executado por os.system. Com backup=true, um atacante autenticado pode inserir metacaracteres no nome do arquivo e executar comandos no processo da aplicação.",
+    "recomendacao": "Substitua os.system por shutil.copyfile ou subprocess.run com argumentos separados, e valide o nome do arquivo."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 17,
+    "linha_final": 17,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O parâmetro class, controlado pelo cliente e aceito sem autenticação, é avaliado com eval. Isso permite executar expressões Python arbitrárias no contexto do servidor.",
+    "recomendacao": "Remova eval e aceite somente classes explicitamente mapeadas em uma allowlist."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 18,
+    "linha_final": 19,
+    "cwe": "CWE-200",
+    "severidade": "alta",
+    "descricao": "A API GET não exige autenticação e serializa todos os objetos do modelo escolhido pelo cliente. Com User, ela expõe campos como password e auth_token para qualquer solicitante.",
+    "recomendacao": "Exija autenticação e autorização, restrinja os modelos permitidos e serialize somente campos não sensíveis."
+  },
+  {
+    "arquivo": "app/views/password_resets/views.py",
+    "linha_inicial": 84,
+    "linha_final": 84,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O conteúdo do campo user enviado pelo cliente é decodificado e desserializado com pickle.loads sem autenticação ou validação de integridade. Um atacante pode fornecer um payload pickle que execute código durante a desserialização.",
+    "recomendacao": "Não desserialize dados não confiáveis com pickle; use um identificador assinado e busque o usuário no banco."
+  },
+  {
+    "arquivo": "app/views/password_resets/views.py",
+    "linha_inicial": 46,
+    "linha_final": 46,
+    "cwe": "CWE-640",
+    "severidade": "alta",
+    "descricao": "O token de recuperação é determinístico, composto apenas pelo user_id e pelo MD5 do email, sem segredo específico, expiração ou uso único. Quem conhecer o email e o identificador pode gerar um token válido e redefinir a senha.",
+    "recomendacao": "Gere tokens aleatórios, armazenados com expiração e uso único, e valide-os no servidor."
+  },
+  {
+    "arquivo": "app/views/sessions/views.py",
+    "linha_inicial": 22,
+    "linha_final": 22,
+    "cwe": "CWE-601",
+    "severidade": "media",
+    "descricao": "O parâmetro path enviado pelo cliente é usado diretamente como destino de HttpResponseRedirect após login. Um atacante pode induzir a vítima a autenticar e depois redirecioná-la para um domínio ou caminho controlado pelo atacante.",
+    "recomendacao": "Aceite somente destinos locais previamente permitidos ou valide o destino com uma allowlist."
+  },
+  {
+    "arquivo": "app/views/users/benefit_forms/views.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O parâmetro name é concatenado a BASE_DIR para abrir um arquivo sem normalização nem restrição ao diretório permitido. Um usuário autenticado pode usar traversal para ler arquivos acessíveis ao processo.",
+    "recomendacao": "Resolva o caminho com segurança e rejeite qualquer caminho fora de um diretório de downloads permitido."
+  },
+  {
+    "arquivo": "app/views/users/messages/views.py",
+    "linha_inicial": 49,
+    "linha_final": 50,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A mensagem é buscada somente por message_id, sem verificar se pertence ao usuário autenticado. O atacante pode alterar o identificador para ler qualquer mensagem e, via DELETE, excluir mensagens de terceiros.",
+    "recomendacao": "Filtre a mensagem pelo usuário autenticado como remetente ou destinatário antes de exibir ou excluir."
+  },
+  {
+    "arquivo": "app/views/users/messages/views.py",
+    "linha_inicial": 25,
+    "linha_final": 29,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "Os campos creator_id e receiver_id recebidos do cliente determinam os usuários associados à mensagem, sem exigir que creator_id seja o usuário autenticado. Um usuário pode forjar mensagens em nome de terceiros.",
+    "recomendacao": "Defina o criador exclusivamente a partir do usuário autenticado e valide autorização para o destinatário."
+  },
+  {
+    "arquivo": "app/views/users/pay/views.py",
+    "linha_inicial": 66,
+    "linha_final": 66,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A operação DELETE localiza Pay apenas pelo id global e não verifica o usuário autenticado. Um atacante autenticado que conheça outro pay_id pode excluir dados bancários de terceiros.",
+    "recomendacao": "Busque o registro por pay_id e pelo usuário autenticado antes de permitir a exclusão."
+  },
+  {
+    "arquivo": "app/views/users/views.py",
+    "linha_inicial": 26,
+    "linha_final": 28,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "user_id_form, controlado pelo cliente, é interpolado em uma consulta SQL bruta. A consulta seleciona um usuário arbitrário e o fluxo posterior permite alterar seus dados, inclusive a senha.",
+    "recomendacao": "Use o ORM com filtros parametrizados e autorize explicitamente o usuário alvo; não construa SQL por interpolação."
+  },
+  {
+    "arquivo": "app/views/users/work_info/views.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A view busca WorkInfo usando diretamente o user_id da URL, embora a autenticação apenas confirme que existe algum usuário autenticado. Um usuário autenticado pode trocar o identificador e obter dados trabalhistas e SSN de outro usuário.",
+    "recomendacao": "Ignore o identificador arbitrário para dados próprios ou verifique que ele pertence ao usuário autenticado e que há autorização explícita."
+  }
+]

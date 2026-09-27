@@ -1,0 +1,226 @@
+{
+  "errors": [],
+  "generated_at": "2026-08-11T15:06:52Z",
+  "metrics": {
+    "/entrada/main.py": {
+      "CONFIDENCE.HIGH": 3,
+      "CONFIDENCE.LOW": 5,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 2,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 5,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 242,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "_totals": {
+      "CONFIDENCE.HIGH": 3,
+      "CONFIDENCE.LOW": 5,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 2,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 5,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 242,
+      "nosec": 0,
+      "skipped_tests": 0
+    }
+  },
+  "results": [
+    {
+      "code": "100     await db.commit()\n101     for _ in range(random.randint(7, 84)):\n102         query = f'''\n",
+      "col_offset": 19,
+      "end_col_offset": 40,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 330,
+        "link": "https://cwe.mitre.org/data/definitions/330.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "line_number": 101,
+      "line_range": [
+        101
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+      "test_id": "B311",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "101     for _ in range(random.randint(7, 84)):\n102         query = f'''\n103 INSERT INTO users ( name,\n104                     username,\n105                     password,\n106                     address,\n107                     email,\n108                     contact\n109                     )\n110        VALUES (\n111                 \"{fake.name()}\",\n112                 \"{fake.user_name()}\",\n113                 \"{md5(fake.password().encode()).hexdigest()}\",\n114                 \"{fake.address()}\",\n115                 \"{fake.email()}\",\n116                 \"{fake.phone_number()}\"\n117             ) ;\n118 '''[1:-1]\n119         await db.execute(query)\n",
+      "col_offset": 20,
+      "end_col_offset": 17,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "LOW",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 102,
+      "line_range": [
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "112                 \"{fake.user_name()}\",\n113                 \"{md5(fake.password().encode()).hexdigest()}\",\n114                 \"{fake.address()}\",\n",
+      "col_offset": 18,
+      "end_col_offset": 47,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 327,
+        "link": "https://cwe.mitre.org/data/definitions/327.html"
+      },
+      "issue_severity": "HIGH",
+      "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+      "line_number": 113,
+      "line_range": [
+        113
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b324_hashlib.html",
+      "test_id": "B324",
+      "test_name": "hashlib"
+    },
+    {
+      "code": "181 async def sql_return_users_from_username(username: str):\n182     resp = await run_sql_query(f'SELECT * FROM users WHERE username = \"{username}\";')\n183     return resp\n",
+      "col_offset": 33,
+      "end_col_offset": 71,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "LOW",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 182,
+      "line_range": [
+        182
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "186 async def put_user(user: User):\n187     user.password = md5(user.password.encode()).hexdigest()\n188     query = f'''\n",
+      "col_offset": 20,
+      "end_col_offset": 47,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 327,
+        "link": "https://cwe.mitre.org/data/definitions/327.html"
+      },
+      "issue_severity": "HIGH",
+      "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+      "line_number": 187,
+      "line_range": [
+        187
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b324_hashlib.html",
+      "test_id": "B324",
+      "test_name": "hashlib"
+    },
+    {
+      "code": "187     user.password = md5(user.password.encode()).hexdigest()\n188     query = f'''\n189 INSERT INTO users (\n190                     name,\n191                     username,\n192                     password,\n193                     address,\n194                     email,\n195                     contact\n196                 ) VALUES ( \n197                             \"{user.name}\",\n198                             \"{user.username}\",\n199                             \"{user.password}\",\n200                             \"{user.address}\",\n201                             \"{user.email}\",\n202                             \"{user.contact}\"\n203                             );\n204 '''[1:-1]\n205     await run_sql_query(query, commit=True)\n",
+      "col_offset": 16,
+      "end_col_offset": 29,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "LOW",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 188,
+      "line_range": [
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        201,
+        202,
+        203,
+        204
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "230         db_client.vfapi.users.delete_one({'username': username})\n231         await run_sql_query(f'DELETE FROM users WHERE username = \"{username}\";', commit=True)\n232         return {'resp': 'done'}\n",
+      "col_offset": 30,
+      "end_col_offset": 66,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "LOW",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 231,
+      "line_range": [
+        231
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "234         db_client.vfapi.users.delete_one({'address': user.address})\n235         await run_sql_query(f'DELETE FROM users WHERE address = {user.address};', commit=True)\n236     return {'resp': '!done'}\n",
+      "col_offset": 30,
+      "end_col_offset": 64,
+      "filename": "/entrada/main.py",
+      "issue_confidence": "LOW",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 235,
+      "line_range": [
+        235
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    }
+  ]
+}

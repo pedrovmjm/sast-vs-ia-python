@@ -1,0 +1,24 @@
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 45 files tracked by git with 378 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin   Rules                                                                   
+ ─────────────────────────────        ────────────────                                                                  
+  <multilang>       9      28          Custom     378                                                                   
+  python          368      25                                                                                           
+                                                                                                                        
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 16 (16 blocking)
+ • Rules run: 377
+ • Targets scanned: 45
+ • Parsed lines: ~100.0%
+ • No ignore information available
+Ran 377 rules on 45 files: 16 findings.

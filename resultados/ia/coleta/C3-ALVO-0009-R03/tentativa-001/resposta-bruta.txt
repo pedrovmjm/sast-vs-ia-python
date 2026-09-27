@@ -1,0 +1,47 @@
+[
+  {
+    "arquivo": "app/blueprints/account_area/views.py",
+    "linha_inicial": 15,
+    "linha_final": 17,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "As operações POST de alteração de senha, alteração de email e envio de feedback não validam token CSRF. Um site controlado por um atacante pode induzir um navegador autenticado a enviar requisições com os cookies da vítima, alterando dados da conta ou criando mensagens.",
+    "recomendacao": "Adicionar proteção CSRF validada em todas as operações que alteram estado, incluindo os endpoints de alteração de senha, email e envio de feedback."
+  },
+  {
+    "arquivo": "app/blueprints/xss_protection/views.py",
+    "linha_inicial": 12,
+    "linha_final": 13,
+    "cwe": "CWE-601",
+    "severidade": "baixa",
+    "descricao": "O parâmetro controlado pelo atacante `next` é usado diretamente em `redirect(next)`. Uma URL externa pode ser fornecida para redirecionar usuários que acessarem o endpoint, permitindo phishing por URL legítima da aplicação.",
+    "recomendacao": "Aceitar somente destinos locais validados, rejeitando esquemas, hosts ou URLs absolutas externas."
+  },
+  {
+    "arquivo": "app/flask_xss.py",
+    "linha_inicial": 23,
+    "linha_final": 23,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada pelo Flask para assinar sessões está fixa no código e é conhecida. Um atacante que obtenha essa chave pode forjar cookies de sessão, incluindo a identidade de outro usuário ou do usuário `admin`, contornando a autenticação baseada em sessão.",
+    "recomendacao": "Carregar uma chave aleatória e exclusiva do ambiente de execução por meio de configuração externa ou gerenciamento de segredos, substituindo-a imediatamente se já tiver sido exposta."
+  },
+  {
+    "arquivo": "app/models/models.py",
+    "linha_inicial": 10,
+    "linha_final": 10,
+    "cwe": "CWE-256",
+    "severidade": "media",
+    "descricao": "A senha é armazenada diretamente no campo `password`, e o login e a alteração de senha comparam e persistem o valor em texto puro. Qualquer leitura do banco de dados revela as credenciais reutilizáveis dos usuários.",
+    "recomendacao": "Armazenar somente hashes de senha com salt usando uma função apropriada, como Argon2id, scrypt ou bcrypt, e verificar as senhas por uma operação de comparação de hash."
+  },
+  {
+    "arquivo": "manage.py",
+    "linha_inicial": 14,
+    "linha_final": 14,
+    "cwe": "CWE-798",
+    "severidade": "media",
+    "descricao": "O comando de criação do administrador usa `admin` como senha padrão. Se o comando for executado sem fornecer outro valor, a conta administrativa será criada com credencial previsível `admin/admin`, permitindo acesso administrativo até que a senha seja alterada.",
+    "recomendacao": "Remover a senha padrão e exigir uma senha forte fornecida de forma segura ou gerar uma credencial aleatória de uso único."
+  }
+]

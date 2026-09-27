@@ -1,0 +1,56 @@
+[
+  {
+    "arquivo": "sqli/dao/student.py",
+    "linha_inicial": 45,
+    "linha_final": 46,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O nome controlado pelo cliente em POST /students/ é interpolado diretamente na string SQL antes de cur.execute. Um atacante pode inserir sintaxe SQL no campo name e alterar a consulta, possibilitando leitura ou modificação não autorizada do banco.",
+    "recomendacao": "Use parâmetros do driver, por exemplo uma consulta com VALUES (%(name)s) e passe o dicionário separadamente a cur.execute, sem interpolação da string."
+  },
+  {
+    "arquivo": "sqli/dao/user.py",
+    "linha_inicial": 57,
+    "linha_final": 58,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "As senhas são verificadas contra um digest MD5 rápido e sem salt. Caso um atacante obtenha a coluna pwd_hash por outro meio, poderá realizar quebra offline de senhas com baixo custo e reutilizar as credenciais.",
+    "recomendacao": "Armazene senhas usando um KDF adaptativo e com salt exclusivo por senha, como Argon2id, bcrypt ou scrypt, e migre os hashes existentes."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 52,
+    "linha_final": 55,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /students/ aceita e persiste name sem autenticação ou autorização; a função students não usa authorize nem outro controle de acesso. Qualquer atacante capaz de enviar uma requisição pode criar registros de estudantes.",
+    "recomendacao": "Exija autenticação e autorização apropriada antes de processar o ramo POST, restringindo a criação de estudantes a usuários autorizados."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 64,
+    "linha_final": 69,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /courses/ aceita e persiste title e description sem autenticação ou autorização; a função courses não usa authorize nem outro controle de acesso. Qualquer atacante pode criar cursos arbitrários.",
+    "recomendacao": "Exija autenticação e autorização apropriada antes de processar o ramo POST, restringindo a criação de cursos a usuários autorizados."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 100,
+    "linha_final": 110,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint POST /courses/{course_id}/review aceita e persiste review_text sem autenticação ou autorização. Um atacante não autenticado pode publicar avaliações arbitrárias em qualquer curso existente.",
+    "recomendacao": "Exija autenticação e autorização antes de aceitar a avaliação e valide também se o usuário possui permissão para publicar no curso."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 116,
+    "linha_final": 133,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /students/{student_id}/evaluate/{course_id} permite criar uma nota para qualquer estudante e curso sem autenticação ou autorização. Um atacante pode alterar a integridade dos registros acadêmicos, limitado apenas à validação do intervalo de pontos.",
+    "recomendacao": "Aplique autenticação e autorização de função antes de consultar e criar a nota, permitindo a operação somente a usuários responsáveis pelo curso ou administradores."
+  }
+]

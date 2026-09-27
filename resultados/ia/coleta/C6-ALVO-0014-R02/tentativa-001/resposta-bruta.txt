@@ -1,0 +1,245 @@
+[
+  {
+    "arquivo": "challenge/views.py",
+    "linha_inicial": 50,
+    "linha_final": 50,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "A imagem Docker usada no comando é obtida de chal.docker_image e executada com docker run. Se um atacante puder influenciar esse registro ou obter controle administrativo para alterá-lo, o processo web executará uma imagem arbitrária no host, com impacto potencial sobre a integridade e a confidencialidade do ambiente.",
+    "recomendacao": "Restrinja docker_image a uma allowlist confiável e execute contêineres com privilégios mínimos, isolamento adequado e validação administrativa."
+  },
+  {
+    "arquivo": "challenge/views.py",
+    "linha_inicial": 81,
+    "linha_final": 81,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O container_id armazenado no banco é incorporado ao comando docker stop. Se esse valor puder ser adulterado, a chamada poderá executar argumentos ou opções não previstas no contexto do Docker.",
+    "recomendacao": "Valide container_id contra o formato de identificador retornado pelo Docker e use subprocess.Popen com lista de argumentos e shell=False."
+  },
+  {
+    "arquivo": "dockerized_labs/broken_auth_lab/app.py",
+    "linha_inicial": 44,
+    "linha_final": 49,
+    "cwe": "CWE-565",
+    "severidade": "alta",
+    "descricao": "Após o login, o cookie session contém apenas Base64 de username e timestamp, sem assinatura ou vínculo server-side. O endpoint dashboard decodifica o username e aceita qualquer valor existente em users; assim, um atacante pode forjar o cookie para assumir a identidade de outro usuário, inclusive admin.",
+    "recomendacao": "Use as sessões assinadas e gerenciadas pelo Flask, ou tokens aleatórios armazenados server-side, com validação de integridade, expiração e atributos Secure, HttpOnly e SameSite."
+  },
+  {
+    "arquivo": "dockerized_labs/broken_auth_lab/app.py",
+    "linha_inicial": 123,
+    "linha_final": 123,
+    "cwe": "CWE-489",
+    "severidade": "media",
+    "descricao": "O bloco executável inicia o Flask com debug=True e host 0.0.0.0. Em uma execução acessível pela rede, erros não tratados podem expor o depurador interativo e informações internas, e o depurador pode permitir execução de código.",
+    "recomendacao": "Remova debug=True do caminho de execução implantável e execute a aplicação por um servidor de produção com configuração de depuração desativada."
+  },
+  {
+    "arquivo": "dockerized_labs/insec_des_lab/main.py",
+    "linha_inicial": 36,
+    "linha_final": 36,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O conteúdo de serialized_data vem diretamente da requisição, é decodificado e passado a pickle.loads. Um atacante pode enviar um pickle especialmente construído para executar código arbitrário no processo Flask.",
+    "recomendacao": "Substitua pickle por um formato não executável, como JSON, e valide explicitamente os campos esperados."
+  },
+  {
+    "arquivo": "dockerized_labs/sensitive_data_exposure/dataexposure/views.py",
+    "linha_inicial": 42,
+    "linha_final": 42,
+    "cwe": "CWE-330",
+    "severidade": "media",
+    "descricao": "A chave de API é gerada com random.choices, um gerador previsível e inadequado para credenciais. Um atacante que obtenha amostras ou estado suficiente pode reduzir o espaço de busca e comprometer chaves emitidas.",
+    "recomendacao": "Use secrets.token_urlsafe ou secrets.token_hex para gerar chaves criptograficamente aleatórias."
+  },
+  {
+    "arquivo": "dockerized_labs/sensitive_data_exposure/dataexposure/views.py",
+    "linha_inicial": 115,
+    "linha_final": 128,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "all_users_data_view não verifica autenticação nem autorização e retorna credit_card, ssn e api_key de todos os usuários. Qualquer requisição ao endpoint pode exfiltrar os dados sensíveis armazenados.",
+    "recomendacao": "Exija autenticação e autorização administrativa antes da consulta e retorne somente os campos estritamente necessários, mascarando ou omitindo dados sensíveis."
+  },
+  {
+    "arquivo": "introduction/apis.py",
+    "linha_inicial": 64,
+    "linha_final": 73,
+    "cwe": "CWE-94",
+    "severidade": "alta",
+    "descricao": "log_function_checker aceita log_code e api_code da requisição, sem o decorator de autenticação ativo, e sobrescreve arquivos Python da aplicação. Um atacante pode persistir código arbitrário no código-fonte, que poderá ser executado quando os módulos forem recarregados.",
+    "recomendacao": "Remova a capacidade de sobrescrever módulos da aplicação; se o recurso for indispensável, isole-o em ambiente descartável, exija autorização forte e nunca grave código fornecido pelo usuário no código implantado."
+  },
+  {
+    "arquivo": "introduction/apis.py",
+    "linha_inicial": 125,
+    "linha_final": 134,
+    "cwe": "CWE-94",
+    "severidade": "alta",
+    "descricao": "A7_disscussion_api_2 aceita code de qualquer requisição POST e grava o conteúdo diretamente em introduction/playground/A6/utility.py. Isso permite adulteração persistente do código da aplicação e potencial execução arbitrária em novo carregamento do módulo.",
+    "recomendacao": "Não grave entrada de usuário em arquivos Python implantados; remova o endpoint ou isole qualquer execução de código em sandbox descartável com autorização administrativa."
+  },
+  {
+    "arquivo": "introduction/mitre.py",
+    "linha_inicial": 217,
+    "linha_final": 218,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "mitre_lab_25_api recebe expression diretamente da requisição e executa eval(expression), sem autenticação efetiva. Um atacante pode enviar expressões Python arbitrárias e executar código no servidor.",
+    "recomendacao": "Elimine eval e implemente apenas operações explicitamente permitidas, com parser seguro e allowlist de entradas."
+  },
+  {
+    "arquivo": "introduction/mitre.py",
+    "linha_inicial": 233,
+    "linha_final": 233,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O parâmetro ip é concatenado ao comando nmap e executado com shell=True. Um atacante pode inserir metacaracteres shell e executar comandos arbitrários no host.",
+    "recomendacao": "Use shell=False e uma lista de argumentos; valide ip por tipo e formato e rejeite valores fora da allowlist."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 158,
+    "linha_final": 162,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "name e password, controlados pelo usuário autenticado, são concatenados em uma consulta SQL passada a login.objects.raw. Um atacante pode alterar a consulta para contornar a verificação ou ler dados adicionais.",
+    "recomendacao": "Substitua a consulta raw por filtros do ORM ou use parâmetros vinculados."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 202,
+    "linha_final": 214,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O cookie token é controlado pelo cliente, decodificado em Base64 e passado a pickle.loads. Um usuário autenticado pode enviar um pickle malicioso para obter execução arbitrária no processo Django.",
+    "recomendacao": "Não desserialize pickle fornecido pelo cliente; use JSON assinado e valide os campos, ou mantenha o estado exclusivamente no servidor."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 214,
+    "linha_final": 214,
+    "cwe": "CWE-565",
+    "severidade": "alta",
+    "descricao": "O cookie token também representa diretamente o objeto de autorização e não possui assinatura. Mesmo sem explorar pickle, um usuário autenticado pode alterar o atributo admin para 1 e obter a mensagem de administrador.",
+    "recomendacao": "Não armazene decisões de autorização em cookies modificáveis; use sessão server-side ou token assinado e valide a autorização no servidor."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 258,
+    "linha_final": 260,
+    "cwe": "CWE-611",
+    "severidade": "alta",
+    "descricao": "xxe_parse processa request.body controlado pelo atacante com parser XML nativo e habilita entidades externas por meio de feature_external_ges. Um XML malicioso pode ler arquivos locais ou causar negação de serviço.",
+    "recomendacao": "Use defusedxml ou desabilite explicitamente entidades externas, DTDs e expansões recursivas antes de processar qualquer XML não confiável."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 291,
+    "linha_final": 305,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "auth_lab_login usa o valor do cookie userid fornecido pelo cliente para selecionar diretamente qualquer registro authLogin, sem validar uma sessão ou a posse da conta. Um atacante pode alterar o identificador e autenticar-se como outro usuário.",
+    "recomendacao": "Use sessões server-side ou identificadores aleatórios assinados e associe-os à sessão autenticada; nunca trate um ID de banco vindo do cliente como prova de identidade."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 923,
+    "linha_final": 931,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "ssrf_lab concatena o valor blog recebido da requisição em os.path.join e abre o resultado. Um usuário autenticado pode usar componentes ../ para sair do diretório pretendido e ler arquivos acessíveis ao processo.",
+    "recomendacao": "Use uma allowlist de arquivos, resolva o caminho canônico e confirme que ele permanece dentro do diretório permitido antes de abrir."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 961,
+    "linha_final": 966,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "ssrf_lab2 envia a URL controlada pelo usuário para requests.get e devolve o conteúdo ao usuário. Um atacante autenticado pode fazer o servidor acessar serviços internos, endpoints de metadata ou outros destinos não acessíveis externamente.",
+    "recomendacao": "Permita somente esquemas e hosts explicitamente autorizados, bloqueie redes internas e valide o destino após resolução DNS e antes da conexão."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 981,
+    "linha_final": 996,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "ssti_lab recebe blog do usuário, grava seu conteúdo como arquivo de template e ssti_view_blog renderiza esse arquivo como template Django. Um usuário autenticado pode inserir expressões de template para acessar objetos e executar operações no contexto do servidor.",
+    "recomendacao": "Não grave entrada de usuário como template executável; armazene o conteúdo como dados e renderize-o com escaping e contexto rigidamente controlado."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 1026,
+    "linha_final": 1027,
+    "cwe": "CWE-327",
+    "severidade": "media",
+    "descricao": "A senha fornecida no login é comparada usando MD5 contra valores armazenados. MD5 é inadequado para senhas e permite recuperação mais rápida das credenciais caso os hashes sejam obtidos.",
+    "recomendacao": "Use o sistema de autenticação do Django ou um KDF apropriado, como Argon2, PBKDF2 ou scrypt, com salt individual."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 1076,
+    "linha_final": 1081,
+    "cwe": "CWE-565",
+    "severidade": "alta",
+    "descricao": "crypto_failure_lab3 cria um cookie contendo username e expiração em texto, sem assinatura. crypto_failure_lab3 concede privilégios administrativos quando o primeiro campo é admin; portanto, qualquer usuário pode forjar o cookie e obter a condição admin.",
+    "recomendacao": "Use sessões server-side ou tokens assinados e verifique a autorização no servidor, sem confiar em campos modificáveis do cookie."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 1109,
+    "linha_final": 1109,
+    "cwe": "CWE-565",
+    "severidade": "alta",
+    "descricao": "sec_misconfig_lab3 usa SECRET_COOKIE_KEY constante e conhecida no próprio código para validar JWTs. Um atacante que conheça o código pode assinar um token com user=admin e passar pela verificação.",
+    "recomendacao": "Armazene a chave fora do código, gere uma chave forte e aleatória, faça rotação e restrinja a emissão de tokens a um componente confiável."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 430,
+    "linha_final": 434,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "cmd_lab incorpora domain controlado pelo usuário em um comando e o executa com shell=True. A entrada pode conter separadores e metacaracteres para executar comandos adicionais no servidor.",
+    "recomendacao": "Use shell=False com argumentos separados e valide domain por allowlist de hostname ou endereço."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 456,
+    "linha_final": 460,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "cmd_lab2 executa eval sobre val recebido diretamente da requisição. Um usuário autenticado pode fornecer código Python arbitrário e obter execução no processo Django.",
+    "recomendacao": "Remova eval e substitua-o por uma implementação específica para as operações permitidas."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 560,
+    "linha_final": 560,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "a9_lab aceita arquivo YAML enviado pelo usuário e usa yaml.load com yaml.Loader. Um atacante autenticado pode enviar tags YAML que instanciem objetos ou executem comportamentos arbitrários durante a desserialização.",
+    "recomendacao": "Use yaml.safe_load e valide o tipo e o esquema do documento antes de processá-lo."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 538,
+    "linha_final": 538,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint secret concede o segredo apenas com base no cabeçalho X-Host, que é controlável pelo cliente. Qualquer atacante pode enviar X-Host: admin.localhost:8000 e obter S3CR37K3Y.",
+    "recomendacao": "Não use cabeçalhos fornecidos pelo cliente como controle de autorização; aplique autenticação e autorização server-side."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 923,
+    "linha_final": 931,
+    "cwe": "CWE-200",
+    "severidade": "alta",
+    "descricao": "O conteúdo do arquivo selecionado por blog é retornado diretamente na resposta HTML. Com a travessia de diretórios descrita no mesmo fluxo, arquivos locais contendo segredos ou dados privados podem ser exfiltrados.",
+    "recomendacao": "Elimine a leitura de caminhos controlados pelo cliente e restrinja a resposta a recursos previamente permitidos."
+  }
+]

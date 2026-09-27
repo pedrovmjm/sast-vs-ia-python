@@ -1,0 +1,281 @@
+[
+  {
+    "arquivo": "dockerized_labs/broken_auth_lab/app.py",
+    "linha_inicial": 44,
+    "linha_final": 52,
+    "cwe": "CWE-602",
+    "severidade": "alta",
+    "descricao": "O cookie de sessão contém apenas o nome de usuário codificado em Base64 e é aceito sem assinatura ou validação de integridade. Um atacante pode fabricar um cookie com o nome de qualquer usuário, incluindo admin, e acessar o dashboard correspondente.",
+    "recomendacao": "Substituir o cookie customizado por sessões assinadas e gerenciadas pelo framework, com validação de integridade, HttpOnly, Secure e SameSite."
+  },
+  {
+    "arquivo": "dockerized_labs/broken_auth_lab/app.py",
+    "linha_inicial": 86,
+    "linha_final": 88,
+    "cwe": "CWE-330",
+    "severidade": "media",
+    "descricao": "Tokens de redefinição são derivados de email e timestamp usando MD5, sem aleatoriedade criptográfica nem expiração. Um atacante que conheça ou estime o momento da solicitação pode prever o token; o token também é exposto diretamente na mensagem retornada.",
+    "recomendacao": "Gerar tokens com secrets.token_urlsafe, armazenar apenas um hash do token, associá-lo a expiração e uso único, e enviá-lo exclusivamente por canal confiável."
+  },
+  {
+    "arquivo": "dockerized_labs/insec_des_lab/main.py",
+    "linha_inicial": 36,
+    "linha_final": 36,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O endpoint POST /deserialize aceita dados Base64 controlados pelo atacante e os passa diretamente a pickle.loads. Um payload pickle malicioso pode executar código arbitrário no processo Flask.",
+    "recomendacao": "Remover pickle da desserialização de entrada externa e aceitar somente um formato seguro, como JSON, validando explicitamente os campos permitidos."
+  },
+  {
+    "arquivo": "dockerized_labs/sensitive_data_exposure/dataexposure/views.py",
+    "linha_inicial": 99,
+    "linha_final": 113,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A rota all_users_data_view não exige autenticação nem autorização e retorna dados de todos os usuários, incluindo cartão, SSN e API key. Qualquer requisição externa pode exfiltrar os dados armazenados.",
+    "recomendacao": "Exigir autenticação e autorização administrativa antes da consulta e retornar somente os campos estritamente necessários, com mascaramento dos dados sensíveis."
+  },
+  {
+    "arquivo": "introduction/apis.py",
+    "linha_inicial": 64,
+    "linha_final": 73,
+    "cwe": "CWE-94",
+    "severidade": "alta",
+    "descricao": "O endpoint log_function_checker, sem a autenticação que está comentada, grava log_code e api_code fornecidos pelo cliente diretamente em arquivos Python do servidor. O conteúdo pode substituir código da aplicação e ser executado quando esses módulos forem carregados ou recarregados.",
+    "recomendacao": "Remover a escrita de código-fonte a partir de requisições; executar testes em ambiente isolado com código previamente validado e exigir autorização forte."
+  },
+  {
+    "arquivo": "introduction/apis.py",
+    "linha_inicial": 125,
+    "linha_final": 138,
+    "cwe": "CWE-94",
+    "severidade": "alta",
+    "descricao": "A rota A6_disscussion_api_2 aceita code sem autenticação e sobrescreve introduction/playground/A6/utility.py. Isso permite alteração persistente de código Python do servidor, com potencial de execução quando o módulo for carregado novamente.",
+    "recomendacao": "Não permitir que requisições sobrescrevam módulos Python; usar armazenamento temporário isolado e validação de autorização e conteúdo."
+  },
+  {
+    "arquivo": "introduction/mitre.py",
+    "linha_inicial": 169,
+    "linha_final": 169,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "O JWT de autenticação é assinado com o segredo constante csrf_vulneribility. Qualquer atacante que obtenha o código pode criar tokens válidos para outro usuário e usá-los nas rotas que confiam nessa assinatura.",
+    "recomendacao": "Carregar uma chave aleatória e protegida por gerenciamento de segredos, rotacioná-la e validar também emissor, audiência e demais claims."
+  },
+  {
+    "arquivo": "introduction/mitre.py",
+    "linha_inicial": 176,
+    "linha_final": 189,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "csrf_transfer_monei está isenta de CSRF e aceita GET para alterar saldos por meio de csrf_transfer_monei_api. Um site externo pode induzir um navegador autenticado a realizar uma transferência.",
+    "recomendacao": "Usar POST para a transferência, remover csrf_exempt, exigir token CSRF e validar a operação no servidor."
+  },
+  {
+    "arquivo": "introduction/mitre.py",
+    "linha_inicial": 217,
+    "linha_final": 218,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O endpoint POST mitre_lab_25_api, acessível sem o decorador de autenticação, passa o parâmetro expression controlado pelo cliente diretamente a eval, permitindo execução arbitrária de Python no servidor.",
+    "recomendacao": "Remover eval e implementar um interpretador restrito ou uma operação específica com allowlist de expressões."
+  },
+  {
+    "arquivo": "introduction/mitre.py",
+    "linha_inicial": 231,
+    "linha_final": 233,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "mitre_lab_17_api concatena o parâmetro ip controlado pelo cliente ao comando nmap e executa Popen com shell=True. Um atacante pode inserir metacaracteres e executar comandos arbitrários no sistema.",
+    "recomendacao": "Usar shell=False com argumentos separados e validar ip contra um formato ou allowlist; preferencialmente substituir a chamada por uma biblioteca apropriada."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 158,
+    "linha_final": 162,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "sql_lab concatena name e password recebidos por POST em uma consulta SQL executada por raw. Um usuário autenticado pode injetar sintaxe SQL para alterar a consulta e obter registros não autorizados.",
+    "recomendacao": "Usar filtros do Django ORM ou consulta parametrizada, sem concatenar entrada do usuário."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 202,
+    "linha_final": 214,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "insec_des_lab lê o cookie token controlado pelo cliente, decodifica Base64 e executa pickle.loads. Um usuário autenticado pode enviar um pickle malicioso e obter execução de código no servidor.",
+    "recomendacao": "Substituir pickle por JSON ou outro formato não executável e validar estritamente os campos recebidos."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 258,
+    "linha_final": 260,
+    "cwe": "CWE-611",
+    "severidade": "alta",
+    "descricao": "xxe_parse processa request.body controlado pelo cliente com parser XML configurado para permitir entidades externas. Um atacante pode fazer o servidor ler arquivos locais ou causar consumo excessivo de recursos.",
+    "recomendacao": "Usar defusedxml ou desabilitar explicitamente entidades externas, DTDs e expansões durante o parsing."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 302,
+    "linha_final": 304,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "auth_lab_login usa o valor userid fornecido pelo cookie do cliente diretamente para selecionar um registro, sem vincular o identificador a uma sessão autenticada. Um atacante pode alterar o cookie para impersonar outro usuário.",
+    "recomendacao": "Usar as sessões de autenticação do Django e nunca tratar um identificador fornecido pelo cliente como prova de identidade."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 361,
+    "linha_final": 362,
+    "cwe": "CWE-602",
+    "severidade": "alta",
+    "descricao": "ba_lab concede conteúdo administrativo quando o cookie admin fornecido pelo cliente tem valor 1. Qualquer usuário autenticado pode forjar esse cookie e acessar o segredo.",
+    "recomendacao": "Armazenar a autorização no servidor, usando request.user.is_staff ou permissões Django, e ignorar flags administrativas provenientes do cliente."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 430,
+    "linha_final": 434,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "cmd_lab incorpora domain recebido pelo usuário em um comando shell e executa Popen com shell=True. Um usuário autenticado pode injetar comandos arbitrários no host.",
+    "recomendacao": "Executar o comando sem shell, passar argumentos como lista e validar o domínio contra um formato restrito."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 456,
+    "linha_final": 460,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "cmd_lab2 envia val recebido por POST diretamente a eval. Um usuário autenticado pode executar expressões Python arbitrárias no processo do servidor.",
+    "recomendacao": "Remover eval e substituir por operações explicitamente permitidas ou por ast.literal_eval quando apenas literais forem necessários."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 538,
+    "linha_final": 538,
+    "cwe": "CWE-602",
+    "severidade": "alta",
+    "descricao": "A rota secret concede o segredo quando o cabeçalho X-Host tem um valor específico. Esse cabeçalho é controlado pelo cliente e pode ser forjado sem autenticação.",
+    "recomendacao": "Aplicar autenticação e autorização no servidor; não usar cabeçalhos fornecidos pelo cliente como prova de origem ou privilégio."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 560,
+    "linha_final": 560,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "a9_lab aceita arquivo YAML enviado pelo usuário e usa yaml.load com yaml.Loader. Um arquivo malicioso pode instanciar objetos arbitrários e executar código durante a desserialização.",
+    "recomendacao": "Usar yaml.safe_load e validar o tipo e o esquema do conteúdo antes de processá-lo."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 923,
+    "linha_final": 927,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "ssrf_lab combina o parâmetro blog recebido pelo usuário com o diretório da aplicação e abre o caminho resultante. Um usuário autenticado pode usar traversal, como ../, para ler arquivos locais acessíveis ao processo.",
+    "recomendacao": "Usar uma allowlist de identificadores de arquivos e verificar que o caminho normalizado permanece dentro de um diretório permitido."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 961,
+    "linha_final": 963,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "ssrf_lab2 envia a URL fornecida pelo usuário diretamente a requests.get e devolve o conteúdo ao cliente. Um usuário autenticado pode fazer o servidor acessar serviços internos ou endpoints da rede local.",
+    "recomendacao": "Permitir somente esquemas e hosts explicitamente autorizados, bloquear endereços internos após resolução DNS e aplicar limites de redirecionamento e tempo."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 981,
+    "linha_final": 996,
+    "cwe": "CWE-95",
+    "severidade": "alta",
+    "descricao": "ssti_lab grava conteúdo fornecido pelo usuário como um template Django e ssti_view_blog o renderiza como template. Um usuário autenticado pode inserir expressões de template para acessar dados do contexto ou abusar dos recursos do mecanismo de templates.",
+    "recomendacao": "Armazenar o texto como dado e renderizá-lo em um template fixo, sem compilá-lo como código de template."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 1026,
+    "linha_final": 1027,
+    "cwe": "CWE-602",
+    "severidade": "alta",
+    "descricao": "crypto_failure_lab3 interpreta o cookie cookie controlado pelo cliente e concede privilégios administrativos quando o primeiro campo é admin, verificando apenas uma data também controlada pelo cliente. Um usuário autenticado pode fabricar cookie admin|data futura.",
+    "recomendacao": "Usar sessão ou token assinado pelo servidor e armazenar a autorização no backend; nunca confiar em valores de privilégio fornecidos pelo cliente."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 1095,
+    "linha_final": 1097,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "sec_misconfig_lab3 valida o JWT com SECRET_COOKIE_KEY, definido como uma constante previsível no projeto. Um atacante que conheça o código pode forjar o claim user=admin e obter a resposta administrativa.",
+    "recomendacao": "Mover a chave para um gerenciador de segredos, usar valor aleatório forte e rotacionável e aplicar autorização independente do conteúdo não confiável do token."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 864,
+    "linha_final": 878,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "injection_sql_lab concatena name e password controlados pelo usuário em uma consulta SQL executada por raw. Um usuário autenticado pode injetar SQL e acessar ou modificar dados da tabela.",
+    "recomendacao": "Substituir a consulta por filtros do ORM ou usar parâmetros vinculados."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 846,
+    "linha_final": 851,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "a1_broken_access_lab_3 expõe uma rota de segredo que verifica apenas se o usuário está autenticado; não exige que ele seja administrador nem vincula o acesso ao resultado do login anterior.",
+    "recomendacao": "Exigir uma permissão administrativa no servidor, como request.user.is_staff ou uma permissão específica, antes de renderizar o segredo."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 782,
+    "linha_final": 806,
+    "cwe": "CWE-602",
+    "severidade": "alta",
+    "descricao": "a1_broken_access_lab_2 libera conteúdo administrativo exclusivamente com base no cabeçalho User-Agent pygoat_admin. Esse cabeçalho pode ser definido arbitrariamente pelo cliente autenticado.",
+    "recomendacao": "Remover a decisão de privilégio baseada em User-Agent e usar autorização server-side."
+  },
+  {
+    "arquivo": "introduction/views.py",
+    "linha_inicial": 738,
+    "linha_final": 766,
+    "cwe": "CWE-602",
+    "severidade": "alta",
+    "descricao": "a1_broken_access_lab_1 concede acesso administrativo quando o cookie admin vale 1. O cookie é controlado pelo cliente, permitindo que qualquer usuário autenticado o forje.",
+    "recomendacao": "Armazenar o estado administrativo no servidor e validar permissões usando o usuário autenticado."
+  },
+  {
+    "arquivo": "pygoat/settings.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave SECRET_KEY usada pelo Django está incorporada no código-fonte. Quem obtiver o código pode forjar artefatos assinados pelo Django, dependendo das funcionalidades configuradas, incluindo dados de sessão.",
+    "recomendacao": "Carregar SECRET_KEY de um gerenciador de segredos ou variável de ambiente, usando uma chave aleatória e rotacionável."
+  },
+  {
+    "arquivo": "pygoat/settings.py",
+    "linha_inicial": 29,
+    "linha_final": 29,
+    "cwe": "CWE-489",
+    "severidade": "media",
+    "descricao": "DEBUG=True habilita páginas de erro detalhadas para exceções provocáveis por requisições. Em implantação acessível, essas respostas podem revelar caminhos, configuração e informações internas da aplicação.",
+    "recomendacao": "Definir DEBUG=False fora do desenvolvimento e configurar tratamento de erros sem exposição de detalhes internos."
+  },
+  {
+    "arquivo": "pygoat/settings.py",
+    "linha_inicial": 171,
+    "linha_final": 171,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "SECRET_COOKIE_KEY, usada para assinar JWTs em sec_misconfig_lab3, é uma constante curta e previsível no código. Um atacante pode reconstruir a chave e forjar tokens com privilégios administrativos.",
+    "recomendacao": "Usar uma chave aleatória forte fora do código, protegida por gerenciamento de segredos e com rotação."
+  }
+]

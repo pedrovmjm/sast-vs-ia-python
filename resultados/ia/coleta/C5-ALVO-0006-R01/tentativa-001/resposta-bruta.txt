@@ -1,0 +1,101 @@
+[
+  {
+    "arquivo": "backend/app.py",
+    "linha_inicial": 228,
+    "linha_final": 228,
+    "cwe": "CWE-94",
+    "severidade": "alta",
+    "descricao": "A aplicação é iniciada com debug=True e exposta em 0.0.0.0. Um atacante que alcance o servidor pode acionar erros e, mediante acesso ao depurador Werkzeug e suas barreiras de autenticação, obter execução de código no processo.",
+    "recomendacao": "Desabilitar debug=True em execução da aplicação e iniciar o servidor com modo de produção."
+  },
+  {
+    "arquivo": "backend/models.py",
+    "linha_inicial": 24,
+    "linha_final": 27,
+    "cwe": "CWE-327",
+    "severidade": "alta",
+    "descricao": "As senhas são armazenadas e verificadas usando MD5 sem salt. Se um atacante obtiver o banco ou os hashes, poderá quebrar senhas com baixo custo e assumir as contas correspondentes.",
+    "recomendacao": "Substituir MD5 por um KDF específico para senhas, como Argon2id, scrypt ou bcrypt, com salt individual."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 22,
+    "linha_final": 23,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O username controlado na requisição é interpolado diretamente no INSERT executado pelo banco. Um atacante pode manipular a expressão SQL durante o registro para alterar valores persistidos ou a operação realizada.",
+    "recomendacao": "Usar o ORM ou uma instrução parametrizada para inserir o novo usuário."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 36,
+    "linha_final": 37,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O username controlado pelo cliente é interpolado diretamente na consulta de login. Um atacante pode alterar a condição da consulta e potencialmente contornar a autenticação ou acessar dados de outro usuário.",
+    "recomendacao": "Usar consulta ORM ou SQL parametrizado para buscar o usuário pelo username."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 42,
+    "linha_final": 50,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "Tokens JWT são assinados com o segredo literal 'secret', enquanto o middleware de autenticação usa o mesmo segredo. Qualquer atacante que obtenha o código pode forjar tokens com user_id arbitrário e acessar endpoints protegidos.",
+    "recomendacao": "Carregar um segredo aleatório e protegido a partir de configuração segura, com rotação e gerenciamento fora do código-fonte."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 140,
+    "linha_final": 146,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "O usuário autenticado controla user_id e a função altera a senha do objeto correspondente sem verificar se ele é o próprio usuário nem exigir privilégio administrativo. Assim, qualquer usuário autenticado pode assumir outras contas.",
+    "recomendacao": "Ignorar user_id fornecido pelo cliente e alterar somente current_user, ou exigir autorização explícita para operações administrativas."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 157,
+    "linha_final": 157,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "profile_yaml é recebido do cliente autenticado e desserializado com yaml.Loader. Um atacante autenticado pode fornecer YAML com tags especiais para instanciar objetos e executar código no processo da aplicação.",
+    "recomendacao": "Usar yaml.safe_load ou yaml.SafeLoader e aceitar somente a estrutura de dados necessária ao perfil."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 13,
+    "linha_final": 14,
+    "cwe": "CWE-20",
+    "severidade": "alta",
+    "descricao": "O valor amount é controlado pelo cliente e convertido para Decimal sem validação de positividade. Um atacante autenticado pode enviar valor negativo; o débito current_user.balance -= amount aumenta o saldo do remetente e o crédito do receiver.balance += amount reduz o saldo do destinatário.",
+    "recomendacao": "Rejeitar valores menores ou iguais a zero antes de criar a transação e aplicar validações de faixa e precisão."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 47,
+    "linha_final": 50,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "O endpoint autenticado aceita user_id arbitrário e consulta transações por esse identificador sem verificar sua relação com current_user. Um usuário autenticado pode obter transações de outras contas.",
+    "recomendacao": "Remover user_id da entrada ou restringir a consulta a current_user.id, permitindo exceção apenas para funções administrativas autorizadas."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 49,
+    "linha_final": 50,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "user_id, controlado pela requisição, é interpolado diretamente na consulta SQL executada. Um atacante pode injetar expressões SQL para ampliar a seleção e acessar transações além do escopo pretendido.",
+    "recomendacao": "Usar filtros ORM ou consulta parametrizada para sender_id e receiver_id."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 89,
+    "linha_final": 95,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "description é controlada pelo cliente e interpolada entre delimitadores SQL na consulta de busca. Um atacante autenticado pode injetar SQL e manipular a consulta para acessar ou alterar dados, conforme os recursos permitidos pelo banco.",
+    "recomendacao": "Usar consulta parametrizada para o termo de busca e aplicar escaping apropriado ao padrão LIKE."
+  }
+]

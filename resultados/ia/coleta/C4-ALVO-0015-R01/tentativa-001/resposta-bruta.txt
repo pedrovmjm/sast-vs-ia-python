@@ -1,0 +1,74 @@
+[
+  {
+    "arquivo": "target/project/__init__.py",
+    "linha_inicial": 5,
+    "linha_final": 5,
+    "cwe": "CWE-321",
+    "severidade": "media",
+    "descricao": "A chave de assinatura de sessão do Flask é um valor literal previsível ('random'). Qualquer atacante que conheça esse valor pode forjar cookies de sessão, incluindo loggedin, e acessar endpoints que confiam nesse campo, como /confidential.",
+    "recomendacao": "Carregue uma chave aleatória, secreta e exclusiva do ambiente a partir de configuração externa e faça a rotação da chave comprometida."
+  },
+  {
+    "arquivo": "target/project/controllers/404.py",
+    "linha_inicial": 91,
+    "linha_final": 91,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "request.url, controlável pelo cliente, é interpolado diretamente no código-fonte de um template e depois processado por render_template_string. Expressões Jinja inseridas na URL podem ser avaliadas no servidor, possibilitando execução de operações arbitrárias disponíveis no contexto do template.",
+    "recomendacao": "Não concatene dados da requisição no código do template; passe a URL como variável para um template estático e permita o escaping padrão."
+  },
+  {
+    "arquivo": "target/project/controllers/About.py",
+    "linha_inicial": 22,
+    "linha_final": 27,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O valor data_obj enviado em uma requisição POST é convertido em bytes e desserializado diretamente com pickle.load. Um atacante pode fornecer um pickle criado para executar código durante a desserialização, antes da renderização da resposta.",
+    "recomendacao": "Substitua pickle por um formato de dados não executável, como JSON, validando esquema e tipos; não desserialize dados controlados pelo cliente com pickle."
+  },
+  {
+    "arquivo": "target/project/controllers/Login.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A autenticação aceita as credenciais fixas admin/admin e cria uma sessão autenticada que redireciona para /confidential. Qualquer pessoa que conheça o código pode autenticar-se como administrador.",
+    "recomendacao": "Remova as credenciais embutidas, armazene usuários e hashes de senha em configuração ou banco protegido e valide senhas com um algoritmo adaptativo."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 13,
+    "linha_final": 15,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "example_file é controlado pelo cliente e usado diretamente como caminho em open e send_file. Um atacante pode fornecer caminhos absolutos ou com ../ para ler e baixar arquivos arbitrários acessíveis ao processo.",
+    "recomendacao": "Use uma identificação opaca de arquivo mapeada a um diretório permitido e valide o caminho final com realpath, mantendo-o dentro desse diretório."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 30,
+    "linha_final": 32,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O nome de arquivo fornecido pelo cliente é concatenado diretamente ao diretório uploads/ e usado em file.save. Apesar da allowlist de extensões, nomes contendo ../ podem escapar do diretório e sobrescrever ou criar arquivos em outros caminhos graváveis.",
+    "recomendacao": "Use werkzeug.utils.secure_filename ou, preferencialmente, gere um nome aleatório e grave somente em um diretório fixo validado."
+  },
+  {
+    "arquivo": "target/project/controllers/Webmaster.py",
+    "linha_inicial": 13,
+    "linha_final": 13,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A rota /webmaster concede session['loggedin'] para qualquer requisição, sem autenticação ou autorização. /confidential apenas verifica a existência desse valor, permitindo que qualquer visitante obtenha acesso ao recurso protegido.",
+    "recomendacao": "Remova a atribuição de sessão dessa rota e imponha uma verificação de autenticação e autorização baseada em identidade e privilégios válidos."
+  },
+  {
+    "arquivo": "target/project/models/Dashboard.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "pageId vem diretamente do segmento da URL /dashboard/<pageId> e é concatenado na consulta SQL. Um atacante pode inserir sintaxe SQL para alterar a consulta e acessar ou manipular dados do banco.",
+    "recomendacao": "Use consulta parametrizada, por exemplo com WHERE pageId = ?, e valide pageId como inteiro antes da consulta."
+  }
+]

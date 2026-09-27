@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 40,
+    "linha_final": 42,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "O caminho controlado pelo atacante é concatenado a 'static/' e resolvido sem normalização ou verificação de confinamento ao diretório base. Requisições contendo componentes '..' podem escapar de 'static/' e fazer o servidor retornar arquivos arbitrários acessíveis ao processo.",
+    "recomendacao": "Normalize o caminho e rejeite qualquer resultado fora do diretório estático permitido, preferencialmente usando a rotina segura de arquivos estáticos do Tornado."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 77,
+    "linha_final": 77,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "O argumento HTTP 'file' é concatenado diretamente ao diretório 'read/' e aberto sem validação. Um atacante pode usar '..' para atravessar o diretório esperado e ler arquivos arbitrários acessíveis ao processo.",
+    "recomendacao": "Aceite somente nomes de arquivo permitidos por uma allowlist ou valide o caminho normalizado para garantir que permaneça dentro de 'read/'."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 107,
+    "linha_final": 108,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os valores controlados pelos campos 'username' e 'password' são concatenados diretamente na consulta SQL. Um atacante pode alterar a estrutura da consulta, incluindo contornar a autenticação e acessar contas sem credenciais válidas.",
+    "recomendacao": "Use parâmetros vinculados do SQLite, passando username e password como parâmetros de execute em vez de concatená-los na string SQL."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 128,
+    "linha_final": 128,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O valor HTTP 'server' é concatenado diretamente ao comando executado por os.popen. Um atacante pode injetar metacaracteres ou comandos adicionais, obtendo execução de comandos no sistema operacional com os privilégios do processo.",
+    "recomendacao": "Não invoque um shell; execute o ping por uma API de subprocesso com lista de argumentos e valide 'server' como endereço permitido."
+  }
+]

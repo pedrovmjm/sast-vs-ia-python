@@ -1,0 +1,29 @@
+[
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 35,
+    "linha_final": 35,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os campos username e password, controlados pelo atacante via request.form, são interpolados diretamente na consulta SQL. Um atacante pode injetar sintaxe, como uma condição sempre verdadeira seguida de comentário, para contornar a autenticação e obter um redirecionamento para /dashboard.",
+    "recomendacao": "Substitua a interpolação por uma consulta parametrizada, por exemplo, c.execute(\"SELECT * FROM users WHERE username = ? AND password = ?\", (username, password))."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 48,
+    "linha_final": 48,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O valor do cookie session é controlável pelo cliente e é inserido sem escape na resposta HTML. Um atacante pode induzir uma vítima a enviar um cookie contendo marcação ou JavaScript e executar XSS ao acessar /dashboard.",
+    "recomendacao": "Não insira o cookie diretamente no HTML; renderize a resposta com escape contextual, como render_template com autoescape habilitado, e use uma sessão assinada pelo Flask em vez de confiar em valores arbitrários do cliente."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 56,
+    "linha_final": 56,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro q, controlado pelo atacante via request.args, é refletido diretamente no HTML sem escape. Um link especialmente criado pode executar JavaScript no navegador de qualquer usuário que o acesse.",
+    "recomendacao": "Renderize o resultado usando template com autoescape habilitado ou aplique escape HTML contextual antes de inserir q na resposta."
+  }
+]

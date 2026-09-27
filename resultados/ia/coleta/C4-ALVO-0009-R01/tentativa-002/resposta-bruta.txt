@@ -1,0 +1,47 @@
+[
+  {
+    "arquivo": "app/blueprints/account_area/views.py",
+    "linha_inicial": 54,
+    "linha_final": 57,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A alteração de e-mail é realizada por uma requisição POST autenticada, mas não há validação de token CSRF ou outra garantia de origem. Um site controlado por atacante pode induzir um usuário autenticado a enviar essa requisição e substituir o e-mail da conta, desde que o navegador envie a sessão.",
+    "recomendacao": "Exigir e validar um token CSRF imprevisível em change_email, change_password e send_feedback, rejeitando requisições sem token válido."
+  },
+  {
+    "arquivo": "app/blueprints/api/views.py",
+    "linha_inicial": 44,
+    "linha_final": 55,
+    "cwe": "CWE-862",
+    "severidade": "baixa",
+    "descricao": "O endpoint post aceita requisições sem qualquer autenticação ou autorização e grava no banco uma mensagem e um remetente controlados pelo cliente. Qualquer origem pode inserir registros arbitrários, permitindo abuso do armazenamento e poluição da caixa de mensagens administrativa.",
+    "recomendacao": "Aplicar autenticação e autorização ao endpoint post ou restringir sua finalidade a uma operação explicitamente pública com validação, limites de taxa e controles de abuso."
+  },
+  {
+    "arquivo": "app/blueprints/xss_protection/views.py",
+    "linha_inicial": 11,
+    "linha_final": 12,
+    "cwe": "CWE-601",
+    "severidade": "baixa",
+    "descricao": "O parâmetro next é controlado diretamente pelo atacante e passado a redirect sem validação. Uma vítima que acesse a URL pode ser redirecionada para um domínio externo, possibilitando phishing e ocultação do destino real.",
+    "recomendacao": "Aceitar somente destinos locais por meio de validação de esquema, host e caminho, usando um destino fixo quando next não for seguro."
+  },
+  {
+    "arquivo": "app/flask_xss.py",
+    "linha_inicial": 23,
+    "linha_final": 23,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A SECRET_KEY usada para assinar a sessão Flask está codificada no código-fonte. Quem obtiver esse valor pode forjar cookies de sessão, incluindo dados usados pelo Flask-Login, e assumir identidades de usuários conforme os identificadores existentes.",
+    "recomendacao": "Carregar uma chave aleatória e exclusiva a partir de configuração segura ou variável de ambiente, fora do código-fonte, e rotacioná-la."
+  },
+  {
+    "arquivo": "app/models/models.py",
+    "linha_inicial": 8,
+    "linha_final": 8,
+    "cwe": "CWE-256",
+    "severidade": "media",
+    "descricao": "A senha é armazenada diretamente na coluna password. O fluxo de login e a troca de senha também comparam e gravam o valor em texto puro, e User.serialize o inclui nas respostas. Qualquer leitura do banco ou acesso administrativo que obtenha os registros expõe as credenciais reutilizáveis.",
+    "recomendacao": "Armazenar somente hashes de senha usando uma função adaptativa como Argon2id, bcrypt ou scrypt; verificar com a função de comparação correspondente e remover password de serialize."
+  }
+]

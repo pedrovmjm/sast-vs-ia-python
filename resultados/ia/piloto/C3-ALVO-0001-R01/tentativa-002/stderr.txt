@@ -1,0 +1,2 @@
+Error: Sandbox mode is enabled but not available on this system. Sandbox requires macOS or Linux.
+Run 'agent sandbox disable' to switch to allowlist mode.

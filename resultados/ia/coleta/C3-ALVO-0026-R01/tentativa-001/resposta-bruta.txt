@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "bad/libsession.py",
+    "linha_inicial": 6,
+    "linha_final": 7,
+    "cwe": "CWE-565",
+    "severidade": "alta",
+    "descricao": "A sessão contém apenas o username codificado em Base64 e não possui assinatura, MAC ou criptografia. Um atacante pode fabricar o cookie vulpy_session com qualquer username; libsession.load o aceita e as rotas passam a autorizar leitura de posts, alteração de senha e operações de MFA em nome da vítima.",
+    "recomendacao": "Substitua o cookie artesanal por sessões assinadas pelo framework ou por um token autenticado com uma chave secreta aleatória mantida fora do código."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-89",
+    "severidade": "critica",
+    "descricao": "username e password chegam de formulários e da API e são interpolados diretamente na cláusula SELECT. Um atacante pode injetar SQL para contornar a autenticação, obtendo uma identidade válida e acesso às funcionalidades protegidas.",
+    "recomendacao": "Use parâmetros SQLite, por exemplo, SELECT ... WHERE username = ? AND password = ?, e armazene senhas usando hash resistente a brute force."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 29,
+    "linha_final": 29,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "A criação de usuários interpola username e password controlados pelo solicitante em um comando INSERT. O endpoint de criação de conta chama essa função sem exigir autenticação, permitindo injeção SQL e possível alteração dos dados persistidos.",
+    "recomendacao": "Substitua a interpolação por parâmetros SQLite e valide os campos conforme o esquema esperado."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 52,
+    "linha_final": 52,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "A troca de senha interpola password e username na instrução UPDATE. Os valores chegam de requisições HTTP; um usuário autenticado pode injetar SQL para modificar a senha de outras contas ou alterar mais registros que o pretendido.",
+    "recomendacao": "Use UPDATE users SET password = ? WHERE username = ? com parâmetros e mantenha a verificação de autorização da sessão."
+  },
+  {
+    "arquivo": "bad/mod_api.py",
+    "linha_inicial": 48,
+    "linha_final": 52,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A rota GET /api/post/<username> aceita qualquer username e chama get_posts sem autenticação ou verificação de autorização. Um atacante não autenticado pode consultar posts pertencentes a outros usuários.",
+    "recomendacao": "Exija autenticação e autorize a consulta apenas para o próprio usuário ou para identidades explicitamente permitidas."
+  },
+  {
+    "arquivo": "bad/mod_mfa.py",
+    "linha_inicial": 57,
+    "linha_final": 63,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A desativação de MFA é uma operação de alteração de estado exposta por GET e não exige token CSRF. Um site controlado pelo atacante pode induzir um usuário autenticado a realizar a requisição, desativando o segundo fator da conta.",
+    "recomendacao": "Altere a operação para POST, valide um token CSRF e exija uma confirmação apropriada antes de desativar o MFA."
+  },
+  {
+    "arquivo": "bad/mod_mfa.py",
+    "linha_inicial": 34,
+    "linha_final": 49,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A ativação de MFA aceita uma requisição POST autenticada sem proteção CSRF. Um atacante pode induzir o navegador da vítima a enviar um OTP previamente obtido ou controlado no contexto da conta, alterando a configuração de MFA.",
+    "recomendacao": "Inclua proteção CSRF no formulário e exija confirmação explícita do usuário para ativar o MFA."
+  },
+  {
+    "arquivo": "bad/mod_posts.py",
+    "linha_inicial": 28,
+    "linha_final": 40,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A criação de posts depende apenas do cookie de sessão e não valida token CSRF. Uma página externa pode induzir um usuário autenticado a publicar conteúdo em seu nome.",
+    "recomendacao": "Exija POST com token CSRF validado no servidor."
+  },
+  {
+    "arquivo": "bad/mod_user.py",
+    "linha_inicial": 54,
+    "linha_final": 73,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A rota de alteração de senha aceita POST sem token CSRF. Um atacante pode induzir um usuário autenticado a enviar uma nova senha, causando perda de controle da conta.",
+    "recomendacao": "Exija autenticação válida, token CSRF e confirmação da senha atual antes de executar a alteração."
+  },
+  {
+    "arquivo": "good/libsession.py",
+    "linha_inicial": 10,
+    "linha_final": 11,
+    "cwe": "CWE-321",
+    "severidade": "media",
+    "descricao": "A chave Fernet usada para autenticar e criptografar todos os cookies de sessão está embutida no código. Qualquer atacante que obtenha o código ou a chave pode criar cookies válidos para qualquer username e assumir sessões, permitindo as operações autorizadas pelo restante da aplicação.",
+    "recomendacao": "Carregue uma chave aleatória exclusiva do ambiente de execução a partir de um gerenciador de segredos e faça rotação sem expô-la no repositório."
+  }
+]

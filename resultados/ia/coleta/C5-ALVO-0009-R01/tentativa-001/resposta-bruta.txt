@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "app/blueprints/xss_protection/views.py",
+    "linha_inicial": 11,
+    "linha_final": 12,
+    "cwe": "CWE-601",
+    "severidade": "media",
+    "descricao": "O parâmetro `next`, controlável pelo atacante, é passado diretamente a `redirect()`. Uma vítima autenticada pode ser induzida a acessar uma URL que redireciona para um domínio externo, permitindo phishing e abuso da confiança no domínio legítimo.",
+    "recomendacao": "Aceite somente destinos locais conhecidos, validando o esquema e o host, ou ignore `next` quando ele não corresponder a uma rota interna permitida."
+  },
+  {
+    "arquivo": "app/flask_xss.py",
+    "linha_inicial": 23,
+    "linha_final": 23,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada pelo Flask para assinar a sessão está codificada no código. Qualquer pessoa que obtenha o código pode forjar cookies de sessão; como o Flask-Login usa a sessão para identificar o usuário, isso pode permitir a falsificação de sessões, inclusive de uma conta administrativa existente.",
+    "recomendacao": "Carregue uma chave criptograficamente aleatória a partir de um segredo externo à aplicação e substitua-a caso esta chave já tenha sido exposta."
+  },
+  {
+    "arquivo": "app/models/models.py",
+    "linha_inicial": 9,
+    "linha_final": 10,
+    "cwe": "CWE-256",
+    "severidade": "alta",
+    "descricao": "A senha do usuário é armazenada diretamente no campo `password`, e o fluxo de login compara o valor recebido com esse campo sem hashing. Quem obtiver o banco de dados poderá recuperar as senhas em claro e reutilizá-las, inclusive em outros serviços.",
+    "recomendacao": "Armazene somente hashes de senha com um algoritmo adaptativo apropriado, como Argon2id, bcrypt ou scrypt, e valide as senhas usando a função de verificação correspondente."
+  },
+  {
+    "arquivo": "manage.py",
+    "linha_inicial": 13,
+    "linha_final": 13,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A criação do administrador usa `admin` como senha padrão quando o comando é executado sem argumento. Se o comando for usado nessa forma e o administrador criado puder ser acessado pela aplicação, as credenciais previsíveis permitem comprometimento da conta administrativa.",
+    "recomendacao": "Remova a senha padrão e exija uma senha fornecida explicitamente por mecanismo seguro, recusando a criação do administrador quando ela não estiver presente."
+  }
+]

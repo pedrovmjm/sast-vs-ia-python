@@ -1,0 +1,47 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 117,
+    "linha_final": 130,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "A expressão controlada pelo usuário é avaliada e seu resultado é concatenado diretamente em HTML sem escaping. Um atacante pode fornecer uma expressão que retorne markup JavaScript, causando XSS refletido no navegador da vítima.",
+    "recomendacao": "Renderize o resultado com escaping contextual e não concatene dados controlados pelo usuário em HTML."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 120,
+    "linha_final": 120,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O valor recebido em request.form['expression'] é passado diretamente para eval(). Como a rota é acessível sem autenticação, um atacante pode executar código Python arbitrário no processo do servidor, com os privilégios da aplicação.",
+    "recomendacao": "Remova eval() e implemente um avaliador restrito baseado em ast.parse/ast.literal_eval ou em operações matemáticas explicitamente permitidas."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 159,
+    "linha_final": 162,
+    "cwe": "CWE-611",
+    "severidade": "alta",
+    "descricao": "XML controlado pelo usuário é processado com XMLParser configurado com dtd_validation=True e no_network=False. A resolução de DTDs e entidades externas pode permitir leitura de recursos locais ou requisições SSRF durante o parsing.",
+    "recomendacao": "Desabilite DTDs e entidades externas, usando XMLParser(resolve_entities=False, load_dtd=False, no_network=True) e validação por allowlist quando necessária."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 191,
+    "linha_final": 205,
+    "cwe": "CWE-96",
+    "severidade": "alta",
+    "descricao": "O nome enviado pelo usuário é interpolado na string usada como template e depois processado por render_template_string(). Sintaxe Jinja fornecida pelo atacante pode ser avaliada no servidor, permitindo SSTI e potencial execução de código conforme os objetos acessíveis no contexto.",
+    "recomendacao": "Mantenha o template estático e passe o nome como variável para render_template_string/render_template, permitindo o escaping padrão."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 209,
+    "linha_final": 211,
+    "cwe": "CWE-489",
+    "severidade": "alta",
+    "descricao": "Quando executada como programa principal, a aplicação habilita app.debug=True e escuta em 0.0.0.0. Isso pode expor o debugger interativo e informações internas a qualquer origem alcançável pela rede.",
+    "recomendacao": "Desabilite o modo debug em execução de produção e faça o bind somente em uma interface necessária, usando um servidor de produção configurado adequadamente."
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "backend/auth.py",
+    "linha_inicial": 23,
+    "linha_final": 23,
+    "cwe": "CWE-321",
+    "severidade": "critica",
+    "descricao": "A validação de todos os JWTs usa a chave fixa e conhecida \"secret\". Um atacante que conheça o código pode forjar tokens HS256 com qualquer user_id e acessar ou executar operações protegidas como outro usuário, incluindo transferências e alteração de senha.",
+    "recomendacao": "Carregue uma chave aleatória e exclusiva de um mecanismo seguro de configuração ou segredo, com rotação, sem mantê-la no código-fonte."
+  },
+  {
+    "arquivo": "backend/models.py",
+    "linha_inicial": 24,
+    "linha_final": 24,
+    "cwe": "CWE-916",
+    "severidade": "alta",
+    "descricao": "As senhas são armazenadas como MD5 sem salt. Se o banco ou o campo password_hash for obtido, as senhas podem ser recuperadas por ataques offline de dicionário ou pré-computação, especialmente porque o algoritmo é rápido e inadequado para senhas.",
+    "recomendacao": "Use um KDF adaptativo específico para senhas, como Argon2id, bcrypt ou scrypt, com salt aleatório por senha, e migre os hashes existentes."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 22,
+    "linha_final": 23,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O username controlado no endpoint POST /api/register é interpolado diretamente na instrução INSERT executada pelo banco. Um atacante pode injetar SQL para alterar a instrução de cadastro ou manipular dados, desde que consiga enviar requisições ao endpoint.",
+    "recomendacao": "Substitua a SQL concatenada por criação do objeto User via ORM ou por uma instrução parametrizada com bind parameters."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 36,
+    "linha_final": 37,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O username controlado no endpoint POST /api/login é interpolado diretamente na consulta SELECT. Um atacante pode modificar a cláusula WHERE e potencialmente contornar a autenticação ou extrair dados, dependendo da resposta e do comportamento do banco.",
+    "recomendacao": "Use User.query.filter_by(username=username) ou uma consulta SQL parametrizada."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 135,
+    "linha_final": 140,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "No endpoint autenticado POST /api/update-password, o user_id vem da requisição e é usado para selecionar o usuário cuja senha será alterada, sem verificar se corresponde a current_user nem exigir privilégio administrativo. Qualquer usuário autenticado, ou qualquer atacante com JWT forjado, pode alterar a senha de outra conta.",
+    "recomendacao": "Ignore user_id fornecido pelo cliente e altere somente current_user, ou valide explicitamente uma autorização administrativa antes de aceitar outro identificador."
+  },
+  {
+    "arquivo": "backend/routes/auth_routes.py",
+    "linha_inicial": 148,
+    "linha_final": 150,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "O conteúdo profile_yaml controlado pelo cliente autenticado é processado por yaml.load com yaml.Loader. Esse loader permite construções YAML que podem instanciar objetos e executar código durante o parsing, possibilitando execução remota de código no servidor sob a condição de o atacante possuir acesso ao endpoint.",
+    "recomendacao": "Use yaml.safe_load e valide o resultado contra um schema que aceite somente os campos e tipos necessários do perfil."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 14,
+    "linha_final": 14,
+    "cwe": "CWE-20",
+    "severidade": "alta",
+    "descricao": "O amount controlado pelo usuário é convertido para Decimal, mas valores negativos não são rejeitados. Com uma transferência negativa, o teste de saldo pode ser satisfeito, current_user.balance é incrementado e o saldo do receiver é reduzido, permitindo fraude financeira por qualquer usuário autenticado.",
+    "recomendacao": "Valide que amount seja um valor decimal finito, positivo e dentro dos limites permitidos antes do teste de saldo e da criação da transação."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 48,
+    "linha_final": 52,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "O endpoint autenticado GET /api/transactions aceita user_id arbitrário e não verifica se ele pertence a current_user. Um usuário autenticado pode consultar transações de outras contas; a consulta também usa esse valor diretamente em SQL.",
+    "recomendacao": "Remova user_id da entrada para usuários comuns e filtre sempre por current_user.id; se houver consulta administrativa, aplique uma autorização explícita."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 50,
+    "linha_final": 52,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O user_id controlado pelo cliente é interpolado diretamente na consulta SQL do endpoint GET /api/transactions. Um atacante autenticado pode injetar expressões SQL para alterar os filtros e acessar ou manipular dados além das próprias transações.",
+    "recomendacao": "Use filtros parametrizados do ORM ou bind parameters e não aceite um identificador de usuário arbitrário sem autorização."
+  },
+  {
+    "arquivo": "backend/routes/transaction_routes.py",
+    "linha_inicial": 90,
+    "linha_final": 96,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O parâmetro description controlado pelo cliente é inserido diretamente na cláusula LIKE do endpoint autenticado GET /api/transactions/search. Um atacante pode injetar SQL, modificar a condição que restringe sender_id/receiver_id e consultar dados de outras transações, sujeito apenas à autenticação no endpoint.",
+    "recomendacao": "Use uma consulta parametrizada para o padrão LIKE e faça o escape apropriado dos curingas quando a busca literal for desejada."
+  }
+]

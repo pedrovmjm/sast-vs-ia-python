@@ -1,0 +1,101 @@
+[
+  {
+    "arquivo": "app/models/Analytics/analytics.py",
+    "linha_inicial": 55,
+    "linha_final": 55,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O método hits_by_ip interpola diretamente no SQL os valores ip e col fornecidos pela requisição administrativa, permitindo que um atacante autenticado injete cláusulas SQL e leia ou manipule dados.",
+    "recomendacao": "Use consultas parametrizadas para ip e uma allowlist fixa de colunas para col; não concatene valores controlados pelo usuário no comando SQL."
+  },
+  {
+    "arquivo": "app/models/Benefits/benefits.py",
+    "linha_inicial": 77,
+    "linha_final": 77,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "make_backup monta um comando shell com full_file_name e orig_file.name derivados do nome do upload. Ao solicitar backup, um atacante autenticado pode inserir metacaracteres no nome do arquivo e executar comandos no servidor.",
+    "recomendacao": "Substitua os.system por uma operação de cópia própria do Python, como shutil.copyfile, e valide o nome do arquivo."
+  },
+  {
+    "arquivo": "app/views/admin/views.py",
+    "linha_inicial": 22,
+    "linha_final": 22,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "As funções administrativas verificam apenas a existência de um auth_token, mas nunca verificam user.is_admin. Qualquer usuário autenticado pode acessar consultas, atualização e exclusão de usuários administrativos.",
+    "recomendacao": "Após autenticar, exija explicitamente current_user.is_admin para todos os endpoints administrativos e negue o acesso caso contrário."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 15,
+    "linha_final": 15,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "api_index e api_id avaliam diretamente o parâmetro class com eval sem autenticação ou allowlist. Um atacante pode fornecer uma expressão Python que invoque builtins, importe módulos e execute código arbitrário no processo do servidor.",
+    "recomendacao": "Remova eval e mapeie nomes permitidos para classes por meio de um dicionário explícito; rejeite qualquer nome fora dessa allowlist."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 16,
+    "linha_final": 16,
+    "cwe": "CWE-200",
+    "severidade": "alta",
+    "descricao": "A API móvel não exige autenticação e serializa todos os campos dos objetos selecionados pelo parâmetro class. Com class=User, dados como hashes de senha e auth_token são expostos a qualquer solicitante.",
+    "recomendacao": "Exija autenticação e serialize somente uma lista explícita de campos não sensíveis; nunca retorne password ou auth_token."
+  },
+  {
+    "arquivo": "app/views/password_resets/views.py",
+    "linha_inicial": 79,
+    "linha_final": 79,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "reset_password desserializa com pickle um valor inteiro controlado pelo POST e não o vincula a um token ou usuário validado. Um atacante pode enviar um pickle malicioso e executar código arbitrário no servidor.",
+    "recomendacao": "Não desserialize dados não confiáveis com pickle; use um identificador assinado e opaco para o usuário e valide o token no servidor."
+  },
+  {
+    "arquivo": "app/views/sessions/views.py",
+    "linha_inicial": 44,
+    "linha_final": 44,
+    "cwe": "CWE-601",
+    "severidade": "media",
+    "descricao": "O parâmetro path enviado pelo cliente é usado diretamente como destino de HttpResponseRedirect após login. Um atacante pode induzir a vítima a autenticar-se e então redirecioná-la para um domínio ou caminho controlado pelo atacante.",
+    "recomendacao": "Aceite somente caminhos locais permitidos, valide o destino com url_has_allowed_host_and_scheme ou use uma allowlist de rotas."
+  },
+  {
+    "arquivo": "app/views/sessions/views.py",
+    "linha_inicial": 57,
+    "linha_final": 61,
+    "cwe": "CWE-204",
+    "severidade": "baixa",
+    "descricao": "O fluxo retorna mensagens distintas para email inexistente e senha incorreta. Um atacante pode testar endereços e confirmar quais contas existem.",
+    "recomendacao": "Retorne a mesma mensagem e comportamento para credenciais inválidas, independentemente de o email existir."
+  },
+  {
+    "arquivo": "app/views/users/messages/views.py",
+    "linha_inicial": 49,
+    "linha_final": 49,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "user_message busca a mensagem apenas pelo message_id e não verifica se ela pertence ao usuário autenticado. Alterando o identificador, um usuário pode ler ou excluir mensagens de outros usuários.",
+    "recomendacao": "Filtre a consulta por pk=message_id e por receiver ou creator igual ao usuário autenticado."
+  },
+  {
+    "arquivo": "app/views/users/pay/views.py",
+    "linha_inicial": 53,
+    "linha_final": 53,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "user_pay exclui qualquer registro Pay identificado por pay_id sem conferir o usuário autenticado. Um atacante autenticado pode excluir informações bancárias de outra conta.",
+    "recomendacao": "Exclua somente com uma consulta que combine pay_id com user=current_user e trate o caso de objeto inexistente."
+  },
+  {
+    "arquivo": "app/views/users/work_info/views.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A view aceita qualquer user_id fornecido na URL e carrega diretamente o WorkInfo correspondente, embora a única verificação seja a autenticação. Um usuário autenticado pode consultar salário, data de nascimento e SSN de outra pessoa.",
+    "recomendacao": "Exija que o user_id corresponda ao usuário autenticado ou implemente uma verificação explícita de autorização para acesso administrativo."
+  }
+]

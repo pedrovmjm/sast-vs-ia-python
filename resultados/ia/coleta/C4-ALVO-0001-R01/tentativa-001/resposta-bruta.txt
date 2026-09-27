@@ -1,0 +1,29 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 120,
+    "linha_final": 120,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O valor controlado pelo atacante no campo POST `expression` é passado diretamente a `eval`, permitindo execução arbitrária de código Python no processo do servidor por meio de uma requisição não autenticada.",
+    "recomendacao": "Remover `eval` e implementar um avaliador matemático restrito, com allowlist explícita de operações e operandos."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 158,
+    "linha_final": 160,
+    "cwe": "CWE-611",
+    "severidade": "media",
+    "descricao": "O XML enviado pelo atacante é analisado com validação de DTD e `no_network=False`; entidades externas podem ser resolvidas durante `fromstring`, permitindo requisições SSRF a destinos acessíveis pelo servidor e consumo de recursos por entidades maliciosas.",
+    "recomendacao": "Configurar o parser para rejeitar DTDs e entidades externas, desabilitar resolução de entidades e impedir acesso à rede durante o parsing."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 206,
+    "linha_final": 207,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "O nome fornecido pelo atacante é interpolado em `template` antes de ser enviado a `render_template_string`; portanto, sintaxe Jinja inserida no campo `name` é interpretada como código de template no servidor, permitindo SSTI não autenticado e acesso a recursos expostos ao contexto de templates.",
+    "recomendacao": "Passar o nome como variável para um template estático, usando `render_template_string` apenas com conteúdo constante e escapando a saída."
+  }
+]

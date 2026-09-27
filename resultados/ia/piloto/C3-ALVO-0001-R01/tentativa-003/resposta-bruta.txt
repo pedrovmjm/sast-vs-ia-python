@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 120,
+    "linha_final": 120,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O valor controlado pelo usuário em request.form['expression'] é passado diretamente para eval(). Um atacante pode enviar uma expressão Python arbitrária via POST para /evaluate e executar código com os privilégios do processo da aplicação.",
+    "recomendacao": "Remova eval() e implemente um avaliador restrito que aceite somente operações matemáticas explicitamente permitidas, sem executar código Python arbitrário."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 159,
+    "linha_final": 161,
+    "cwe": "CWE-611",
+    "severidade": "alta",
+    "descricao": "XML fornecido pelo usuário é processado com DTD habilitado, validação DTD e no_network=False. Entidades externas podem ser resolvidas durante etree.fromstring(), permitindo que um atacante tente ler arquivos locais ou acessar recursos externos, com o resultado posteriormente serializado na resposta.",
+    "recomendacao": "Desabilite DTDs e entidades externas no XMLParser, bloqueie rede e use um parser configurado explicitamente para processamento seguro de XML."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 192,
+    "linha_final": 214,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "O valor controlado pelo usuário em request.form['name'] é incorporado diretamente ao texto de um template e esse template é processado por render_template_string(). Um atacante pode inserir sintaxe Jinja arbitrária via POST para /sayhi, obtendo execução de expressões no contexto do servidor e potencial execução de código conforme os objetos disponíveis.",
+    "recomendacao": "Passe o valor como variável para um template estático e renderize-o com o mecanismo normal de templates, sem concatená-lo no código do template; aplique escaping de saída."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 217,
+    "linha_final": 220,
+    "cwe": "CWE-489",
+    "severidade": "media",
+    "descricao": "Quando executado como programa principal, o servidor é iniciado com debug=True e escutando em 0.0.0.0. Além disso, o endpoint /lookup provoca uma exceção por chamar rp(), que não é definido. Um cliente remoto pode alcançar a página de depuração e obter informações internas; a exposição do depurador também aumenta o risco de execução interativa se suas proteções forem contornadas.",
+    "recomendacao": "Desabilite o modo de depuração em ambientes expostos e execute a aplicação atrás de um servidor WSGI configurado para produção."
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 122,
+    "linha_final": 126,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint de consulta de perfil não aplica autenticação ou autorização e aceita user_id controlado pelo cliente. Um visitante pode consultar perfis de outros usuários, incluindo email, role e permissions.",
+    "recomendacao": "Exigir autenticação e autorizar o acesso com base no usuário autenticado, evitando aceitar um user_id arbitrário para consultas não administrativas."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 214,
+    "linha_final": 223,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint delete-user não aplica autenticação nem autorização e exclui o usuário identificado pelo user_id fornecido na URL. Qualquer requisição alcançável pode remover contas.",
+    "recomendacao": "Exigir autenticação e uma verificação explícita de permissão administrativa antes de executar a exclusão."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 239,
+    "linha_final": 254,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "O endpoint update_picture aceita picture_url diretamente do cliente e executa requests.get sem restringir esquema, host ou faixa de endereços. Um atacante pode induzir o servidor a realizar requisições para serviços internos ou outros destinos controlados.",
+    "recomendacao": "Permitir apenas URLs HTTPS de uma allowlist de hosts confiáveis, resolver e validar o endereço antes da conexão e bloquear destinos privados, locais e de link-local."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 237,
+    "linha_final": 241,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint update_picture não possui autenticação ou autorização, mas permite selecionar o usuário pelo username e alterar sua profile_picture no banco e no sistema de arquivos. Um atacante não autenticado pode modificar o perfil de qualquer usuário existente.",
+    "recomendacao": "Exigir autenticação e autorizar a alteração somente para o próprio usuário ou para uma função administrativa."
+  },
+  {
+    "arquivo": "server/config.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A mesma chave constante just_another_secret é usada como SECRET_KEY da aplicação e para assinar JWTs. Quem obtiver o código pode forjar tokens JWT aceitos por token_required e cookies de sessão Flask, caso esses mecanismos sejam usados no ambiente.",
+    "recomendacao": "Carregar uma chave criptográfica aleatória e exclusiva a partir de um segredo externo à aplicação, com rotação e armazenamento seguro."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 137,
+    "linha_final": 138,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "search_query vem dos parâmetros da requisição e é interpolado diretamente em s_query antes de cursor.execute. Um usuário autenticado pode injetar SQL e alterar a consulta executada contra a tabela files.",
+    "recomendacao": "Usar parâmetros vinculados para user_id e search_query, por exemplo com WHERE user_id = ? AND filename LIKE ?."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 262,
+    "linha_final": 263,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O nome do arquivo enviado é controlado pelo cliente e é combinado diretamente com UPLOAD_FOLDER em os.path.join antes de file.save. Um usuário autenticado pode usar traversal ou um caminho absoluto para gravar fora do diretório de uploads, sujeito às permissões do processo.",
+    "recomendacao": "Normalizar e validar o nome com secure_filename, rejeitar caminhos absolutos e confirmar que o caminho final permanece dentro de UPLOAD_FOLDER."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 403,
+    "linha_final": 403,
+    "cwe": "CWE-916",
+    "severidade": "alta",
+    "descricao": "custom_hash usa MD5 sem salt para armazenar e verificar senhas no fluxo de cadastro e login. Se o banco for obtido, as senhas podem ser submetidas a ataques offline de dicionário ou força bruta com baixo custo.",
+    "recomendacao": "Migrar para um KDF de senha adaptativo com salt, como werkzeug.security.generate_password_hash/check_password_hash, bcrypt, scrypt ou Argon2."
+  }
+]

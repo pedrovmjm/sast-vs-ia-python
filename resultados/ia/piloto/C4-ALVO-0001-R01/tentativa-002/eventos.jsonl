@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a0b101-1424-7f53-a666-e2848d2c0412"}
+{"type":"turn.started"}
+{"type":"error","message":"{\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': schema must be a JSON Schema of 'type: \\\"object\\\"', got 'type: \\\"array\\\"'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}"}
+{"type":"turn.failed","error":{"message":"{\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': schema must be a JSON Schema of 'type: \\\"object\\\"', got 'type: \\\"array\\\"'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}"}}

@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 40,
+    "linha_final": 42,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "O segmento capturado pela rota /static/(.*) é concatenado ao caminho static/ e usado em open() sem normalização ou validação. Um atacante pode fornecer componentes ../ para escapar do diretório static e ler arquivos acessíveis ao processo.",
+    "recomendacao": "Resolva o caminho com uma raiz fixa, valide que o caminho resultante permanece dentro dessa raiz e rejeite componentes de travessia antes de abrir o arquivo."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 75,
+    "linha_final": 77,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "O argumento HTTP file é concatenado diretamente ao diretório read/ e usado em io.open(). Um atacante pode usar ../ para acessar arquivos fora de read/, desde que sejam legíveis pelo processo.",
+    "recomendacao": "Aceite apenas nomes permitidos ou IDs de arquivos e valide, após resolver o caminho, que ele permanece dentro do diretório read."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 106,
+    "linha_final": 108,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "username e password controlados pela requisição são concatenados na instrução SQL. Aspas e expressões SQL inseridas nesses parâmetros podem alterar a consulta, permitindo contornar a autenticação e potencialmente expor dados da tabela Users.",
+    "recomendacao": "Use uma consulta parametrizada, por exemplo execute('SELECT * FROM Users WHERE User = ? AND Password = ?', (uname, pwd))."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 126,
+    "linha_final": 127,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "O argumento server recebido por POST é concatenado diretamente ao comando passado a os.popen(). Um atacante sem autenticação visível pode inserir metacaracteres de shell e executar comandos arbitrários com os privilégios do processo.",
+    "recomendacao": "Não invoque um shell; valide server contra uma allowlist de endereços permitidos e use subprocess.run com argumentos separados e shell=False."
+  }
+]

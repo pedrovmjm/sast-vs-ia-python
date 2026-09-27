@@ -1,0 +1,47 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-489",
+    "severidade": "alta",
+    "descricao": "O servidor é iniciado em 0.0.0.0 com debug=True. Quando executado como script e acessível pela rede, erros não tratados expõem o depurador interativo e rastreamentos detalhados; com acesso autorizado ao console de depuração, um atacante pode executar código no processo.",
+    "recomendacao": "Iniciar o servidor com debug=False e restringir a escuta a uma interface apropriada; habilitar depuração somente em ambiente local controlado."
+  },
+  {
+    "arquivo": "lfi.py",
+    "linha_inicial": 2,
+    "linha_final": 2,
+    "cwe": "CWE-73",
+    "severidade": "alta",
+    "descricao": "fetchfile usa diretamente o valor controlável por lfi.get(\"filename\") em open(), sem validação, normalização ou restrição de diretório. Um atacante que alcance lfivuln pode fornecer caminhos absolutos ou traversal e obter o conteúdo de arquivos legíveis pelo processo na resposta.",
+    "recomendacao": "Aceitar somente nomes de uma allowlist ou resolver o caminho dentro de um diretório base fixo e rejeitar qualquer caminho que escape desse diretório."
+  },
+  {
+    "arquivo": "rfi.py",
+    "linha_inicial": 5,
+    "linha_final": 5,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "rfivuln encaminha o parâmetro imagelink diretamente para requests.get e devolve o corpo obtido. Um atacante que alcance essa função pode fazer o servidor realizar requisições para destinos arbitrários, inclusive serviços internos ou endereços acessíveis apenas pela rede do servidor.",
+    "recomendacao": "Restringir o destino a uma allowlist de esquemas, hosts e portas, bloquear endereços internos após resolução DNS e não seguir redirecionamentos para destinos não permitidos."
+  },
+  {
+    "arquivo": "sqli.py",
+    "linha_inicial": 16,
+    "linha_final": 16,
+    "cwe": "CWE-89",
+    "severidade": "media",
+    "descricao": "O username controlável por sqli.get é interpolado diretamente na consulta SQL. Um atacante que alcance sqlivuln pode inserir sintaxe SQL, alterar a cláusula WHERE ou usar construções como UNION para manipular resultados retornados pela consulta.",
+    "recomendacao": "Usar consulta parametrizada, por exemplo cur.execute(\"SELECT * FROM USERS WHERE USERNAME=?\", (username,)), mantendo valores fora da string SQL."
+  },
+  {
+    "arquivo": "ssti.py",
+    "linha_inicial": 10,
+    "linha_final": 12,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "O valor controlável mathexp é concatenado ao texto recebido por Template e depois renderizado. Um atacante que alcance sstivuln pode inserir expressões e diretivas Jinja, obtendo execução de lógica do template e, conforme os objetos disponíveis no ambiente, potencialmente execução de código no servidor.",
+    "recomendacao": "Não compilar entrada do usuário como template; tratar o valor como dado e renderizá-lo por meio de um template estático, ou aplicar uma linguagem de expressão explicitamente limitada."
+  }
+]

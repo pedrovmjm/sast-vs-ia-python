@@ -1,0 +1,1 @@
+Failed to read prompt from stdin: input is not valid UTF-8 (invalid byte at offset 3). Convert it to UTF-8 and retry (e.g., `iconv -f <ENC> -t UTF-8 prompt.txt`).

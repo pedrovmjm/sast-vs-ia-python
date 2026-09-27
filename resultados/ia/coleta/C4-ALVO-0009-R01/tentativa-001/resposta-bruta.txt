@@ -1,0 +1,65 @@
+[
+  {
+    "arquivo": "app/blueprints/account_area/views.py",
+    "linha_inicial": 40,
+    "linha_final": 56,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A rota autenticada de alteração de e-mail aceita POST e altera o e-mail da conta sem validação de token CSRF. Um site externo pode induzir um navegador já autenticado a enviar a requisição, modificando o e-mail da vítima.",
+    "recomendacao": "Exigir e validar um token CSRF nessa rota por meio do mecanismo CSRF do Flask ou de extensão equivalente."
+  },
+  {
+    "arquivo": "app/blueprints/account_area/views.py",
+    "linha_inicial": 60,
+    "linha_final": 76,
+    "cwe": "CWE-352",
+    "severidade": "baixa",
+    "descricao": "A rota autenticada de envio de feedback aceita POST e grava o conteúdo sem validação de token CSRF. Um site externo pode induzir o navegador autenticado da vítima a criar uma mensagem em seu nome.",
+    "recomendacao": "Exigir e validar um token CSRF nessa rota por meio do mecanismo CSRF do Flask ou de extensão equivalente."
+  },
+  {
+    "arquivo": "app/blueprints/api/views.py",
+    "linha_inicial": 43,
+    "linha_final": 54,
+    "cwe": "CWE-306",
+    "severidade": "media",
+    "descricao": "A operação POST de MessagesView não possui decorador de autenticação ou outra verificação de autorização. Qualquer cliente que alcance a API pode inserir mensagens arbitrárias e persistentes no banco, inclusive definindo livremente from_user, permitindo abuso de armazenamento e poluição do fluxo administrativo.",
+    "recomendacao": "Aplicar autenticação e autorização à operação POST, além de impor limites de tamanho e taxa para as mensagens."
+  },
+  {
+    "arquivo": "app/blueprints/flask_xss/views.py",
+    "linha_inicial": 11,
+    "linha_final": 12,
+    "cwe": "CWE-601",
+    "severidade": "baixa",
+    "descricao": "O parâmetro next controlado pelo atacante é passado diretamente a redirect. Uma requisição para essa rota pode redirecionar o usuário para um domínio externo após o processamento da solicitação, viabilizando phishing por URL confiável.",
+    "recomendacao": "Aceitar apenas destinos locais permitidos, validando next contra o host e uma allowlist de caminhos internos."
+  },
+  {
+    "arquivo": "app/flask_xss.py",
+    "linha_inicial": 24,
+    "linha_final": 24,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A SECRET_KEY usada pelo Flask para assinar a sessão é um valor constante e previsível presente no código. Quem obtiver o código pode forjar cookies de sessão; como Flask-Login armazena a identidade autenticada na sessão, isso pode permitir personificar usuários, inclusive o usuário admin, se a aplicação estiver acessível.",
+    "recomendacao": "Carregar uma chave aleatória, forte e exclusiva a partir de configuração segura fora do código, com rotação da chave comprometida."
+  },
+  {
+    "arquivo": "app/models/models.py",
+    "linha_inicial": 11,
+    "linha_final": 16,
+    "cwe": "CWE-256",
+    "severidade": "alta",
+    "descricao": "A senha é armazenada diretamente no campo password e comparada em texto puro no fluxo de login e de alteração de senha. Um atacante que obtenha uma cópia do banco ou leia os registros recupera imediatamente as credenciais, que podem ser reutilizadas em outros serviços.",
+    "recomendacao": "Armazenar somente hashes de senha produzidos por uma função adaptativa segura, como werkzeug.security.generate_password_hash, e verificar com check_password_hash."
+  },
+  {
+    "arquivo": "manage.py",
+    "linha_inicial": 16,
+    "linha_final": 16,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "O comando de criação do administrador define admin como senha padrão. Se o comando for executado sem argumento, a conta admin será criada com uma credencial conhecida, permitindo acesso administrativo a qualquer atacante que tente essa combinação.",
+    "recomendacao": "Remover a senha padrão e exigir uma senha forte fornecida por mecanismo seguro, ou gerar uma credencial aleatória de uso único."
+  }
+]

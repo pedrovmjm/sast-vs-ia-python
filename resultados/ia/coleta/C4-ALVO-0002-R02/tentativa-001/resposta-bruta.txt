@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 21,
+    "linha_final": 21,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "A função decodifica o token JWT sem verificar assinatura nem expiração e usa diretamente o campo identity. Um atacante pode fabricar um token com identity=admin e obter os dados do usuário administrativo, inclusive a senha exposta pelo resolver correspondente.",
+    "recomendacao": "Valide assinatura, algoritmo permitido e expiração usando uma chave secreta protegida; rejeite tokens inválidos ou expirados."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O filename controlado pelo usuário é concatenado diretamente ao diretório de upload e usado em open(). Um atacante pode fornecer componentes .. ou caminho absoluto para gravar conteúdo arbitrário em arquivos acessíveis ao processo.",
+    "recomendacao": "Use um nome gerado pelo servidor ou secure_filename, resolva o caminho e confirme que ele permanece dentro de WEB_UPLOADDIR antes de abrir o arquivo."
+  },
+  {
+    "arquivo": "core/middleware.py",
+    "linha_inicial": 76,
+    "linha_final": 77,
+    "cwe": "CWE-400",
+    "severidade": "media",
+    "descricao": "Quando o corpo GraphQL é uma lista, o middleware de proteção de profundidade substitui query por None para entradas de mutação e chama parser.get_depth(None). A validação de profundidade fica incorreta para mutações em lote, permitindo que consultas profundas contornem esse controle.",
+    "recomendacao": "Use mutation como entrada de get_depth quando query estiver ausente e valide cada operação do lote antes da execução."
+  },
+  {
+    "arquivo": "core/view_override.py",
+    "linha_inicial": 51,
+    "linha_final": 53,
+    "cwe": "CWE-209",
+    "severidade": "media",
+    "descricao": "Erros GraphQL são retornados com stack trace, traceback de depuração e caminho completo do arquivo. Um cliente que provoque erro no endpoint GraphiQL pode obter detalhes internos da aplicação e do ambiente de execução.",
+    "recomendacao": "Retorne mensagens genéricas em produção e registre stack traces apenas no servidor, condicionando detalhes de depuração a uma configuração segura."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 168,
+    "linha_final": 176,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A mutação deletePaste aceita qualquer id e exclui o registro sem autenticação nem verificação de propriedade. Qualquer cliente capaz de acessar o endpoint GraphQL pode apagar pastes arbitrários.",
+    "recomendacao": "Exija autenticação e autorize a exclusão verificando que o usuário autenticado é proprietário do paste ou possui permissão administrativa."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 218,
+    "linha_final": 219,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "scheme, host, port e path são controlados pelo cliente, inseridos em uma string e executados por os.popen via run_cmd. A remoção de apenas ; e & no modo hard não impede metacaracteres como |, substituição de comandos ou redirecionamentos, permitindo execução arbitrária no sistema.",
+    "recomendacao": "Não use shell para buscar URLs; utilize um cliente HTTP com esquema permitido, validação de host e porta, bloqueio de destinos internos e argumentos separados."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 320,
+    "linha_final": 321,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O filtro fornecido pelo usuário é interpolado diretamente em uma expressão SQL passada a text(). Um atacante pode inserir sintaxe SQL e alterar a cláusula WHERE, obtendo registros não autorizados ou manipulando a consulta.",
+    "recomendacao": "Use filtros SQLAlchemy parametrizados, como comparações de colunas e bind parameters, sem interpolar entrada na expressão SQL."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 338,
+    "linha_final": 346,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "O resolver systemDiagnostics executa cmd controlado pelo cliente através de shell quando as credenciais administrativas são aceitas. O banco é inicializado com a senha administrativa fixa changeme e, no modo fácil padrão, allowed_cmds aceita qualquer comando, permitindo execução arbitrária no host.",
+    "recomendacao": "Remova a execução de comandos do resolver; se uma operação administrativa for indispensável, use funções fixas sem shell e autorização forte, sem aceitar comandos livres."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 350,
+    "linha_final": 355,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "systemDebug é acessível pelo GraphQL sem autenticação e concatena o argumento arg em ps antes de executá-lo por shell. Um atacante pode fornecer metacaracteres para executar comandos arbitrários com os privilégios do processo.",
+    "recomendacao": "Elimine esse resolver ou execute apenas uma chamada fixa de processo sem shell e sem entrada arbitrária do cliente."
+  }
+]

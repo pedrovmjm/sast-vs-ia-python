@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 33,
+    "linha_final": 34,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O valor controlado por request.form username/password é interpolado diretamente na consulta SQL. Um atacante pode injetar sintaxe SQL no endpoint /login para alterar a condição da consulta e autenticar-se sem credenciais válidas.",
+    "recomendacao": "Use uma consulta parametrizada, como c.execute(\"SELECT * FROM users WHERE username = ? AND password = ?\", (username, password))."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 43,
+    "linha_final": 47,
+    "cwe": "CWE-862",
+    "severidade": "baixa",
+    "descricao": "O endpoint /dashboard não verifica autenticação nem autorização e pode ser acessado diretamente. Qualquer requisição, inclusive sem cookie de sessão, recebe a resposta do dashboard; o impacto observável no código é limitado à exposição dessa página.",
+    "recomendacao": "Exija uma sessão autenticada validada no início da função dashboard e retorne erro ou redirecionamento para requisições não autenticadas."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 46,
+    "linha_final": 47,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O valor do cookie session é controlável pelo cliente e é inserido diretamente em HTML sem escaping. Um atacante que consiga definir esse cookie, inclusive por meio do fluxo de login combinado com a injeção SQL, pode fazer JavaScript arbitrário ser interpretado por quem acessar /dashboard.",
+    "recomendacao": "Renderize o valor usando escaping contextual do Flask/Jinja2 ou aplique escaping HTML antes de inseri-lo na resposta; não use dados de cookie diretamente em HTML."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 52,
+    "linha_final": 53,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro GET q, controlado pelo atacante, é refletido diretamente na resposta HTML sem sanitização. Um link especialmente criado para /search?q=... pode executar JavaScript no navegador da vítima ao ser aberto.",
+    "recomendacao": "Escape q para o contexto HTML antes da renderização, preferencialmente passando-o a um template Jinja2 com autoescaping habilitado."
+  }
+]

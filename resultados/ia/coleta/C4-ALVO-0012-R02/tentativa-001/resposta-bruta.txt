@@ -1,0 +1,65 @@
+[
+  {
+    "arquivo": "badguys/settings.py",
+    "linha_inicial": 10,
+    "linha_final": 10,
+    "cwe": "CWE-215",
+    "severidade": "media",
+    "descricao": "DEBUG permanece habilitado em configuração usada pela aplicação, e a rota pública boom sempre lança uma exceção. Em execução com essas configurações, um atacante pode acessar a rota e obter a página detalhada de erro do Django, potencialmente expondo informações internas do aplicativo.",
+    "recomendacao": "Defina DEBUG = False fora do desenvolvimento."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 42,
+    "linha_final": 42,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O parâmetro GET p controla diretamente o caminho usado por open(), sem validação ou confinamento ao diretório de imagens. Um atacante pode fornecer componentes .. ou caminho absoluto para ler arquivos arbitrários acessíveis ao processo, que são devolvidos na resposta HTTP.",
+    "recomendacao": "Resolva o caminho e confirme que ele permanece sob base_path, ou aceite somente nomes de arquivo de uma allowlist."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 72,
+    "linha_final": 72,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O valor controlado pelo usuário em request.POST['first_name'] é decodificado de Base64 e executado com exec(). Um atacante que alcance a rota POST pode executar código Python arbitrário com as permissões do processo da aplicação.",
+    "recomendacao": "Remova a chamada a exec() e implemente a funcionalidade com operações explícitas e dados tratados como dados."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 128,
+    "linha_final": 132,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "O userid da URL seleciona diretamente um registro no dicionário users, e a view retorna seus dados sem verificar a identidade ou autorização do solicitante. Em requisições POST, o mesmo identificador permite alterar nome e e-mail de qualquer usuário, inclusive o usuário administrativo.",
+    "recomendacao": "Exija autenticação e autorização para o usuário-alvo antes de ler ou alterar o registro, associando a operação ao usuário autenticado."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 152,
+    "linha_final": 153,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A seleção da página administrativa depende exclusivamente do parâmetro GET action=admin. A função não verifica autenticação nem autorização, portanto qualquer solicitante que alcance a rota pode obter a resposta destinada à área administrativa.",
+    "recomendacao": "Verifique autenticação e permissão administrativa antes de renderizar a página admin."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 173,
+    "linha_final": 173,
+    "cwe": "CWE-601",
+    "severidade": "media",
+    "descricao": "O parâmetro GET url é passado diretamente a redirect(). Um atacante pode induzir usuários a acessar a rota com uma URL externa controlada por ele, causando redirecionamento aberto e facilitando phishing.",
+    "recomendacao": "Aceite somente destinos locais ou valide o destino com uma allowlist de esquemas e hosts permitidos."
+  },
+  {
+    "arquivo": "badguys/vulnerable/views.py",
+    "linha_inicial": 178,
+    "linha_final": 181,
+    "cwe": "CWE-470",
+    "severidade": "alta",
+    "descricao": "O parâmetro GET fwd controla a seleção de um objeto global e, se corresponder a uma função, essa função é chamada com o request. Isso permite que um atacante escolha e invoque views expostas no escopo, incluindo admin, sem uma allowlist ou verificação de autorização.",
+    "recomendacao": "Substitua a resolução dinâmica por uma allowlist explícita de destinos permitidos e aplique autorização em cada função sensível."
+  }
+]

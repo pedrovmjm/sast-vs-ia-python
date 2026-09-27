@@ -1,0 +1,128 @@
+[
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 21,
+    "linha_final": 21,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "get_identity decodifica o token JWT com verify_signature=False e verify_exp=False. Um atacante pode fornecer um token não assinado, escolher a identidade admin e obter dados protegidos pelo fluxo me, incluindo a senha do administrador.",
+    "recomendacao": "Validar assinatura, algoritmo, expiração e demais claims do JWT usando uma chave configurada de forma segura antes de aceitar a identidade."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "save_file concatena WEB_UPLOADDIR diretamente com filename controlado pelo usuário e abre o resultado para escrita. Um atacante pode usar traversal de diretórios ou caminho absoluto para sobrescrever arquivos acessíveis ao processo.",
+    "recomendacao": "Normalizar e resolver o caminho dentro do diretório de upload, rejeitar componentes de traversal e usar uma lista permitida ou nome gerado pelo servidor."
+  },
+  {
+    "arquivo": "core/view_override.py",
+    "linha_inicial": 42,
+    "linha_final": 55,
+    "cwe": "CWE-209",
+    "severidade": "media",
+    "descricao": "format_custom_error inclui stack trace, traceback, caminho absoluto do arquivo e detalhes de exceção nas respostas GraphQL. Um atacante capaz de provocar erro pode obter informações internas do servidor e da estrutura do código.",
+    "recomendacao": "Retornar apenas uma mensagem genérica ao cliente e registrar detalhes de depuração exclusivamente em logs protegidos."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 261,
+    "linha_final": 262,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A assinatura de subscription paste ignora id e title e retorna todos os eventos de global_event para qualquer assinante. Assim, um cliente sem autorização pode receber novos pastes, inclusive conteúdos privados.",
+    "recomendacao": "Exigir autenticação e autorização por proprietário ou visibilidade antes de publicar cada evento, aplicando também os filtros id e title."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 311,
+    "linha_final": 319,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "resolve_pastes usa public=False como padrão, mas não verifica identidade ou propriedade. A consulta GraphQL pública retorna pastes privados de qualquer usuário.",
+    "recomendacao": "Restringir pastes privados ao proprietário ou a usuários autorizados e tornar a visibilidade pública uma condição explícita da consulta."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 321,
+    "linha_final": 327,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "resolve_paste permite consultar um paste por id ou título sem autenticação nem verificação de propriedade, retornando registros privados quando burn=False.",
+    "recomendacao": "Aplicar autorização por proprietário ou visibilidade antes de retornar o registro."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 334,
+    "linha_final": 342,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "system_diagnostics aceita cmd controlado pelo cliente e o executa com os.popen quando allowed_cmds retorna verdadeiro. Em modo easy essa função retorna True para qualquer comando; além disso, o código de inicialização fornece a senha admin changeme. Um atacante pode obter execução de comandos no servidor.",
+    "recomendacao": "Remover a execução de shell e implementar diagnósticos com chamadas parametrizadas e operações fixas, sem aceitar comandos arbitrários do cliente."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 346,
+    "linha_final": 351,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "system_debug concatena o argumento controlado pelo cliente em ps {} e executa o resultado com os.popen, sem autenticação ou validação. Metacaracteres de shell permitem execução arbitrária de comandos.",
+    "recomendacao": "Não executar shell com entrada do cliente; se necessário, usar subprocess com lista de argumentos fixa e validação estrita."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 361,
+    "linha_final": 365,
+    "cwe": "CWE-400",
+    "severidade": "media",
+    "descricao": "system_health chama simulate_load, que bloqueia por aproximadamente 20 a 50 segundos por requisição. O campo é acessível sem autenticação, permitindo consumir trabalhadores ou conexões mediante requisições concorrentes.",
+    "recomendacao": "Remover o atraso artificial do endpoint público ou protegê-lo e impor limites de taxa, timeout e concorrência."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 381,
+    "linha_final": 385,
+    "cwe": "CWE-862",
+    "severidade": "critica",
+    "descricao": "resolve_delete_all_pastes exclui todos os pastes e confirma a transação sem autenticação ou autorização. Qualquer cliente que alcance o campo GraphQL pode causar perda permanente de dados.",
+    "recomendacao": "Exigir autenticação forte e autorização administrativa explícita antes da exclusão, preferencialmente com confirmação adicional."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 209,
+    "linha_final": 210,
+    "cwe": "CWE-78",
+    "severidade": "critica",
+    "descricao": "ImportPaste monta uma URL com scheme, host, port e path controlados pelo cliente e a concatena em curl executado por os.popen. Metacaracteres não removidos, como pipe, permitem injeção de comandos e execução arbitrária no servidor.",
+    "recomendacao": "Substituir o shell por um cliente HTTP com parâmetros estruturados e validar scheme, host, porta e caminho; rejeitar destinos e caracteres não permitidos."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 209,
+    "linha_final": 210,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "ImportPaste realiza uma requisição para destino integralmente controlado pelo cliente e retorna o conteúdo obtido. Mesmo sem considerar a injeção de comandos, isso permite SSRF contra serviços internos ou outros destinos alcançáveis pelo servidor.",
+    "recomendacao": "Usar cliente HTTP sem shell, permitir apenas esquemas e hosts aprovados, bloquear endereços privados e loopback e validar redirecionamentos."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 62,
+    "linha_final": 66,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "resolve_password libera a senha em claro quando info.context.json contém identity igual a admin. Esse campo vem do JSON da requisição e não é demonstrado como autenticado, permitindo ao cliente declarar a própria identidade e consultar senhas por meio do tipo UserObject.",
+    "recomendacao": "Obter a identidade exclusivamente de um token validado no contexto do servidor e nunca retornar senhas armazenadas."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 316,
+    "linha_final": 317,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O filtro de pastes interpola diretamente o valor filter controlado pelo cliente em uma expressão SQL passada a text(). Isso permite alterar a condição da consulta e acessar registros além do filtro pretendido.",
+    "recomendacao": "Usar filtros SQLAlchemy parametrizados, como comparações de colunas e bind parameters, sem interpolar entrada em SQL."
+  }
+]

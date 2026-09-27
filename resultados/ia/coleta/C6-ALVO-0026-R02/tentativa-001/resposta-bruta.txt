@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "bad/db_init.py",
+    "linha_inicial": 9,
+    "linha_final": 13,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A inicialização cria contas utilizáveis com credenciais fixas e previsíveis, incluindo admin/SuperSecret. Após a execução dessa rotina, qualquer pessoa que conheça esses valores pode autenticar-se nas contas criadas.",
+    "recomendacao": "Remova contas e senhas padrão; gere credenciais iniciais aleatórias e obrigue sua substituição antes de permitir o uso."
+  },
+  {
+    "arquivo": "bad/libsession.py",
+    "linha_inicial": 16,
+    "linha_final": 19,
+    "cwe": "CWE-565",
+    "severidade": "critica",
+    "descricao": "O cookie vulpy_session contém apenas JSON codificado em Base64 e é aceito sem assinatura ou criptografia. Um atacante pode fabricar um cookie com qualquer username; o valor é carregado em g.session e usado para autorizar operações, permitindo impersonação de contas.",
+    "recomendacao": "Use sessões assinadas e protegidas pelo mecanismo de sessão do Flask ou por tokens autenticados, rejeitando qualquer cookie sem integridade verificável."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Username e password recebidos pelo endpoint de login são interpolados diretamente na consulta SQL. Um atacante pode enviar valores contendo sintaxe SQL para alterar a condição de autenticação ou extrair dados.",
+    "recomendacao": "Substitua a interpolação por parâmetros vinculados, por exemplo, execute(sql, (username, password))."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os valores de username e password fornecidos no cadastro são interpolados diretamente em um INSERT SQL. Um atacante pode manipular os campos para alterar a consulta e inserir ou modificar dados arbitrários no banco.",
+    "recomendacao": "Use uma instrução parametrizada para o INSERT e valide os campos conforme as regras de negócio."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 53,
+    "linha_final": 53,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "A alteração de senha constrói um UPDATE por interpolação de password e username. Valores controlados pela requisição podem injetar SQL e modificar registros além da conta pretendida.",
+    "recomendacao": "Use parâmetros vinculados no UPDATE e restrinja a alteração ao usuário autenticado."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-256",
+    "severidade": "media",
+    "descricao": "A senha recebida no cadastro é gravada diretamente na coluna password, sem derivação criptográfica. Qualquer acesso ao arquivo SQLite expõe imediatamente as credenciais armazenadas.",
+    "recomendacao": "Armazene somente hashes de senha fortes e individualmente salgados, usando uma função apropriada como Argon2, scrypt ou PBKDF2."
+  },
+  {
+    "arquivo": "bad/mod_api.py",
+    "linha_inicial": 40,
+    "linha_final": 43,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "A rota GET /api/post/<username> consulta e retorna as publicações do username indicado sem autenticação ou verificação de autorização. Qualquer cliente pode enumerar usuários e ler posts de outras contas.",
+    "recomendacao": "Exija autenticação e autorize o acesso ao proprietário dos posts ou aplique uma política explícita de visibilidade."
+  },
+  {
+    "arquivo": "bad/mod_mfa.py",
+    "linha_inicial": 51,
+    "linha_final": 57,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A desativação de MFA é realizada por uma requisição GET autenticada, sem token anti-CSRF. Um site externo pode induzir o navegador de uma vítima autenticada a acessar essa URL e desativar sua proteção MFA.",
+    "recomendacao": "Altere a operação para POST, exija token anti-CSRF validado no servidor e solicite reautenticação ou confirmação adicional para desativar MFA."
+  },
+  {
+    "arquivo": "bad/mod_posts.py",
+    "linha_inicial": 9,
+    "linha_final": 20,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "A rota pública de visualização aceita qualquer username no caminho e retorna os posts correspondentes sem autenticação ou autorização. Um atacante pode consultar conteúdo privado de outras contas.",
+    "recomendacao": "Exija autenticação e verifique se o solicitante pode visualizar o username solicitado; caso posts sejam públicos, aplique explicitamente essa política."
+  },
+  {
+    "arquivo": "bad/mod_user.py",
+    "linha_inicial": 19,
+    "linha_final": 25,
+    "cwe": "CWE-307",
+    "severidade": "media",
+    "descricao": "O endpoint de login chama libuser.login diretamente e não há contagem, atraso, bloqueio ou limitação de tentativas. Um atacante pode enviar tentativas ilimitadas contra as contas, inclusive as credenciais padrão inicializadas pelo aplicativo.",
+    "recomendacao": "Implemente limitação por conta e origem, backoff progressivo, registro de falhas e bloqueio temporário, sem permitir enumeração de usuários."
+  }
+]

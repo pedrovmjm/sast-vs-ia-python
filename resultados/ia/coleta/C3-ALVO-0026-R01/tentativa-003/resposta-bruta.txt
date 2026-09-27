@@ -1,0 +1,101 @@
+[
+  {
+    "arquivo": "bad/db_init.py",
+    "linha_inicial": 10,
+    "linha_final": 14,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A rotina de inicialização cria contas utilizáveis com senhas fixas e conhecidas no código, incluindo a conta admin. Após a inicialização, qualquer atacante que conheça esses valores pode autenticar-se diretamente, caso essas contas permaneçam habilitadas.",
+    "recomendacao": "Remova credenciais fixas do código e exija configuração ou geração segura de credenciais únicas durante a instalação, com troca obrigatória da senha inicial."
+  },
+  {
+    "arquivo": "bad/libsession.py",
+    "linha_inicial": 6,
+    "linha_final": 6,
+    "cwe": "CWE-565",
+    "severidade": "critica",
+    "descricao": "O cookie de sessão contém apenas JSON codificado em Base64, sem assinatura ou criptografia. Como load() confia no campo username desse cookie, um atacante pode fabricar um cookie contendo qualquer usuário e obter uma sessão autenticada.",
+    "recomendacao": "Use sessões assinadas pelo framework ou tokens autenticados criptograficamente, com validação de integridade e expiração."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-89",
+    "severidade": "critica",
+    "descricao": "Username e password controlados pelo solicitante são interpolados diretamente na consulta SQL de login. Um atacante pode injetar expressões SQL para alterar a condição de autenticação e acessar uma conta sem conhecer sua senha.",
+    "recomendacao": "Use parâmetros vinculados na consulta, por exemplo SELECT ... WHERE username = ? AND password = ?, e armazene senhas usando um KDF apropriado."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 28,
+    "linha_final": 28,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os valores de username e password usados na criação de usuários são interpolados diretamente em um INSERT SQL. Como a criação é acionada por dados fornecidos ao endpoint de cadastro, um atacante pode injetar SQL e modificar a consulta ou o banco de dados.",
+    "recomendacao": "Substitua a interpolação por parâmetros vinculados e valide explicitamente os campos conforme o formato permitido."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 58,
+    "linha_final": 58,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "A alteração de senha concatena password e username diretamente em uma instrução UPDATE. Dados controlados pelo usuário podem injetar SQL e alterar senhas de outras contas ou modificar registros arbitrários.",
+    "recomendacao": "Use uma instrução parametrizada para o UPDATE e aplique autorização e reautenticação antes da troca de senha."
+  },
+  {
+    "arquivo": "bad/mod_api.py",
+    "linha_inicial": 47,
+    "linha_final": 47,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O endpoint GET /api/post/<username> usa o username fornecido na URL para consultar posts sem autenticação ou verificação de autorização. Um atacante pode enumerar nomes de usuários e acessar os posts de outras contas, caso esses dados não sejam públicos.",
+    "recomendacao": "Exija autenticação e autorize o acesso ao proprietário dos posts, ou remova o identificador controlado pelo cliente e use o usuário da sessão."
+  },
+  {
+    "arquivo": "bad/mod_mfa.py",
+    "linha_inicial": 65,
+    "linha_final": 71,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A desativação do MFA é realizada por uma requisição GET autenticada, sem token CSRF ou confirmação adicional. Um site malicioso pode induzir o navegador de uma vítima autenticada a acessar esse endpoint e desativar o MFA da própria conta.",
+    "recomendacao": "Altere a operação para POST, exija token CSRF e solicite reautenticação ou outro fator antes de desativar o MFA."
+  },
+  {
+    "arquivo": "bad/mod_user.py",
+    "linha_inicial": 57,
+    "linha_final": 74,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A troca de senha aceita POST sem proteção CSRF, sem exigir senha atual e sem verificar explicitamente uma sessão autenticada antes de usar g.session. Um atacante pode induzir uma vítima autenticada a enviar uma nova senha e assumir a conta.",
+    "recomendacao": "Exija sessão autenticada e a senha atual, use POST com token CSRF e rejeite a operação quando o usuário não estiver autenticado."
+  },
+  {
+    "arquivo": "good/libapi.py",
+    "linha_inicial": 11,
+    "linha_final": 11,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada para assinar todos os tokens JWT está codificada no fonte. Qualquer pessoa que obtenha o código pode forjar tokens HS256 com qualquer username e obter autenticação na API.",
+    "recomendacao": "Carregue a chave de um armazenamento secreto seguro ou variável de ambiente protegida, gere uma chave aleatória exclusiva por implantação e faça rotação da chave comprometida."
+  },
+  {
+    "arquivo": "good/libsession.py",
+    "linha_inicial": 10,
+    "linha_final": 11,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave Fernet usada para proteger todos os cookies de sessão está embutida no código. Um atacante que obtenha o fonte pode descriptografar e criar cookies de sessão arbitrários, assumindo identidades de usuários.",
+    "recomendacao": "Mantenha a chave fora do código em um armazenamento secreto protegido, gere uma chave exclusiva por implantação e faça rotação após exposição."
+  },
+  {
+    "arquivo": "good/mod_user.py",
+    "linha_inicial": 39,
+    "linha_final": 43,
+    "cwe": "CWE-287",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /user/create chama libuser.login e grava o resultado diretamente na sessão, concedendo acesso sem validar MFA. Um usuário que conheça apenas username e senha de uma conta com MFA habilitado pode usar esse endpoint para obter uma sessão autenticada sem fornecer OTP.",
+    "recomendacao": "Não autentique no endpoint de criação; para login, reutilize o fluxo que verifica mfa_enabled e valida o OTP antes de criar a sessão."
+  }
+]

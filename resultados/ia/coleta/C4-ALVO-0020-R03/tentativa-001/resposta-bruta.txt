@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 182,
+    "linha_final": 185,
+    "cwe": "CWE-200",
+    "severidade": "alta",
+    "descricao": "O endpoint GET /select é acessível sem autenticação ou autorização e retorna diretamente os registros obtidos por SELECT *, incluindo senha armazenada, endereço, e-mail e telefone. Qualquer cliente que conheça um username válido pode obter esses dados; usernames também podem ser descobertos por outros fluxos da aplicação.",
+    "recomendacao": "Exija autenticação e autorização para o endpoint e retorne somente os campos estritamente necessários, excluindo password e demais dados sensíveis."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 184,
+    "linha_final": 184,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O parâmetro username controlado pelo cliente é interpolado diretamente na consulta SQL. Aspas e sintaxe SQL fornecidas no parâmetro podem alterar a cláusula WHERE e permitir leitura ou manipulação arbitrária no contexto do banco SQLite.",
+    "recomendacao": "Use consultas parametrizadas, por exemplo com placeholder para username, e nunca concatene entrada do cliente na instrução SQL."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 187,
+    "linha_final": 217,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint PUT /user aceita criação de usuários sem qualquer autenticação ou verificação de autorização. Um cliente não autenticado pode inserir registros arbitrários, inclusive dados de contato e credenciais, alterando o estado da base.",
+    "recomendacao": "Proteja o endpoint com autenticação e autorização para criação de usuários e aplique regras de privilégio e validação de negócio antes da inserção."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 189,
+    "linha_final": 189,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "Senhas fornecidas ao endpoint são armazenadas como hashes MD5 sem salt. Como os hashes são posteriormente retornados pelo endpoint /select, um atacante que obtenha a resposta pode realizar ataques offline eficientes e recuperar senhas reutilizadas ou fracas.",
+    "recomendacao": "Armazene senhas usando um KDF adaptativo e com salt, como Argon2id, bcrypt ou scrypt, e elimine a exposição dos hashes nas respostas."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 190,
+    "linha_final": 205,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os campos do modelo User, todos controlados pelo cliente, são interpolados diretamente em uma instrução INSERT SQL. Um valor contendo aspas e comandos SQL pode escapar do literal e alterar a consulta, permitindo inserção de dados arbitrários ou execução de outras operações SQL conforme as permissões do banco.",
+    "recomendacao": "Substitua a concatenação por uma instrução parametrizada com parâmetros separados para todos os campos."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 224,
+    "linha_final": 227,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /find aceita uma consulta NoSQL arbitrária enviada em JSON e a executa sem autenticação ou autorização. Um cliente não autenticado pode consultar a coleção inteira ou aplicar critérios de consulta escolhidos por ele, obtendo dados de usuários.",
+    "recomendacao": "Exija autenticação e autorização e substitua a consulta arbitrária por filtros permitidos explicitamente, com campos e operadores em uma allowlist."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 229,
+    "linha_final": 238,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint DELETE /user permite a qualquer cliente não autenticado excluir usuários por username ou address, sem verificar identidade, propriedade ou privilégio administrativo. Isso permite remoção arbitrária de registros.",
+    "recomendacao": "Exija autenticação, valide autorização sobre o usuário alvo e restrinja exclusões administrativas a uma permissão específica."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 233,
+    "linha_final": 237,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "username e address controlados pelo cliente são interpolados diretamente em instruções DELETE SQL. A entrada pode alterar a cláusula WHERE e permitir exclusão de registros além do alvo pretendido ou outras alterações SQL.",
+    "recomendacao": "Use consultas parametrizadas para ambas as instruções DELETE e valide o identificador do usuário antes da operação."
+  },
+  {
+    "arquivo": "main.py",
+    "linha_inicial": 244,
+    "linha_final": 249,
+    "cwe": "CWE-306",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /reset executa operações destrutivas na base SQL e NoSQL e recria os dados, mas não possui autenticação nem controle de autorização. Qualquer cliente capaz de alcançar a aplicação pode apagar os dados atuais e provocar perda de estado e indisponibilidade.",
+    "recomendacao": "Remova o endpoint de produção ou restrinja-o a administradores autenticados, com autorização explícita e proteção contra execução acidental ou repetida."
+  }
+]

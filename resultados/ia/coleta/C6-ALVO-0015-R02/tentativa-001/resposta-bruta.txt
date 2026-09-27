@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "target/project/__init__.py",
+    "linha_inicial": 5,
+    "linha_final": 5,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave de assinatura de sessão do Flask é definida como o valor constante 'random'. Como a aplicação usa sessões para controlar o acesso a /confidential, um atacante que conheça o código pode forjar cookies de sessão válidos e definir loggedin, contornando a autenticação.",
+    "recomendacao": "Carregar uma chave criptograficamente aleatória e exclusiva a partir de configuração protegida, sem mantê-la no código-fonte."
+  },
+  {
+    "arquivo": "target/project/__init__.py",
+    "linha_inicial": 6,
+    "linha_final": 6,
+    "cwe": "CWE-489",
+    "severidade": "media",
+    "descricao": "O modo de depuração do Flask é habilitado globalmente e o servidor é iniciado externamente em 0.0.0.0. Erros acessíveis remotamente podem expor informações internas e disponibilizar a interface interativa de depuração.",
+    "recomendacao": "Desabilitar app.debug em execução implantada e controlar o modo de depuração exclusivamente por configuração segura de desenvolvimento."
+  },
+  {
+    "arquivo": "target/project/controllers/About.py",
+    "linha_inicial": 22,
+    "linha_final": 27,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "A rota POST /about/sync aceita data_obj controlado pelo atacante, converte o valor hexadecimal em bytes, grava o conteúdo em arquivo e o desserializa com pickle.load. Um atacante não autenticado pode enviar um pickle malicioso e obter execução arbitrária de código no processo da aplicação.",
+    "recomendacao": "Remover a desserialização de pickle de dados recebidos; usar um formato não executável como JSON e validar explicitamente sua estrutura."
+  },
+  {
+    "arquivo": "target/project/controllers/Dashboard.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "pageId é obtido diretamente do segmento da URL /dashboard/<pageId> e concatenado na consulta SQL. Um atacante pode inserir sintaxe SQL no parâmetro e alterar a consulta executada contra o banco de dados.",
+    "recomendacao": "Usar parâmetros vinculados, por exemplo, executar a consulta com WHERE pageId=? e passar pageId como parâmetro após validar que ele é um inteiro."
+  },
+  {
+    "arquivo": "target/project/controllers/Information.py",
+    "linha_inicial": 18,
+    "linha_final": 18,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "A rota GET /information/<input> decodifica entrada controlada pelo atacante em base64 e a passa diretamente a yaml.load. Um payload YAML especialmente criado pode instanciar objetos arbitrários e executar código durante a desserialização.",
+    "recomendacao": "Substituir yaml.load por yaml.safe_load e validar o resultado antes de acessar a chave yaml."
+  },
+  {
+    "arquivo": "target/project/controllers/Login.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A autenticação aceita o par fixo username=admin e password=admin, codificado no servidor. Qualquer pessoa que conheça esse valor pode obter uma sessão autenticada e ser redirecionada para /confidential.",
+    "recomendacao": "Remover credenciais fixas do código, armazenar apenas hashes de senhas em configuração ou banco protegido e aplicar verificação segura de credenciais."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 29,
+    "linha_final": 31,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "example_file é recebido diretamente do formulário e usado tanto em open quanto em send_file. Um atacante pode fornecer um caminho absoluto ou conter .. para ler e baixar arquivos arbitrários acessíveis ao processo.",
+    "recomendacao": "Não aceitar caminhos fornecidos pelo cliente; mapear identificadores a arquivos permitidos por uma allowlist e validar o caminho resolvido dentro de um diretório fixo."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 45,
+    "linha_final": 45,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O nome original do arquivo enviado é concatenado diretamente a uploads/ antes de file.save. A validação verifica apenas a extensão e permite nomes contendo .. ou separadores, possibilitando gravação ou sobrescrita de arquivos fora do diretório pretendido.",
+    "recomendacao": "Normalizar e restringir o nome com um identificador gerado pelo servidor, usando secure_filename e verificando que o caminho final permanece dentro do diretório de uploads."
+  },
+  {
+    "arquivo": "target/project/controllers/Webmaster.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A rota pública /webmaster atribui session['loggedin'] sem autenticação ou autorização. Como /confidential concede acesso quando esse valor existe, qualquer atacante pode visitar /webmaster e obter acesso ao recurso confidencial.",
+    "recomendacao": "Remover a atribuição de estado autenticado dessa rota e exigir uma verificação de autenticação e autorização antes de permitir acesso a /confidential."
+  }
+]

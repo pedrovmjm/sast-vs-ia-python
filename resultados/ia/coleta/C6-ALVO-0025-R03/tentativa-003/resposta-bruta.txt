@@ -1,0 +1,281 @@
+[
+  {
+    "arquivo": "apps/falcon_app.py",
+    "linha_inicial": 29,
+    "linha_final": 29,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O conteúdo do arquivo enviado por uma requisição POST é concatenado a um comando passado a os.system. Um atacante que controle o upload pode injetar metacaracteres shell e executar comandos no processo da aplicação.",
+    "recomendacao": "Não use shell para processar o upload; substitua os.system por subprocess com shell=False e argumentos estruturados, ou remova essa execução."
+  },
+  {
+    "arquivo": "apps/falcon_app.py",
+    "linha_inicial": 64,
+    "linha_final": 64,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O parâmetro user_input da rota GET /thread é concatenado a um comando executado por os.system em uma thread. Qualquer cliente capaz de acessar a rota pode obter execução arbitrária de comandos.",
+    "recomendacao": "Remova a execução shell ou use subprocess.run com shell=False e argumentos fixos/validados."
+  },
+  {
+    "arquivo": "apps/fastapi_app.py",
+    "linha_inicial": 37,
+    "linha_final": 37,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "Os primeiros 20 bytes de um arquivo enviado pelo atacante são encaminhados a do_os_system, que executa o valor com os.system. O conteúdo do upload pode conter sintaxe shell e resultar em execução arbitrária de comandos.",
+    "recomendacao": "Não execute conteúdo de upload; se uma ferramenta externa for necessária, use subprocess com shell=False e argumentos separados."
+  },
+  {
+    "arquivo": "apps/fastapi_app.py",
+    "linha_inicial": 43,
+    "linha_final": 43,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O parâmetro user_input é concatenado ao comando executado por os.system dez vezes. Um atacante remoto pode injetar comandos shell e causar execução arbitrária, além de prolongar o consumo de recursos pela repetição e pelos sleeps.",
+    "recomendacao": "Elimine a construção de comandos por concatenação e use subprocess com shell=False e uma lista de argumentos permitidos."
+  },
+  {
+    "arquivo": "src/vulnpy/common/templating.py",
+    "linha_inicial": 24,
+    "linha_final": 27,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "get_template concatena path a TEMPLATES_LOCATION e abre o resultado sem validar que o caminho permaneça no diretório de templates. Qualquer chamador que consiga controlar path pode ler arquivos arbitrários; no código fornecido, os chamadores observados usam nomes derivados de allowlists.",
+    "recomendacao": "Restrinja path a nomes permitidos ou resolva o caminho e confirme que ele permanece dentro de TEMPLATES_LOCATION antes de abrir."
+  },
+  {
+    "arquivo": "src/vulnpy/django/vulnerable.py",
+    "linha_inicial": 34,
+    "linha_final": 38,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "user_input controlado por GET ou POST é concatenado diretamente em HTML e devolvido por HttpResponse quando name=xss e trigger=raw. Um atacante pode enviar JavaScript e obter XSS refletido nos clientes que acessarem a URL.",
+    "recomendacao": "Escape user_input para contexto HTML antes da concatenação ou renderize com o mecanismo de templates e autoescape habilitado."
+  },
+  {
+    "arquivo": "src/vulnpy/django/vulnerable_asgi.py",
+    "linha_inicial": 53,
+    "linha_final": 57,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "user_input de requisições GET ou POST é inserido sem escaping no corpo HTML retornado por HttpResponse. A rota xss/raw permite XSS refletido.",
+    "recomendacao": "Aplique escaping contextual ao valor recebido ou use templates com autoescape habilitado."
+  },
+  {
+    "arquivo": "src/vulnpy/falcon/vulnerable.py",
+    "linha_inicial": 116,
+    "linha_final": 119,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "A resposta HTML da rota xss/raw concatena user_input diretamente no corpo. O parâmetro de consulta pode conter marcação ou script executável no navegador.",
+    "recomendacao": "Escape o valor antes de inseri-lo no HTML ou use um mecanismo de templates com autoescape."
+  },
+  {
+    "arquivo": "src/vulnpy/falcon/vulnerable_asgi.py",
+    "linha_inicial": 116,
+    "linha_final": 119,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "A rota xss/raw insere user_input não escapado em uma resposta HTML. Um atacante pode refletir JavaScript para usuários que consumirem a resposta.",
+    "recomendacao": "Use escaping contextual ou templates com autoescape para inserir user_input."
+  },
+  {
+    "arquivo": "src/vulnpy/fastapi/vulnerable.py",
+    "linha_inicial": 39,
+    "linha_final": 42,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro user_input da rota xss/raw é concatenado diretamente ao HTML retornado por HTMLResponse, permitindo XSS refletido.",
+    "recomendacao": "Escape user_input antes da concatenação ou renderize o conteúdo com autoescape."
+  },
+  {
+    "arquivo": "src/vulnpy/flask/blueprint.py",
+    "linha_inicial": 52,
+    "linha_final": 55,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "A rota xss/raw retorna uma string HTML contendo user_input sem escaping. O valor pode ser controlado por cabeçalho, query string ou formulário e executar script no navegador.",
+    "recomendacao": "Use renderização com autoescape ou aplique escaping HTML contextual ao valor controlado."
+  },
+  {
+    "arquivo": "src/vulnpy/pyramid/vulnerable_routes.py",
+    "linha_inicial": 45,
+    "linha_final": 48,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "user_input recebido por GET ou POST é concatenado diretamente em HTML na rota xss/raw. Isso permite XSS refletido.",
+    "recomendacao": "Escape o valor para contexto HTML ou use templates com autoescape."
+  },
+  {
+    "arquivo": "src/vulnpy/quart/blueprint.py",
+    "linha_inicial": 52,
+    "linha_final": 55,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "A rota xss/raw concatena user_input não escapado na resposta HTML. O valor pode vir de query string ou cabeçalho controlado pelo atacante.",
+    "recomendacao": "Aplique escaping contextual ou utilize templates com autoescape habilitado."
+  },
+  {
+    "arquivo": "src/vulnpy/wsgi/app.py",
+    "linha_inicial": 42,
+    "linha_final": 45,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro user_input é inserido sem escaping na resposta HTML quando o trigger xss/raw é selecionado. Isso permite XSS refletido.",
+    "recomendacao": "Escape user_input antes de compor a resposta HTML."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/cmdi.py",
+    "linha_inicial": 6,
+    "linha_final": 6,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "do_os_system recebe diretamente valores fornecidos pelas rotas de trigger e os executa com os.system. As rotas expõem user_input de query string, formulário ou cabeçalho, permitindo injeção de comandos.",
+    "recomendacao": "Substitua os.system por subprocess com shell=False e argumentos estruturados; valide o conjunto de comandos permitido."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/cmdi.py",
+    "linha_inicial": 10,
+    "linha_final": 12,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "do_subprocess_popen executa command com shell=True. Como command é derivado do input recebido pelas rotas, um atacante pode injetar sintaxe shell e executar comandos arbitrários.",
+    "recomendacao": "Use subprocess.Popen com shell=False e uma lista de argumentos, sem aceitar comandos arbitrários."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/deserialization.py",
+    "linha_inicial": 8,
+    "linha_final": 12,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "Dados controlados por user_input são convertidos em bytes e processados por pickle.load ou pickle.loads. Pickle permite que uma carga criada pelo atacante execute código durante a desserialização.",
+    "recomendacao": "Não desserialize pickle não confiável; use um formato sem execução, como JSON, com validação de esquema."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/deserialization.py",
+    "linha_inicial": 17,
+    "linha_final": 23,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "Entrada de usuário é processada com yaml.UnsafeLoader em yaml.load e yaml.load_all. Tags YAML controladas pelo atacante podem instanciar objetos e executar código no processo.",
+    "recomendacao": "Use yaml.safe_load ou yaml.safe_load_all e aceite apenas tipos esperados."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/pt.py",
+    "linha_inicial": 6,
+    "linha_final": 62,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "Várias triggers usam user_input diretamente como nome de arquivo ou arquivo compactado em open, io.open, bz2 e tarfile. As rotas expõem esse valor ao atacante, permitindo leitura de arquivos fora do diretório pretendido quando o processo tiver permissão.",
+    "recomendacao": "Use uma allowlist de arquivos ou resolva o caminho sob um diretório fixo e rejeite qualquer caminho fora dele."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/redos.py",
+    "linha_inicial": 3,
+    "linha_final": 7,
+    "cwe": "CWE-1333",
+    "severidade": "media",
+    "descricao": "A entrada controlada pelo atacante é comparada repetidamente com o padrão aninhado ((a)+)+ por várias operações de re. Entradas especialmente construídas podem causar backtracking excessivo e bloquear o worker da aplicação.",
+    "recomendacao": "Substitua o padrão por uma expressão linearmente limitada ou use um mecanismo regex com limite de tempo e limite de tamanho de entrada."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/sqli.py",
+    "linha_inicial": 37,
+    "linha_final": 37,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "user_input é interpolado em uma instrução INSERT e executado por cursor.execute. O atacante pode alterar a sintaxe SQL e manipular a consulta.",
+    "recomendacao": "Use parâmetros vinculados, por exemplo cursor.execute com placeholders e valores separados."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/sqli.py",
+    "linha_inicial": 47,
+    "linha_final": 47,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "user_input é interpolado em SQL antes de cursor.executemany. A entrada das rotas pode injetar SQL na instrução construída.",
+    "recomendacao": "Parametrize também a parte controlada pelo usuário e não monte SQL por format."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/sqli.py",
+    "linha_inicial": 57,
+    "linha_final": 57,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "user_input é interpolado em uma string passada a executescript, que aceita múltiplas instruções. Um atacante pode inserir instruções SQL adicionais.",
+    "recomendacao": "Elimine executescript para dados controlados e use consultas parametrizadas com uma única operação."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/ssrf.py",
+    "linha_inicial": 66,
+    "linha_final": 84,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "Valores de user_input são passados diretamente a urllib.request.urlopen ou Request. Quando VULNPY_REAL_SSRF_REQUESTS está habilitado, o atacante pode fazer o servidor acessar URLs arbitrárias.",
+    "recomendacao": "Restrinja esquema, host, porta e destino a uma allowlist; bloqueie destinos internos e desabilite redirecionamentos não validados."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/ssrf.py",
+    "linha_inicial": 91,
+    "linha_final": 126,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "user_input controla o destino ou o método usado nas chamadas HTTPConnection e HTTPSConnection. Com requisições reais habilitadas, isso permite conexões do servidor para destinos controlados pelo atacante.",
+    "recomendacao": "Use uma allowlist de destinos e métodos, valide host e porta e bloqueie endereços privados, locais e de metadados."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/ssrf.py",
+    "linha_inicial": 130,
+    "linha_final": 139,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "user_input é usado diretamente como host na criação de HTTPConnection ou HTTPSConnection. Sob a configuração que permite requisições reais, o atacante controla o destino acessado pelo servidor.",
+    "recomendacao": "Não aceite hosts arbitrários; aplique allowlist e validação de resolução contra redes internas e endereços reservados."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/unsafe_code_exec.py",
+    "linha_inicial": 2,
+    "linha_final": 2,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "do_exec executa diretamente o valor recebido das rotas de trigger. Como user_input é controlado pela requisição, o atacante pode executar código Python arbitrário no processo.",
+    "recomendacao": "Remova exec; se apenas uma expressão limitada for necessária, use uma representação de dados validada ou ast.literal_eval."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/unsafe_code_exec.py",
+    "linha_inicial": 6,
+    "linha_final": 6,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "do_eval avalia diretamente user_input fornecido pelas rotas. Um atacante pode executar expressões Python arbitrárias e acessar recursos do processo.",
+    "recomendacao": "Remova eval e substitua por parsing explícito de valores permitidos."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/unsafe_code_exec.py",
+    "linha_inicial": 10,
+    "linha_final": 10,
+    "cwe": "CWE-95",
+    "severidade": "alta",
+    "descricao": "do_compile compila user_input como código Python no modo exec. A função permite que o atacante forneça código executável, ainda que a execução possa ocorrer posteriormente pelo chamador.",
+    "recomendacao": "Não compile código controlado pelo usuário; use uma linguagem ou formato de dados restrito."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/xpath.py",
+    "linha_inicial": 28,
+    "linha_final": 36,
+    "cwe": "CWE-643",
+    "severidade": "media",
+    "descricao": "user_input é passado diretamente como expressão XPath a findall, findtext ou ElementTree.findall. O atacante pode alterar a consulta e extrair ou selecionar nós além do previsto.",
+    "recomendacao": "Não aceite XPath arbitrário; use consultas fixas com valores validados ou uma API de composição segura."
+  },
+  {
+    "arquivo": "src/vulnpy/trigger/xxe.py",
+    "linha_inicial": 7,
+    "linha_final": 16,
+    "cwe": "CWE-611",
+    "severidade": "alta",
+    "descricao": "XML controlado por user_input é processado por parsers que não demonstram desabilitação de entidades externas. Um atacante pode causar leitura de recursos locais, requisições externas ou negação de serviço por entidades.",
+    "recomendacao": "Use defusedxml ou configure explicitamente o parser para desabilitar entidades externas, DTDs e carregamento de recursos."
+  }
+]

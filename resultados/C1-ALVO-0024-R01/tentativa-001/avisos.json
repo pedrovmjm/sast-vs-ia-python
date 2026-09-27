@@ -1,0 +1,1 @@
+[{"categoria":"ResultadoParcialBanditWarning","erros":[{"filename":"/entrada/server.py","reason":"syntax error while parsing AST from file"}],"mensagem":"Bandit retornou 1 erro(s) parcial(is); bruto SHA-256=0d153a590f22937bc5594bd84c4d29cdcc7e018da066fc839cbc5bb839c70204","saida_bruta_sha256":"0d153a590f22937bc5594bd84c4d29cdcc7e018da066fc839cbc5bb839c70204"}]

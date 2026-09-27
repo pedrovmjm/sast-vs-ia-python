@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 26,
+    "linha_final": 26,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A chave HMAC usada para assinar e validar JWTs está fixa no código. Um atacante que conheça o código pode forjar tokens HS256 aceitos por verify_jwt, obtendo acesso aos endpoints protegidos e podendo se passar por qualquer usuário.",
+    "recomendacao": "Carregue uma chave aleatória e exclusiva a partir de um mecanismo seguro de configuração ou gerenciamento de segredos, com rotação quando necessário."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 63,
+    "linha_final": 63,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A aplicação cria automaticamente o usuário admin com a senha fixa admin123. Como /login aceita essas credenciais e emite um JWT, qualquer pessoa que conheça o código pode autenticar como administrador.",
+    "recomendacao": "Remova credenciais padrão fixas e exija configuração inicial de uma senha forte, armazenada com hash resistente a cracking."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 96,
+    "linha_final": 97,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "insecure_verify decodifica o JWT com verify=False e sempre retorna True. O endpoint /get/<cust_id> usa essa função, portanto qualquer valor no cabeçalho Authorization pode acessar dados de qualquer cliente sem assinatura válida.",
+    "recomendacao": "Valide a assinatura, o algoritmo permitido, a expiração, o emissor e demais claims obrigatórios usando a mesma rotina segura de verificação."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 103,
+    "linha_final": 114,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "request.url, controlável pelo cliente, é inserida diretamente no código de um template e depois processada por render_template_string. Um atacante pode injetar expressões Jinja no URL, causando server-side template injection, além de possível XSS na resposta de erro.",
+    "recomendacao": "Use um template estático e passe request.url como variável escapada; não concatene entrada do usuário no texto do template."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 141,
+    "linha_final": 141,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "Senhas registradas em /register/user são armazenadas apenas com MD5, sem salt e sem um esquema adaptativo de derivação de senha. Se o banco for obtido, as senhas podem ser recuperadas por cracking offline com baixo custo.",
+    "recomendacao": "Use um algoritmo específico para senhas, como Argon2id, scrypt, bcrypt ou PBKDF2, com salt único por senha, e valide o login contra o mesmo formato."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 210,
+    "linha_final": 211,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "Após validar apenas que o JWT é válido, /fetch/customer aceita um id fornecido pelo cliente e consulta qualquer registro Customer, sem verificar propriedade, papel ou autorização sobre o cliente solicitado. Um usuário autenticado pode enumerar IDs e obter nomes, e-mails, usernames e números de cartão.",
+    "recomendacao": "Associe o usuário autenticado a um escopo de clientes permitido e aplique uma verificação de autorização antes da consulta, restringindo o retorno aos registros autorizados."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 235,
+    "linha_final": 236,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "No endpoint /get/<cust_id>, a aplicação não verifica se o usuário autenticado pode acessar o cust_id solicitado. Com um token aceito pela função de verificação, qualquer cliente pode consultar dados de qualquer registro.",
+    "recomendacao": "Implemente uma checagem explícita de autorização entre a identidade do token e o cliente solicitado antes de executar a consulta."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 261,
+    "linha_final": 265,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O valor search vindo do JSON da requisição é interpolado diretamente na consulta SQL executada por db.engine.execute. Um atacante com acesso ao endpoint /search pode alterar a cláusula WHERE e usar injeção SQL para extrair ou modificar dados conforme os recursos da conexão.",
+    "recomendacao": "Use uma consulta parametrizada ou o ORM do SQLAlchemy, passando search como parâmetro em vez de incorporá-lo à string SQL."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 329,
+    "linha_final": 329,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "O endpoint /yaml_hammer aceita um arquivo YAML enviado pelo cliente e o processa com yaml.load sem um loader seguro. Em versões/configurações compatíveis, um YAML malicioso pode instanciar objetos arbitrários e levar à execução de código no servidor.",
+    "recomendacao": "Use yaml.safe_load para dados não confiáveis e restrinja explicitamente os tipos aceitos."
+  }
+]

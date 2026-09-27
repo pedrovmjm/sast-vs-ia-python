@@ -1,0 +1,20 @@
+[
+  {
+    "arquivo": "VulnerablePythonScript.py",
+    "linha_inicial": 16,
+    "linha_final": 17,
+    "cwe": "CWE-798",
+    "severidade": "media",
+    "descricao": "O endpoint /login compara credenciais fornecidas pelo usuário com os valores fixos admin/password123. Qualquer atacante que obtenha ou adivinhe esses valores pode autenticar-se como essa conta, dependendo da exposição do endpoint e das permissões associadas.",
+    "recomendacao": "Remova as credenciais do código e valide usuários contra um mecanismo de autenticação seguro, armazenando senhas apenas como hashes e obtendo segredos por configuração segura."
+  },
+  {
+    "arquivo": "VulnerablePythonScript.py",
+    "linha_inicial": 33,
+    "linha_final": 33,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O endpoint POST /unserialize passa request.data, controlável pelo atacante e sem autenticação ou validação visível, diretamente a pickle.loads. Um payload pickle malicioso pode executar código durante a desserialização, permitindo comprometimento do processo do servidor.",
+    "recomendacao": "Substitua pickle por um formato de dados não executável, como JSON, e valide explicitamente o esquema e os tipos recebidos."
+  }
+]

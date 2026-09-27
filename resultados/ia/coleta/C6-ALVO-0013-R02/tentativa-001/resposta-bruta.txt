@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 25,
+    "linha_final": 25,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A SECRET_KEY fixa e conhecida permite que um atacante que obtenha o código forje cookies de sessão Flask assinados, podendo assumir identidades e os privilégios representados na sessão, inclusive is_admin quando aplicável.",
+    "recomendacao": "Carregue uma chave criptograficamente aleatória a partir de configuração externa protegida e faça sua rotação."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 165,
+    "linha_final": 177,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "username e password controlados pelo cliente são interpolados diretamente na consulta SQL executada contra users. Um atacante pode alterar a cláusula WHERE, ignorar a autenticação e selecionar contas privilegiadas.",
+    "recomendacao": "Use parâmetros vinculados, por exemplo, SELECT ... WHERE username = ? AND password = ?, sem interpolação de entrada."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 247,
+    "linha_final": 249,
+    "cwe": "CWE-89",
+    "severidade": "media",
+    "descricao": "search_term, controlado pelo cliente autenticado, é interpolado na consulta LIKE e executado diretamente. Uma entrada com sintaxe SQL pode alterar a condição e retornar comentários que não correspondem à busca.",
+    "recomendacao": "Parametrize o valor da busca e aplique os curingas no parâmetro, por exemplo, WHERE content LIKE ? com '%' + search_term + '%'."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 384,
+    "linha_final": 384,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "A URL fornecida pelo usuário autenticado é passada diretamente a requests.get. O servidor pode ser induzido a fazer requisições para serviços internos, localhost ou endpoints de metadados, retornando parte da resposta ao atacante.",
+    "recomendacao": "Restrinja destinos por allowlist de esquemas, hosts e portas, resolva e valide endereços para bloquear redes internas e desabilite redirecionamentos para destinos não autorizados."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 409,
+    "linha_final": 417,
+    "cwe": "CWE-776",
+    "severidade": "media",
+    "descricao": "XML fornecido pelo usuário é processado diretamente por xml.etree.ElementTree.fromstring sem limite de tamanho ou proteção contra expansão de entidades. Um documento malformado ou com entidades expansivas pode consumir recursos do processo e causar negação de serviço.",
+    "recomendacao": "Use defusedxml ou outro parser com proteção contra expansão de entidades e imponha limites de tamanho e complexidade ao XML recebido."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 436,
+    "linha_final": 436,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "Dados base64 controlados pelo usuário são decodificados e passados a pickle.loads. Um atacante autenticado pode fornecer um pickle criado para executar código arbitrário durante a desserialização no servidor.",
+    "recomendacao": "Substitua pickle por um formato não executável, como JSON, e valide explicitamente a estrutura e os tipos aceitos."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 661,
+    "linha_final": 661,
+    "cwe": "CWE-94",
+    "severidade": "alta",
+    "descricao": "Quando o arquivo é executado diretamente, o servidor é iniciado com debug=True e host 0.0.0.0. Um atacante com acesso à aplicação pode explorar o depurador Werkzeug e, conforme as condições de exposição e autenticação do debugger, obter execução de código no servidor.",
+    "recomendacao": "Desative debug em execução real e restrinja o servidor de desenvolvimento; use um servidor WSGI configurado para produção."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": null,
+    "linha_final": null,
+    "cwe": "CWE-434",
+    "severidade": "media",
+    "descricao": "Qualquer usuário autenticado pode enviar um arquivo com conteúdo e extensão arbitrários; o nome é apenas normalizado com basename, o conteúdo não é validado e o arquivo é salvo em diretório publicamente servido. Isso permite publicar HTML ou outros conteúdos ativos controlados pelo atacante, podendo atingir usuários que acessem a URL.",
+    "recomendacao": "Armazene uploads fora da árvore pública, gere nomes aleatórios, valide tipo e conteúdo por allowlist e sirva arquivos como downloads com conteúdo não executável."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": null,
+    "linha_final": null,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "A rota da API aceita qualquer user_id fornecido pelo usuário autenticado, consulta esse registro sem verificar autorização de acesso e retorna id, username, email e role de outra conta. Um usuário pode enumerar IDs e obter dados de outros usuários.",
+    "recomendacao": "Imponha autorização por objeto antes da consulta ou retorno, permitindo apenas o próprio usuário ou uma função administrativa autorizada."
+  },
+  {
+    "arquivo": "python/database.py",
+    "linha_inicial": 96,
+    "linha_final": 99,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A inicialização cria contas reais com credenciais fixas e previsíveis, incluindo a conta admin com senha password. Como essas credenciais são usadas pelo fluxo de login, qualquer pessoa que conheça o código pode autenticar-se como administrador.",
+    "recomendacao": "Não crie credenciais administrativas fixas; gere uma senha inicial aleatória, exija alteração no primeiro acesso e armazene somente hashes de senha."
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "target/project/__init__.py",
+    "linha_inicial": 5,
+    "linha_final": 5,
+    "cwe": "CWE-321",
+    "severidade": "media",
+    "descricao": "A chave secreta do Flask é o valor constante 'random'. Um atacante que conheça o código pode forjar o cookie de sessão, definir loggedin como verdadeiro e acessar rotas protegidas como /confidential.",
+    "recomendacao": "Carregar uma chave secreta aleatória e exclusiva a partir de configuração segura, sem incluí-la no código-fonte."
+  },
+  {
+    "arquivo": "target/project/__init__.py",
+    "linha_inicial": 6,
+    "linha_final": 6,
+    "cwe": "CWE-489",
+    "severidade": "media",
+    "descricao": "O modo de depuração do Flask é habilitado globalmente e o servidor fornecido escuta em 0.0.0.0. Erros acessíveis remotamente podem expor informações internas e, conforme o tratamento do depurador, permitir interação perigosa com o processo.",
+    "recomendacao": "Desabilitar app.debug em ambientes acessíveis e configurar o modo de depuração exclusivamente por configuração segura de desenvolvimento."
+  },
+  {
+    "arquivo": "target/project/controllers/About.py",
+    "linha_inicial": 13,
+    "linha_final": 18,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "O endpoint POST /about/sync aceita data_obj controlado pelo atacante, converte-o de hexadecimal, grava os bytes em arquivo e executa pickle.load sobre o conteúdo. Um payload pickle criado pelo atacante pode executar código no processo da aplicação quando o endpoint é acessado.",
+    "recomendacao": "Remover a desserialização pickle de dados recebidos pelo cliente e usar um formato seguro com validação explícita, como JSON, ou uma allowlist rigorosa de tipos."
+  },
+  {
+    "arquivo": "target/project/controllers/Confidential.py",
+    "linha_inicial": 8,
+    "linha_final": 8,
+    "cwe": "CWE-287",
+    "severidade": "media",
+    "descricao": "O acesso a /confidential depende apenas de session['loggedin']. O endpoint /webmaster define esse valor para qualquer visitante, sem autenticação, permitindo que um atacante visite /webmaster e depois obtenha a resposta da área confidencial.",
+    "recomendacao": "Exigir uma sessão autenticada por verificação de credenciais antes de conceder acesso e não aceitar valores definidos por endpoints públicos como prova de autenticação."
+  },
+  {
+    "arquivo": "target/project/controllers/Dashboard.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "pageId vem diretamente do segmento da URL e é concatenado à consulta SQL sem parametrização. Um atacante pode inserir sintaxe SQL em /dashboard/<pageId>, alterando a consulta executada contra o SQLite.",
+    "recomendacao": "Usar parâmetros vinculados, por exemplo SELECT ... WHERE pageId = ?, passando pageId como argumento separado, e validar que o valor é um inteiro."
+  },
+  {
+    "arquivo": "target/project/controllers/Information.py",
+    "linha_inicial": 17,
+    "linha_final": 18,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "O parâmetro input da URL é controlado pelo atacante, decodificado de Base64 e passado diretamente a yaml.load. Em versões do PyYAML que permitem carregadores arbitrários nessa chamada, uma entrada YAML maliciosa pode instanciar objetos e executar código durante a desserialização.",
+    "recomendacao": "Substituir yaml.load por yaml.safe_load com validação do esquema esperado e, quando possível, restringir a entrada a um formato seguro como JSON."
+  },
+  {
+    "arquivo": "target/project/controllers/Login.py",
+    "linha_inicial": 14,
+    "linha_final": 14,
+    "cwe": "CWE-798",
+    "severidade": "media",
+    "descricao": "O endpoint de login aceita literalmente username=admin e password=admin e então cria uma sessão autenticada, sem depender de armazenamento ou verificação externa. Qualquer atacante que tente essas credenciais obtém acesso ao fluxo protegido por loggedin.",
+    "recomendacao": "Remover credenciais fixas do código e validar a senha de uma conta armazenada em mecanismo seguro, usando hash apropriado e configuração de credenciais fora do código."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 24,
+    "linha_final": 26,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "example_file é controlado pelo atacante e usado diretamente em open e send_file. Um caminho contendo traversal, como ../, pode fazer o endpoint ler e devolver arquivos arbitrários acessíveis ao processo.",
+    "recomendacao": "Aceitar somente identificadores ou nomes de uma allowlist e resolver o caminho dentro de um diretório fixo validando que o caminho final permanece nesse diretório."
+  },
+  {
+    "arquivo": "target/project/controllers/Validator.py",
+    "linha_inicial": 42,
+    "linha_final": 44,
+    "cwe": "CWE-22",
+    "severidade": "media",
+    "descricao": "O nome original do upload é controlado pelo atacante e concatenado diretamente a uploads/ antes de file.save. Um nome com componentes ../ pode gravar o arquivo fora do diretório de uploads, sujeito às permissões do processo.",
+    "recomendacao": "Usar werkzeug.utils.secure_filename, rejeitar nomes com separadores de caminho e salvar apenas em um diretório fixo após validar o caminho resolvido."
+  },
+  {
+    "arquivo": "target/project/controllers/Webmaster.py",
+    "linha_inicial": 13,
+    "linha_final": 13,
+    "cwe": "CWE-287",
+    "severidade": "media",
+    "descricao": "Qualquer requisição a /webmaster, sem autenticação ou autorização, define session['loggedin'] para um valor truthy. Isso satisfaz a verificação de acesso de /confidential e permite autenticação efetiva sem credenciais.",
+    "recomendacao": "Remover a atribuição de estado autenticado desse endpoint público e estabelecer loggedin somente após autenticação e autorização bem-sucedidas."
+  }
+]

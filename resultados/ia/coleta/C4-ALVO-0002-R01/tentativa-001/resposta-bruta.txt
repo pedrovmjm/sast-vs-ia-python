@@ -1,0 +1,164 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 14,
+    "linha_final": 15,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "As chaves SECRET_KEY e JWT_SECRET_KEY são constantes e públicas no código. Um atacante que obtenha ou forje tokens pode comprometer sessões e autenticação.",
+    "recomendacao": "Carregar chaves criptográficas aleatórias e mantidas fora do código, por exemplo em um gerenciador de segredos."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 20,
+    "linha_final": 21,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "get_identity aceita um token fornecido pelo usuário e desabilita a verificação de assinatura e expiração. O atacante pode criar um JWT arbitrário com identity=admin e, por meio de resolve_me, obter a identidade administrativa e o campo de senha.",
+    "recomendacao": "Validar assinatura, algoritmo, emissor e expiração do JWT usando a chave configurada antes de aceitar a identidade."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 23,
+    "linha_final": 26,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "save_file concatena WEB_UPLOADDIR com filename controlado pelo usuário e abre o resultado diretamente. Um atacante pode usar componentes ../ para gravar ou sobrescrever arquivos fora do diretório de uploads.",
+    "recomendacao": "Resolver o caminho com uma função segura como secure_filename e verificar que o caminho final permanece dentro de WEB_UPLOADDIR."
+  },
+  {
+    "arquivo": "core/models.py",
+    "linha_inicial": 14,
+    "linha_final": 15,
+    "cwe": "CWE-256",
+    "severidade": "media",
+    "descricao": "A senha do usuário é armazenada diretamente no campo password e comparada em texto puro durante o login. Uma exposição do banco revela imediatamente as credenciais reutilizáveis.",
+    "recomendacao": "Armazenar apenas hashes de senha usando um algoritmo adaptativo como Argon2 ou bcrypt e verificar com uma função de comparação segura."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 141,
+    "linha_final": 149,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "EditPaste altera qualquer paste identificado pelo id sem autenticação, autorização ou verificação de propriedade. Qualquer cliente pode modificar conteúdo e título de registros arbitrários.",
+    "recomendacao": "Exigir autenticação e verificar que o usuário autenticado é proprietário do paste antes de permitir a atualização."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 165,
+    "linha_final": 170,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "DeletePaste exclui qualquer paste indicado pelo id sem autenticação ou autorização. Um atacante anônimo pode remover dados arbitrários.",
+    "recomendacao": "Exigir autenticação e autorização baseada na propriedade do registro antes de executar a exclusão."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 186,
+    "linha_final": 187,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "UploadPaste encaminha filename controlado pelo usuário para save_file, que o utiliza na abertura do arquivo sem normalização de caminho, permitindo traversal e escrita arbitrária.",
+    "recomendacao": "Validar e normalizar o nome do arquivo, rejeitar caminhos e limitar a gravação ao diretório de uploads."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 210,
+    "linha_final": 212,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "host, port, path e scheme controlados pelo usuário são interpolados em um comando curl executado por os.popen. A remoção apenas de ; e & no modo hard não impede metacaracteres como ||, permitindo execução de comandos.",
+    "recomendacao": "Abandonar o shell e usar um cliente HTTP com argumentos separados e validação estrita de esquema, host, porta e caminho."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 210,
+    "linha_final": 212,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "ImportPaste permite que o atacante escolha esquema, host, porta e caminho da requisição feita pelo servidor. Sem allowlist ou bloqueio de endereços internos, o servidor pode ser usado para acessar serviços arbitrários, inclusive a rede local.",
+    "recomendacao": "Aplicar allowlist de destinos e esquemas, bloquear faixas internas e de loopback após resolução DNS e usar um cliente HTTP sem shell."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 319,
+    "linha_final": 320,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O valor filter controlado pelo usuário é interpolado diretamente em uma expressão SQL passada a text. Um atacante pode injetar sintaxe SQL e alterar a cláusula de busca, obtendo registros que não correspondem ao filtro.",
+    "recomendacao": "Usar comparações SQLAlchemy parametrizadas, como Paste.title == filter ou bind parameters, sem interpolação de strings."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 349,
+    "linha_final": 354,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "system_debug aceita arg diretamente e o concatena ao comando ps executado por os.popen. O resolver não exige autenticação, permitindo a um atacante anônimo injetar opções ou comandos shell.",
+    "recomendacao": "Remover a execução shell; se a funcionalidade for necessária, usar subprocess com lista fixa de argumentos e validar arg por allowlist."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 337,
+    "linha_final": 345,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "system_diagnostics executa cmd controlado pelo usuário por os.popen quando allowed_cmds retorna verdadeiro. No modo easy, allowed_cmds aceita qualquer comando, e o resolver só exige credenciais administrativas em texto puro, que são previsíveis no setup.",
+    "recomendacao": "Não executar entrada do usuário via shell; substituir por operações fixas e aplicar autenticação, autorização e allowlist independente do modo."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 314,
+    "linha_final": 322,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "resolve_pastes consulta e retorna registros privados quando public=False, que é o valor padrão, sem autenticação ou autorização. Qualquer cliente pode listar pastes privados.",
+    "recomendacao": "Exigir autenticação para registros privados e filtrar por proprietário ou por uma política explícita de compartilhamento."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 381,
+    "linha_final": 384,
+    "cwe": "CWE-200",
+    "severidade": "media",
+    "descricao": "O campo GraphQL audits retorna todos os registros de auditoria sem autenticação. Esses registros contêm consultas GraphQL e podem incluir dados sensíveis enviados pelos usuários.",
+    "recomendacao": "Restringir audits a administradores autorizados e remover ou mascarar dados sensíveis antes do armazenamento."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 386,
+    "linha_final": 390,
+    "cwe": "CWE-862",
+    "severidade": "critica",
+    "descricao": "delete_all_pastes exclui todos os pastes sem autenticação ou autorização. Uma requisição GraphQL anônima pode causar perda global de dados.",
+    "recomendacao": "Exigir autenticação forte e autorização administrativa explícita antes da operação, preferencialmente removendo-a da API pública."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 431,
+    "linha_final": 434,
+    "cwe": "CWE-306",
+    "severidade": "alta",
+    "descricao": "A rota start_over é acessível sem autenticação e chama helpers.initialize, que executa setup.py e recria o banco e os uploads. Um atacante pode resetar o estado persistente da aplicação.",
+    "recomendacao": "Remover a rota de produção ou protegê-la com autenticação administrativa e autorização específica."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 332,
+    "linha_final": 335,
+    "cwe": "CWE-400",
+    "severidade": "media",
+    "descricao": "system_update é acessível sem autenticação e chama simulate_load, que bloqueia a execução por aproximadamente 20 a 50 segundos. Requisições concorrentes podem consumir trabalhadores e degradar a disponibilidade.",
+    "recomendacao": "Remover a simulação da rota pública ou exigir autorização e aplicar limites de taxa e tempo de execução."
+  },
+  {
+    "arquivo": "core/view_override.py",
+    "linha_inicial": 46,
+    "linha_final": 59,
+    "cwe": "CWE-209",
+    "severidade": "media",
+    "descricao": "format_custom_error inclui stack trace, traceback e caminho absoluto do arquivo nas respostas de erro GraphQL. Um cliente que acesse o endpoint GraphiQL e provoque um erro recebe detalhes internos úteis para exploração.",
+    "recomendacao": "Retornar mensagens genéricas em produção e registrar stack traces somente no servidor."
+  }
+]

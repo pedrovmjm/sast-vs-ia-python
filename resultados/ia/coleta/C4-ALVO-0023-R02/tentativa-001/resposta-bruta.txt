@@ -1,0 +1,29 @@
+[
+  {
+    "arquivo": "Directory_Traversal/Dir_Traversal.py",
+    "linha_inicial": 15,
+    "linha_final": 15,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O caminho controlado por self.path é concatenado diretamente ao diretório atual. A validação anterior bloqueia apenas requisições iniciadas por /../../, permitindo sequências como /arquivo/../../segredo; o sistema operacional normaliza o caminho e o servidor retorna o conteúdo de arquivos acessíveis ao processo.",
+    "recomendacao": "Resolva o caminho com pathlib.Path.resolve() e permita somente caminhos que permaneçam dentro de um diretório-raiz explicitamente definido, rejeitando qualquer caminho fora dele."
+  },
+  {
+    "arquivo": "Other/host_header_injection.py",
+    "linha_inicial": 6,
+    "linha_final": 6,
+    "cwe": "CWE-295",
+    "severidade": "media",
+    "descricao": "A verificação do nome do host no certificado TLS é desabilitada. Em uma conexão interceptada por um atacante com capacidade de man-in-the-middle, um certificado válido para outro domínio pode ser aceito para a conexão destinada a website.com.",
+    "recomendacao": "Mantenha context.check_hostname habilitado e preserve a validação padrão do certificado contra o hostname de destino."
+  },
+  {
+    "arquivo": "Other/url_fetch.py",
+    "linha_inicial": 13,
+    "linha_final": 14,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "A URL é controlada pelo parâmetro url e a allowlist usa apenas startswith(\"https://insecurewebapp.com\"). URLs como https://insecurewebapp.com.evil ou https://insecurewebapp.com@evil podem alcançar hosts arbitrários; o servidor então realiza a requisição e devolve a resposta, permitindo SSRF e possível acesso a serviços internos acessíveis via HTTPS.",
+    "recomendacao": "Analise a URL com um parser, exija esquema HTTPS e hostname exatamente igual ao permitido, rejeite credenciais e portas não autorizadas e impeça ou revalide redirecionamentos antes de cada requisição."
+  }
+]

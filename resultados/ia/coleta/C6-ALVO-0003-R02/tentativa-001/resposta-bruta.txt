@@ -1,0 +1,146 @@
+[
+  {
+    "arquivo": "app/models/Analytics/analytics.py",
+    "linha_inicial": 57,
+    "linha_final": 60,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O método constrói SQL por interpolação direta de `col` e `ip`. O endpoint administrativo repassa parâmetros controlados pelo usuário para esses argumentos, permitindo injeção SQL autenticada e leitura ou alteração de dados conforme os privilégios da conexão.",
+    "recomendacao": "Use consultas parametrizadas e uma allowlist fixa de colunas; não concatene valores ou identificadores controlados pelo usuário."
+  },
+  {
+    "arquivo": "app/models/Benefits/benefits.py",
+    "linha_inicial": 73,
+    "linha_final": 73,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O nome controlado pelo usuário no arquivo enviado chega a `os.system` dentro de uma string de shell. Um usuário autenticado pode enviar um nome contendo metacaracteres para executar comandos no processo da aplicação quando o backup é solicitado.",
+    "recomendacao": "Elimine o shell e copie o arquivo usando APIs de arquivo ou `subprocess` com argumentos separados; valide o nome contra uma allowlist e mantenha-o restrito ao diretório de upload."
+  },
+  {
+    "arquivo": "app/views/admin/views.py",
+    "linha_inicial": 39,
+    "linha_final": 44,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "As funções administrativas exigem apenas um `auth_token` válido e não verificam `is_admin`. Assim, qualquer usuário autenticado pode invocar operações administrativas, incluindo excluir usuários e acessar ou modificar dados de terceiros.",
+    "recomendacao": "Exija autorização administrativa explícita antes de cada operação administrativa, além da autenticação."
+  },
+  {
+    "arquivo": "app/views/admin/views.py",
+    "linha_inicial": 56,
+    "linha_final": 63,
+    "cwe": "CWE-915",
+    "severidade": "alta",
+    "descricao": "Dados arbitrários de `request.POST` são repassados a `User.objects.update`. Um usuário que alcance esse endpoint pode incluir campos não destinados ao formulário, como `is_admin`, e elevar privilégios ou alterar atributos protegidos.",
+    "recomendacao": "Construa manualmente um dicionário somente com campos permitidos e valide cada valor antes da atualização."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 16,
+    "linha_final": 16,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O parâmetro HTTP `class` é avaliado por `eval` no endpoint móvel, sem autenticação ou restrição de valores. Um atacante pode fornecer uma expressão Python arbitrária e executar código no servidor.",
+    "recomendacao": "Substitua `eval` por uma allowlist explícita de modelos ou operações permitidas."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 27,
+    "linha_final": 27,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O endpoint móvel por identificador também avalia diretamente o parâmetro HTTP `class`. A requisição não possui controle de autorização visível, permitindo execução de expressões Python arbitrárias no servidor.",
+    "recomendacao": "Use uma allowlist explícita de modelos e remova a avaliação dinâmica de entrada HTTP."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 16,
+    "linha_final": 17,
+    "cwe": "CWE-200",
+    "severidade": "alta",
+    "descricao": "O endpoint móvel não exige autenticação e serializa todos os objetos do modelo escolhido pelo parâmetro `class`. Com `class=User`, dados de usuários, incluindo campos sensíveis do modelo, podem ser expostos a qualquer visitante.",
+    "recomendacao": "Exija autenticação e autorização por modelo/campo; serialize somente atributos explicitamente permitidos."
+  },
+  {
+    "arquivo": "app/views/password_resets/views.py",
+    "linha_inicial": 67,
+    "linha_final": 67,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O valor `user` recebido no POST é decodificado com `pickle.loads` sem autenticação de origem ou integridade. Um atacante pode enviar um payload pickle criado para executar código durante a desserialização.",
+    "recomendacao": "Não desserialize dados controlados pelo cliente com pickle; envie apenas um identificador assinado ou um token opaco armazenado no servidor."
+  },
+  {
+    "arquivo": "app/views/password_resets/views.py",
+    "linha_inicial": 43,
+    "linha_final": 45,
+    "cwe": "CWE-640",
+    "severidade": "alta",
+    "descricao": "O token de recuperação é derivado somente de `user_id` e MD5 do e-mail, sem segredo aleatório, expiração ou uso único. Quem souber ou adivinhar o e-mail pode calcular um token válido e iniciar a redefinição da senha.",
+    "recomendacao": "Gere tokens aleatórios criptograficamente seguros, armazene-os com expiração e invalidação após o uso, e compare-os de forma segura."
+  },
+  {
+    "arquivo": "app/views/sessions/views.py",
+    "linha_inicial": 25,
+    "linha_final": 26,
+    "cwe": "CWE-601",
+    "severidade": "media",
+    "descricao": "O destino de redirecionamento após login pode ser fornecido diretamente pelo cliente no parâmetro `path`. Após autenticação válida, a aplicação redireciona para esse destino sem allowlist, permitindo abuso para phishing por URL de redirecionamento aberto.",
+    "recomendacao": "Aceite somente caminhos locais previamente permitidos ou valide o destino com uma allowlist de rotas internas."
+  },
+  {
+    "arquivo": "app/views/users/messages/views.py",
+    "linha_inicial": 57,
+    "linha_final": 68,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "A mensagem é obtida apenas pelo `message_id`; `user_id` e a identidade autenticada não são usados para verificar proprietário, remetente ou destinatário. Um usuário autenticado pode ler ou excluir mensagens de outros usuários alterando o identificador na URL.",
+    "recomendacao": "Filtre a mensagem pelo usuário autenticado e valide a autorização antes de exibir ou excluir o objeto."
+  },
+  {
+    "arquivo": "app/views/users/pay/views.py",
+    "linha_inicial": 66,
+    "linha_final": 69,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A exclusão busca `Pay` somente por `pay_id`, ignorando o usuário autenticado e o `user_id` da rota. Qualquer usuário autenticado que conheça outro identificador pode excluir o depósito direto de outra pessoa.",
+    "recomendacao": "Exclua usando uma consulta que inclua simultaneamente `id=pay_id` e `user=curr_user`, tratando falha de autorização como não encontrado."
+  },
+  {
+    "arquivo": "app/views/users/views.py",
+    "linha_inicial": 74,
+    "linha_final": 76,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O valor `user_id_form`, controlado pelo POST, é interpolado em uma consulta SQL bruta. Um usuário autenticado pode injetar cláusulas SQL para selecionar outro usuário e alcançar a atualização de seus dados, inclusive senha.",
+    "recomendacao": "Use o ORM ou uma consulta parametrizada e obtenha o usuário pelo identificador validado, sem aceitar fragmentos SQL no formulário."
+  },
+  {
+    "arquivo": "app/views/users/work_info/views.py",
+    "linha_inicial": 16,
+    "linha_final": 18,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "Após autenticar apenas a existência de uma sessão, a view busca `User.objects.get(id=user_id)` usando diretamente o identificador da URL. Um usuário autenticado pode trocar esse valor e visualizar informações trabalhistas e SSN de outro usuário.",
+    "recomendacao": "Restrinja a consulta ao usuário autenticado ou aplique uma verificação explícita de autorização administrativa antes de permitir acesso a outro usuário."
+  },
+  {
+    "arquivo": "app/models/User/user.py",
+    "linha_inicial": 133,
+    "linha_final": 134,
+    "cwe": "CWE-916",
+    "severidade": "alta",
+    "descricao": "As senhas são armazenadas como MD5 simples, sem salt ou fator de trabalho. Em caso de exposição do banco, os hashes podem ser quebrados rapidamente e reutilizados para autenticação.",
+    "recomendacao": "Use o sistema de hash de senhas do Django, como `make_password` e `check_password`, com um algoritmo adaptativo."
+  },
+  {
+    "arquivo": "app/models/User/user.py",
+    "linha_inicial": 141,
+    "linha_final": 141,
+    "cwe": "CWE-330",
+    "severidade": "media",
+    "descricao": "O token de autenticação usa `random.randint` com espaço de apenas um milhão de valores e MD5 de dados previsíveis. Um atacante que conheça o e-mail pode tentar enumerar os valores e forjar um token válido.",
+    "recomendacao": "Gere tokens com `secrets.token_urlsafe` ou equivalente criptograficamente seguro, com entropia suficiente e rotação adequada."
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "sqli/app.py",
+    "linha_inicial": 23,
+    "linha_final": 26,
+    "cwe": "CWE-352",
+    "severidade": "baixa",
+    "descricao": "O middleware de proteção CSRF está comentado e não é instalado, enquanto a rota autenticada de logout aceita POST. Um site externo pode induzir um navegador com sessão válida a enviar essa requisição, encerrando a sessão da vítima.",
+    "recomendacao": "Ative o csrf_middleware na lista de middlewares e exija um token CSRF válido em toda operação que altere estado."
+  },
+  {
+    "arquivo": "sqli/dao/student.py",
+    "linha_inicial": 43,
+    "linha_final": 44,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O nome controlado pelo cliente é interpolado diretamente na string SQL em Student.create. A rota POST /students/ aceita esse valor sem autenticação visível, permitindo que um atacante manipule a consulta e potencialmente leia ou altere dados conforme os privilégios da conexão.",
+    "recomendacao": "Use parâmetros do driver, por exemplo INSERT INTO students (name) VALUES (%s), passando name separadamente para execute."
+  },
+  {
+    "arquivo": "sqli/dao/user.py",
+    "linha_inicial": 39,
+    "linha_final": 40,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "As senhas são verificadas contra um hash MD5 simples, sem salt ou fator de custo. Se os hashes armazenados forem obtidos, ataques offline com dicionários ou força bruta podem recuperar senhas reutilizadas, comprometendo as contas correspondentes.",
+    "recomendacao": "Armazene senhas com um KDF adaptativo e com salt, como Argon2id, scrypt ou bcrypt, usando os verificadores da biblioteca correspondente."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 121,
+    "linha_final": 139,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A operação de avaliação de aluno aceita POST e grava notas com Mark.create, mas o handler não aplica authorize nem outra verificação de identidade ou função. Qualquer cliente que conheça IDs numéricos válidos pode alterar a integridade das notas de qualquer aluno e curso.",
+    "recomendacao": "Exija autorização antes de processar a avaliação, restringindo a operação a usuários autenticados com a função apropriada, e valide também a relação entre usuário, aluno e curso."
+  }
+]

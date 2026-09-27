@@ -1,0 +1,92 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada pelo Flask para assinar cookies de sessão está codificada no fonte. Qualquer atacante que obtenha o código pode forjar cookies de sessão e potencialmente assumir a identidade de usuários, inclusive administradores.",
+    "recomendacao": "Carregue a chave de uma variável de ambiente ou de um gerenciador de segredos, usando uma chave aleatória e exclusiva por implantação."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 31,
+    "linha_final": 32,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "O caminho requisitado pelo atacante (`request.path`) é interpolado diretamente em `render_template_string`. Expressões Jinja inseridas em um caminho que provoque erro 404 podem ser avaliadas no servidor, resultando em Server-Side Template Injection.",
+    "recomendacao": "Não interprete dados da requisição como template; passe a mensagem como variável para um template estático e escape o valor."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 31,
+    "linha_final": 33,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O parâmetro controlado pelo atacante é interpolado em uma expressão SQL `LIKE` por meio de `text()`. Um usuário autenticado pode injetar condições como `OR 1=1` e contornar o filtro textual, fazendo a busca retornar notas de outros usuários, inclusive privadas.",
+    "recomendacao": "Use a expressão parametrizada do SQLAlchemy, por exemplo `Note.text.like(f\"%{search_param}%\")`, sem interpolar entrada em SQL bruto."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 42,
+    "linha_final": 43,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "Qualquer usuário autenticado pode fornecer outro `user_id` na URL e obter todas as notas desse usuário. O filtro não verifica se o identificador pertence ao usuário autenticado nem exclui notas privadas.",
+    "recomendacao": "Ignore o `user_id` fornecido pelo cliente ou autorize explicitamente o acesso ao usuário-alvo; filtre notas privadas conforme a política de acesso."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 65,
+    "linha_final": 66,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "O endpoint que altera a conta aceita requisições POST sem proteção CSRF. Um site externo pode induzir um navegador autenticado a enviar alterações na conta da vítima.",
+    "recomendacao": "Exija e valide um token CSRF em todas as operações que alteram estado."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 73,
+    "linha_final": 76,
+    "cwe": "CWE-915",
+    "severidade": "alta",
+    "descricao": "Campos do formulário são copiados diretamente para `current_user.__dict__`, incluindo `is_admin`. Um usuário autenticado pode enviar `is_admin=true`, persistir a alteração com `merge` e elevar seus próprios privilégios.",
+    "recomendacao": "Atualize explicitamente apenas campos permitidos e defina `is_admin` exclusivamente por uma operação administrativa autorizada."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 109,
+    "linha_final": 109,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O conteúdo do cookie `preferences` é controlado pelo cliente, decodificado em base64 e desserializado com `pickle.loads`. Um atacante pode fornecer um payload pickle malicioso e obter execução de código no processo do servidor ao acessar qualquer rota.",
+    "recomendacao": "Substitua pickle por um formato de dados não executável, como JSON, e valide rigorosamente a estrutura e os valores recebidos."
+  },
+  {
+    "arquivo": "routes/notes.py",
+    "linha_inicial": 31,
+    "linha_final": 32,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "O endpoint de exclusão de notas aceita POST autenticado sem token CSRF. Um site externo pode induzir o navegador da vítima a excluir uma nota usando sua sessão.",
+    "recomendacao": "Adicione proteção CSRF ao endpoint e valide o token antes de excluir a nota."
+  },
+  {
+    "arquivo": "routes/notes.py",
+    "linha_inicial": 36,
+    "linha_final": 42,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A nota é carregada apenas pelo `note_id` e excluída sem verificar `note.user_id == current_user.id` nem autorização administrativa. Qualquer usuário autenticado que conheça ou enumere um identificador pode excluir notas de outros usuários.",
+    "recomendacao": "Inclua a propriedade do usuário na consulta ou verifique autorização antes de executar `session.delete(note)`."
+  },
+  {
+    "arquivo": "utils/profile_image.py",
+    "linha_inicial": 7,
+    "linha_final": 9,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "A URL fornecida por um usuário autenticado é passada diretamente a `urlopen`, permitindo que o servidor faça requisições para destinos arbitrários, incluindo serviços internos ou recursos locais acessíveis ao processo.",
+    "recomendacao": "Restrinja URLs a uma allowlist de esquemas e destinos permitidos, bloqueie endereços internos e valide o destino após resolução DNS antes de conectar."
+  }
+]

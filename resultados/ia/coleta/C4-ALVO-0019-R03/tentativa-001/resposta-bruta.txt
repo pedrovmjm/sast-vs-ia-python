@@ -1,0 +1,74 @@
+[
+  {
+    "arquivo": "api_views/books.py",
+    "linha_inicial": 51,
+    "linha_final": 51,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "Com um token válido de qualquer usuário e vuln habilitado, book_title controlado pela requisição é usado para buscar um livro sem filtrar pelo proprietário. O atacante pode ler secret_content e o username de livros pertencentes a outros usuários.",
+    "recomendacao": "Inclua o usuário autenticado no filtro da consulta, por exemplo filtrando simultaneamente por user=usuário autenticado e book_title."
+  },
+  {
+    "arquivo": "api_views/users.py",
+    "linha_inicial": 24,
+    "linha_final": 25,
+    "cwe": "CWE-200",
+    "severidade": "alta",
+    "descricao": "A função debug retorna User.get_all_users_debug() sem autenticação ou autorização visível. Esse método inclui username, password, email e admin de todos os usuários, permitindo a exposição massiva de credenciais quando o handler estiver acessível.",
+    "recomendacao": "Remova o endpoint de debug ou proteja-o com autenticação e autorização administrativa; nunca serialize senhas nas respostas."
+  },
+  {
+    "arquivo": "api_views/users.py",
+    "linha_inicial": 60,
+    "linha_final": 68,
+    "cwe": "CWE-915",
+    "severidade": "alta",
+    "descricao": "Quando vuln está habilitado, o campo admin fornecido pelo cliente é aceito em register_user e usado para criar o usuário com privilégios administrativos. Um atacante não autenticado pode registrar uma conta administradora.",
+    "recomendacao": "Ignore admin na entrada pública e atribua explicitamente admin=False; permita a concessão desse privilégio somente por uma operação administrativa autorizada."
+  },
+  {
+    "arquivo": "api_views/users.py",
+    "linha_inicial": 140,
+    "linha_final": 142,
+    "cwe": "CWE-1333",
+    "severidade": "media",
+    "descricao": "Com vuln habilitado, o email controlado pelo cliente é processado por uma expressão regular ancorada que contém quantificação potencialmente ambígua e retrocesso sobre entrada arbitrariamente longa. Um atacante autenticado pode enviar valores malformados para provocar consumo elevado de CPU e indisponibilidade do worker.",
+    "recomendacao": "Substitua a expressão por validação de email sem retrocesso catastrófico, limite o tamanho do campo antes da validação e aplique timeout ou mecanismo seguro de matching."
+  },
+  {
+    "arquivo": "api_views/users.py",
+    "linha_inicial": 180,
+    "linha_final": 183,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "Com qualquer token válido e vuln habilitado, o username vindo do parâmetro da requisição seleciona a conta cujo password será alterado, sem verificar se corresponde ao usuário autenticado nem exigir privilégio administrativo. Um atacante pode assumir outras contas.",
+    "recomendacao": "Atualize somente a conta identificada pelo subject do token ou imponha uma verificação explícita de autorização administrativa antes de aceitar outro username."
+  },
+  {
+    "arquivo": "config.py",
+    "linha_inicial": 13,
+    "linha_final": 13,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada para assinar e validar tokens JWT é constante e previsível ('random'). Qualquer pessoa que obtenha o código pode forjar tokens HS256 com subject arbitrário e acessar ou alterar recursos protegidos.",
+    "recomendacao": "Carregue uma chave criptograficamente aleatória de um segredo externo e faça sua rotação sem armazená-la no código-fonte."
+  },
+  {
+    "arquivo": "models/user_model.py",
+    "linha_inicial": 14,
+    "linha_final": 15,
+    "cwe": "CWE-256",
+    "severidade": "alta",
+    "descricao": "As senhas são armazenadas diretamente no campo password, e login_user compara a entrada com esse valor em texto claro. Uma leitura do banco, inclusive facilitada pelo endpoint debug, revela credenciais reutilizáveis.",
+    "recomendacao": "Armazene somente hashes de senha com salt usando um algoritmo específico para senhas, como Argon2id, e verifique-os com uma função de comparação segura."
+  },
+  {
+    "arquivo": "models/user_model.py",
+    "linha_inicial": 72,
+    "linha_final": 74,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Quando vuln está habilitado, username controlado pelo cliente é interpolado diretamente em uma instrução SQL e executado. O endpoint que chama get_user pode ser explorado para alterar a consulta, como por UNION, permitindo acesso indevido a dados do banco.",
+    "recomendacao": "Use exclusivamente User.query.filter_by(username=username) ou parâmetros vinculados do SQLAlchemy, sem interpolar a entrada na string SQL."
+  }
+]

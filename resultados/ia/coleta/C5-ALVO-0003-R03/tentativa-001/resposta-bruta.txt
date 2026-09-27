@@ -1,0 +1,173 @@
+[
+  {
+    "arquivo": "app/models/Analytics/analytics.py",
+    "linha_inicial": 57,
+    "linha_final": 60,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "hits_by_ip monta uma consulta SQL por interpolação direta de ip e col. Esses valores podem ser derivados de parâmetros controlados pelo cliente em admin_analytics, permitindo alterar a consulta e ler ou modificar dados conforme os privilégios do banco.",
+    "recomendacao": "Use consultas parametrizadas para ip e uma allowlist fixa de nomes de colunas; não aceite identificadores SQL arbitrários."
+  },
+  {
+    "arquivo": "app/models/Benefits/benefits.py",
+    "linha_inicial": 73,
+    "linha_final": 73,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "make_backup passa full_file_name e bak_file_path, derivados do nome do arquivo enviado, a os.system. Um atacante autenticado pode fornecer um nome contendo metacaracteres e executar comandos no processo da aplicação quando backup=true.",
+    "recomendacao": "Substitua os.system por uma operação de cópia sem shell e valide o nome do arquivo com uma allowlist."
+  },
+  {
+    "arquivo": "app/models/Benefits/benefits.py",
+    "linha_inicial": 23,
+    "linha_final": 25,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "uploaded_file.name é concatenado ao diretório de armazenamento sem normalização ou validação. Um nome absoluto ou contendo traversal pode escapar de MEDIA_ROOT/data e gravar conteúdo em caminho arbitrário acessível ao processo.",
+    "recomendacao": "Descartar componentes de diretório, gerar um nome de arquivo controlado pelo servidor e verificar que o caminho final permanece dentro de MEDIA_ROOT/data."
+  },
+  {
+    "arquivo": "app/models/User/user.py",
+    "linha_inicial": 107,
+    "linha_final": 107,
+    "cwe": "CWE-916",
+    "severidade": "alta",
+    "descricao": "A senha é armazenada como MD5 sem salt. Se o banco for obtido, senhas podem ser recuperadas eficientemente por dicionário ou rainbow tables, comprometendo as contas reutilizadas.",
+    "recomendacao": "Use o sistema de hash de senhas do Django, como make_password e check_password, com salt e fator de custo adequado."
+  },
+  {
+    "arquivo": "app/models/User/user.py",
+    "linha_inicial": 141,
+    "linha_final": 141,
+    "cwe": "CWE-330",
+    "severidade": "media",
+    "descricao": "auth_token é derivado de email e de random.randint com apenas cerca de um milhão de valores possíveis. Como o token é usado diretamente como credencial bearer em cookie, um atacante pode tentar adivinhar tokens, especialmente sem expiração ou limitação visível.",
+    "recomendacao": "Gere tokens com secrets.token_urlsafe ou equivalente criptograficamente seguro, armazene-os de forma apropriada e implemente expiração e rotação."
+  },
+  {
+    "arquivo": "app/models/utils.py",
+    "linha_inicial": 24,
+    "linha_final": 29,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave AES usada para criptografar dados sensíveis vem de uma constante fixa em settings.py. Qualquer pessoa com acesso ao código pode recuperar a chave e descriptografar SSNs e dados bancários armazenados.",
+    "recomendacao": "Carregue a chave de um gerenciador de segredos ou variável protegida fora do código e faça rotação da chave comprometida."
+  },
+  {
+    "arquivo": "app/views/admin/views.py",
+    "linha_inicial": 15,
+    "linha_final": 16,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "As rotas administrativas apenas verificam a existência de auth_token; não verificam is_admin. Qualquer usuário autenticado pode alcançar operações de consulta, atualização, exclusão de usuários e listagem de dados administrativos.",
+    "recomendacao": "Exija autorização administrativa explícita em todas as views administrativas, além da autenticação."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 15,
+    "linha_final": 16,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O parâmetro GET class, controlado pelo cliente e recebido sem autenticação, é executado por eval. Um atacante pode fornecer uma expressão Python arbitrária e obter execução de código no servidor.",
+    "recomendacao": "Remova eval e substitua-o por um mapeamento fixo entre nomes permitidos e classes de modelo."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 16,
+    "linha_final": 17,
+    "cwe": "CWE-200",
+    "severidade": "alta",
+    "descricao": "A API móvel não exige autenticação e serializa model.objects.all() para uma classe escolhida pelo cliente. Para User, isso expõe campos como password e auth_token de todos os usuários.",
+    "recomendacao": "Exija autenticação e autorização, use serializers com allowlist explícita de campos e limite os modelos consultáveis."
+  },
+  {
+    "arquivo": "app/views/api/mobile/views.py",
+    "linha_inicial": 26,
+    "linha_final": 27,
+    "cwe": "CWE-95",
+    "severidade": "critica",
+    "descricao": "O endpoint de consulta por ID também aplica eval diretamente ao parâmetro class controlado pelo cliente e não possui autenticação, permitindo execução arbitrária de código no servidor.",
+    "recomendacao": "Use uma allowlist de modelos e elimine completamente a avaliação dinâmica de expressões Python."
+  },
+  {
+    "arquivo": "app/views/password_resets/views.py",
+    "linha_inicial": 67,
+    "linha_final": 67,
+    "cwe": "CWE-640",
+    "severidade": "alta",
+    "descricao": "O token de recuperação é MD5 determinístico de user_id e email, sem segredo, expiração ou uso único. Conhecendo esses valores, um atacante pode criar um token válido e iniciar recuperação de conta.",
+    "recomendacao": "Use tokens aleatórios, assinados ou armazenados no servidor, com expiração, uso único e associação à finalidade de recuperação."
+  },
+  {
+    "arquivo": "app/views/password_resets/views.py",
+    "linha_inicial": 84,
+    "linha_final": 84,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O campo POST user é controlado pelo cliente e é decodificado com pickle.loads sem autenticação ou integridade. Um atacante pode enviar um payload pickle que execute código arbitrário durante a desserialização.",
+    "recomendacao": "Não desserialize dados controlados pelo cliente com pickle; envie apenas um identificador de recuperação opaco e valide-o no servidor."
+  },
+  {
+    "arquivo": "app/views/sessions/views.py",
+    "linha_inicial": 43,
+    "linha_final": 43,
+    "cwe": "CWE-601",
+    "severidade": "media",
+    "descricao": "Após autenticação bem-sucedida, o valor path fornecido no POST é usado diretamente como destino de HttpResponseRedirect. Um atacante pode induzir o usuário a autenticar e depois redirecioná-lo para um domínio controlado, facilitando phishing.",
+    "recomendacao": "Aceite somente caminhos locais relativos de uma allowlist ou valide o destino com url_has_allowed_host_and_scheme."
+  },
+  {
+    "arquivo": "app/views/users/messages/views.py",
+    "linha_inicial": 19,
+    "linha_final": 19,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A mensagem é buscada somente por message_id, sem verificar se pertence ao usuário autenticado ou se user_id da URL corresponde a ele. Qualquer usuário autenticado que conheça um ID pode ler ou excluir mensagens de terceiros.",
+    "recomendacao": "Filtre a consulta por receiver ou creator do usuário autenticado e aplique a mesma autorização antes da exclusão."
+  },
+  {
+    "arquivo": "app/views/users/pay/views.py",
+    "linha_inicial": 68,
+    "linha_final": 69,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A exclusão de pagamento consulta Pay apenas por id, ignorando o usuário autenticado e user_id da URL. Um usuário autenticado pode excluir o registro bancário de outro usuário ao fornecer seu pay_id.",
+    "recomendacao": "Busque o pagamento por id e user=usuário autenticado antes de permitir a exclusão."
+  },
+  {
+    "arquivo": "app/views/users/views.py",
+    "linha_inicial": 74,
+    "linha_final": 76,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "user_id_form, recebido do POST, é interpolado em uma consulta raw SQL. Um usuário autenticado pode injetar condições SQL para selecionar outro usuário e alterar seus dados, inclusive senha.",
+    "recomendacao": "Use o ORM ou parâmetros vinculados e autorize explicitamente o usuário alvo antes de atualizar qualquer registro."
+  },
+  {
+    "arquivo": "app/views/users/work_info/views.py",
+    "linha_inicial": 15,
+    "linha_final": 15,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A view busca WorkInfo pelo id fornecido na URL após apenas autenticar a existência de um token. Não há verificação de que o recurso pertence ao usuário autenticado, permitindo consultar informações trabalhistas e SSN de terceiros.",
+    "recomendacao": "Restrinja a consulta ao usuário autenticado ou verifique uma autorização administrativa explícita antes de acessar outro user_id."
+  },
+  {
+    "arquivo": "app/views/users/benefit_forms/views.py",
+    "linha_inicial": 22,
+    "linha_final": 24,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O parâmetro name controlado pelo cliente é concatenado a BASE_DIR e aberto diretamente. Um usuário autenticado pode usar ../ para ler arquivos arbitrários acessíveis ao processo.",
+    "recomendacao": "Use uma allowlist de arquivos disponíveis e resolva o caminho com validação para garantir que ele permaneça dentro do diretório de documentos."
+  },
+  {
+    "arquivo": "pygoat/settings.py",
+    "linha_inicial": 127,
+    "linha_final": 127,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave criptográfica usada para proteger dados bancários e SSNs está codificada diretamente no arquivo de configurações. A exposição do código permite descriptografar os dados armazenados.",
+    "recomendacao": "Remova a chave do código, injete-a por um mecanismo seguro de gerenciamento de segredos e faça rotação da chave atual."
+  }
+]

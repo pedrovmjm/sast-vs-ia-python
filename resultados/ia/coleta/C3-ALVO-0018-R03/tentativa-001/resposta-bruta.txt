@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 152,
+    "linha_final": 163,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O endpoint de perfil aceita user_id controlado pelo solicitante e a verificação token_required está comentada. Um usuário não autenticado pode consultar os dados de qualquer perfil, incluindo e-mail, função e permissões.",
+    "recomendacao": "Exigir autenticação e autorizar o acesso comparando o user_id solicitado com o usuário autenticado, permitindo exceção explícita apenas para administradores."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 221,
+    "linha_final": 231,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint de exclusão não exige autenticação nem autorização; o decorador token_required e seu parâmetro estão comentados. Qualquer solicitante que conheça um ID pode excluir o usuário correspondente.",
+    "recomendacao": "Exigir autenticação e verificar autorização administrativa antes de executar o DELETE."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 247,
+    "linha_final": 264,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint de atualização de foto não exige autenticação e aceita username controlado pelo solicitante. Um atacante pode alterar a foto de perfil de qualquer usuário existente.",
+    "recomendacao": "Exigir autenticação e derivar o usuário-alvo da identidade autenticada, permitindo alteração de terceiros somente com autorização administrativa."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 251,
+    "linha_final": 253,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "picture_url é fornecida diretamente pelo solicitante e usada em requests.get sem allowlist, bloqueio de endereços internos ou timeout. Um atacante pode induzir o servidor a realizar requisições HTTP para serviços internos ou externos controlados por ele.",
+    "recomendacao": "Aceitar somente URLs de origens explicitamente permitidas, bloquear endereços loopback, privados e de metadados, validar o destino após resolução DNS e definir timeout e limites de resposta."
+  },
+  {
+    "arquivo": "server/config.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada para assinar sessões Flask e tokens JWT está fixa no código. Quem obtiver o código pode forjar cookies de sessão e tokens válidos, permitindo impersonar usuários e acessar operações autenticadas.",
+    "recomendacao": "Carregar uma chave aleatória e exclusiva por ambiente a partir de um mecanismo seguro de configuração ou gerenciamento de segredos, com rotação da chave comprometida."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 140,
+    "linha_final": 141,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "search_query é controlado pelo usuário e interpolado diretamente em uma instrução SQL dentro de uma f-string. Um usuário autenticado pode injetar SQL e alterar a consulta executada.",
+    "recomendacao": "Usar parâmetros vinculados para user_id e search_query, construindo o padrão LIKE como parâmetro, sem interpolação de entrada na instrução SQL."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 190,
+    "linha_final": 198,
+    "cwe": "CWE-269",
+    "severidade": "alta",
+    "descricao": "A rota autenticada de atualização de perfil aceita role e permissions diretamente de request.form sem verificar se o usuário é administrador. Qualquer usuário autenticado pode elevar seus próprios privilégios para admin e atribuir permissões.",
+    "recomendacao": "Ignorar esses campos para usuários comuns e exigir uma verificação de autorização administrativa antes de permitir alterações de role ou permissions."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 260,
+    "linha_final": 262,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "file.filename é controlado pelo cliente e usado diretamente em os.path.join antes de salvar o upload. Um nome absoluto ou com traversal pode escapar de UPLOAD_FOLDER e sobrescrever ou criar arquivos em local arbitrário com as permissões do processo.",
+    "recomendacao": "Sanitizar o nome com secure_filename, rejeitar nomes absolutos e caminhos, gerar um nome interno aleatório e validar que o caminho final permanece dentro de UPLOAD_FOLDER."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 390,
+    "linha_final": 400,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "A função usada para armazenar e verificar senhas aplica MD5 sem salt ou função de derivação lenta. Se o banco for obtido, as senhas podem ser recuperadas por dicionários e cracking offline com baixo custo.",
+    "recomendacao": "Substituir MD5 por um KDF adaptativo específico para senhas, como Argon2id, scrypt ou bcrypt, com salt aleatório por senha e migração dos registros existentes."
+  }
+]

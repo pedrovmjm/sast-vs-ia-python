@@ -1,0 +1,47 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 24,
+    "linha_final": 24,
+    "cwe": "CWE-489",
+    "severidade": "alta",
+    "descricao": "A aplicação é iniciada com debug=True e escuta em 0.0.0.0. Se a porta estiver acessível ao atacante, o modo de depuração pode expor detalhes internos e a interface interativa do depurador, possibilitando execução de código no processo conforme as proteções do servidor.",
+    "recomendacao": "Inicie a aplicação com debug=False em ambientes acessíveis e configure a depuração somente por mecanismos administrativos restritos."
+  },
+  {
+    "arquivo": "lfi.py",
+    "linha_inicial": 3,
+    "linha_final": 3,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O valor controlado pelo cliente em lfi['filename'] é passado diretamente a open() por fetchfile(), sem canonicalização nem restrição a um diretório permitido. Um atacante pode solicitar caminhos absolutos ou usar traversal para ler arquivos acessíveis ao processo.",
+    "recomendacao": "Restringir a leitura a uma allowlist de nomes ou a um diretório-base, canonicalizando o caminho e rejeitando qualquer resultado fora desse diretório."
+  },
+  {
+    "arquivo": "rfi.py",
+    "linha_inicial": 6,
+    "linha_final": 6,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "O valor controlado pelo cliente em rfi['imagelink'] é usado diretamente em requests.get(). Um atacante pode fazer o servidor realizar requisições para hosts internos ou outros destinos arbitrários e devolver o conteúdo obtido na resposta.",
+    "recomendacao": "Aceitar somente URLs de uma allowlist de esquemas, hosts e portas permitidos, bloquear destinos internos após resolver DNS e validar redirecionamentos; manter a verificação TLS habilitada."
+  },
+  {
+    "arquivo": "sqli.py",
+    "linha_inicial": 15,
+    "linha_final": 15,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O username controlado pelo cliente é interpolado diretamente na consulta SQL. A entrada pode alterar a cláusula WHERE e permitir injeção SQL, com leitura ou manipulação adicional dependendo das permissões e capacidades da conexão SQLite.",
+    "recomendacao": "Usar consulta parametrizada, por exemplo, cur.execute(\"SELECT * FROM USERS WHERE USERNAME=?\", (username,)), e validar os campos conforme o modelo esperado."
+  },
+  {
+    "arquivo": "ssti.py",
+    "linha_inicial": 15,
+    "linha_final": 16,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "A entrada controlada pelo cliente em ssti['mathexp'] é concatenada em um template Jinja e compilada por Template(). O atacante pode fornecer sintaxe Jinja arbitrária, que será avaliada por test.render(), podendo acessar dados do processo e, conforme o ambiente e os objetos disponíveis, alcançar execução de código.",
+    "recomendacao": "Não compile entrada do usuário como template; trate-a como dado e, se expressões forem necessárias, implemente um parser restrito com allowlist de operações."
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 11,
+    "linha_final": 11,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave usada para assinar a sessão Flask está codificada no fonte. Qualquer atacante que obtenha o código pode forjar cookies de sessão, inclusive impersonar usuários autenticados, comprometendo a integridade e a confidencialidade das contas.",
+    "recomendacao": "Carregar uma chave criptograficamente aleatória a partir de um mecanismo seguro de segredos, sem incluí-la no código ou reutilizá-la entre ambientes."
+  },
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 31,
+    "linha_final": 33,
+    "cwe": "CWE-1336",
+    "severidade": "alta",
+    "descricao": "O caminho solicitado pelo atacante é interpolado diretamente em uma string passada a render_template_string. Um caminho contendo sintaxe Jinja, como uma expressão ou acesso a objetos, pode ser interpretado como template no tratamento de uma resposta 404, permitindo injeção de template no servidor.",
+    "recomendacao": "Não renderizar entrada controlada pelo usuário como template; passar o caminho como variável a um template estático e aplicar escaping apropriado."
+  },
+  {
+    "arquivo": "db_seed.py",
+    "linha_inicial": 17,
+    "linha_final": 19,
+    "cwe": "CWE-1392",
+    "severidade": "alta",
+    "descricao": "A inicialização cria uma conta administrativa com credenciais fixas e previsíveis: admin@evfa.com e admin. Se essas credenciais permanecerem disponíveis no ambiente implantado, qualquer atacante pode autenticar-se como administrador.",
+    "recomendacao": "Não criar credenciais administrativas fixas; exigir configuração inicial segura e uma senha aleatória ou definida fora do código."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 31,
+    "linha_final": 34,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O parâmetro search da requisição é concatenado em uma expressão SQL textual. Um usuário autenticado pode inserir sintaxe SQL para alterar a condição LIKE, contornar o filtro por current_user.id e consultar notas de outros usuários, inclusive privadas.",
+    "recomendacao": "Usar parâmetros vinculados do SQLAlchemy para o valor pesquisado, mantendo a expressão SQL separada dos dados fornecidos pelo usuário."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 42,
+    "linha_final": 49,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "A rota aceita qualquer user_id fornecido na URL e retorna todas as notas desse usuário, sem verificar se ele corresponde a current_user nem se o solicitante é administrador. Um usuário autenticado pode acessar notas privadas de outras contas.",
+    "recomendacao": "Autorizar explicitamente o acesso apenas quando user_id for o identificador do usuário autenticado ou quando current_user.is_admin for verdadeiro."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 69,
+    "linha_final": 70,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A rota POST /account não exige autenticação. Além disso, quando acessada por um usuário autenticado, permite atualizar diretamente atributos da conta, incluindo is_admin, a partir de dados do formulário. Um usuário comum pode definir is_admin e obter privilégios administrativos.",
+    "recomendacao": "Adicionar login_required e permitir a atualização somente de campos explicitamente autorizados; tratar is_admin exclusivamente em um fluxo administrativo separado."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 77,
+    "linha_final": 82,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A atualização de conta aceita uma requisição POST autenticada sem token CSRF e altera dados sensíveis, incluindo a possibilidade de promover a conta por meio de is_admin. Um site externo pode induzir o navegador de uma vítima autenticada a enviar essa requisição.",
+    "recomendacao": "Habilitar proteção CSRF para o formulário e validar o token em toda requisição que altere estado."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 118,
+    "linha_final": 118,
+    "cwe": "CWE-502",
+    "severidade": "critica",
+    "descricao": "O cookie preferences é controlado pelo cliente, apenas codificado em Base64 e desserializado com pickle.loads. Um atacante pode enviar um cookie especialmente criado e obter execução de código no processo do servidor durante qualquer requisição.",
+    "recomendacao": "Substituir pickle por um formato de dados não executável, como JSON, validar estritamente a estrutura e os valores aceitos e assinar ou armazenar as preferências no servidor."
+  },
+  {
+    "arquivo": "routes/account.py",
+    "linha_inicial": 103,
+    "linha_final": 105,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A rota POST /darkmode altera um cookie de preferências sem proteção CSRF. Um site externo pode induzir uma vítima autenticada a enviar a requisição, embora o impacto direto dessa alteração seja limitado.",
+    "recomendacao": "Adicionar validação CSRF às requisições POST que alteram estado."
+  },
+  {
+    "arquivo": "routes/notes.py",
+    "linha_inicial": 40,
+    "linha_final": 50,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "A exclusão busca a nota apenas pelo note_id e não verifica se note.user_id pertence a current_user nem se o solicitante é administrador. Qualquer usuário autenticado que conheça ou enumere um identificador pode excluir notas de outras contas.",
+    "recomendacao": "Restringir a consulta à nota cujo user_id seja current_user.id, ou exigir autorização administrativa explícita antes de excluir."
+  },
+  {
+    "arquivo": "routes/notes.py",
+    "linha_inicial": 16,
+    "linha_final": 18,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "A criação de notas por POST não apresenta validação CSRF. Um site externo pode induzir um usuário autenticado a criar conteúdo em sua conta usando dados controlados pelo atacante.",
+    "recomendacao": "Adicionar token CSRF ao formulário e validar esse token no endpoint POST."
+  },
+  {
+    "arquivo": "utils/profile_image.py",
+    "linha_inicial": 8,
+    "linha_final": 8,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "A URL fornecida pelo usuário é passada diretamente a urllib.request.urlopen. Um usuário autenticado pode fazer o servidor requisitar endereços arbitrários, incluindo serviços internos ou endpoints acessíveis apenas pela rede do servidor, caracterizando SSRF.",
+    "recomendacao": "Aplicar uma allowlist de esquemas, hosts e portas permitidos, bloquear endereços privados e de loopback após resolução DNS e impor limites de redirecionamento, tamanho e tempo."
+  }
+]

@@ -1,0 +1,83 @@
+[
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 24,
+    "linha_final": 24,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave usada para assinar a sessão Flask é fixa e está presente no código. Quem obtiver o código pode forjar cookies de sessão contendo user e demais atributos, incluindo impersonação de usuários.",
+    "recomendacao": "Carregue uma chave criptograficamente aleatória de um gerenciador de segredos ou variável de ambiente, exclusiva por implantação, e invalide sessões assinadas com a chave exposta."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 165,
+    "linha_final": 177,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "username e password controlados pelo usuário são interpolados diretamente na consulta SQL e executados. Um atacante pode alterar a cláusula WHERE e autenticar-se sem credenciais válidas, inclusive como um usuário privilegiado.",
+    "recomendacao": "Use consulta parametrizada, por exemplo, com placeholders para username e password, e armazene senhas com hash seguro."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 244,
+    "linha_final": 246,
+    "cwe": "CWE-89",
+    "severidade": "media",
+    "descricao": "O termo de busca autenticado é concatenado em uma consulta SQL SELECT. Um usuário autenticado pode injetar sintaxe SQL e alterar a consulta, potencialmente lendo dados acessíveis ao processo e provocando erros controlados.",
+    "recomendacao": "Parametrize o valor pesquisado e componha o padrão LIKE no parâmetro, usando, por exemplo, `content LIKE ?` com `%` concatenado fora da instrução SQL."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 279,
+    "linha_final": 283,
+    "cwe": "CWE-352",
+    "severidade": "baixa",
+    "descricao": "Uma requisição GET autenticada ao endpoint de transferência altera o estado no servidor ao registrar sucesso e atualizar o progresso. Como GET é acionável por uma página de terceiro e não exige token CSRF, um atacante pode induzir o navegador autenticado a realizar essa operação.",
+    "recomendacao": "Remova efeitos de estado de GET e exija POST protegido por token CSRF para operações de transferência e atualização de progresso."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 315,
+    "linha_final": 317,
+    "cwe": "CWE-434",
+    "severidade": "media",
+    "descricao": "Qualquer usuário autenticado pode enviar um arquivo de tipo e conteúdo arbitrários; o nome é apenas normalizado com basename e o arquivo é salvo no diretório estático, que também o disponibiliza por HTTP. Isso permite hospedar conteúdo ativo, como HTML ou SVG com JavaScript, no mesmo domínio.",
+    "recomendacao": "Aplique allowlist de extensões e tipos MIME, valide o conteúdo, gere um nome aleatório e armazene uploads fora da árvore estática; sirva-os com Content-Disposition apropriado."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 379,
+    "linha_final": 380,
+    "cwe": "CWE-918",
+    "severidade": "alta",
+    "descricao": "A URL fornecida por usuário autenticado é passada diretamente a requests.get, e parte da resposta é devolvida na página. Um atacante pode fazer o servidor acessar serviços internos ou endereços reservados e obter o conteúdo retornado.",
+    "recomendacao": "Permita somente esquemas e destinos explicitamente autorizados, resolva e valide o endereço IP após DNS, bloqueie redes internas e desabilite redirecionamentos para destinos não validados."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 430,
+    "linha_final": 431,
+    "cwe": "CWE-502",
+    "severidade": "alta",
+    "descricao": "Dados controlados por usuário são decodificados e passados a pickle.loads. Um payload pickle especialmente construído pode executar código arbitrário durante a desserialização, com os privilégios do processo da aplicação; basta acesso autenticado ao endpoint.",
+    "recomendacao": "Não desserialize pickle originado do usuário; use um formato de dados não executável, como JSON, com validação explícita de esquema."
+  },
+  {
+    "arquivo": "python/app.py",
+    "linha_inicial": 608,
+    "linha_final": 610,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "Após apenas verificar que existe uma sessão, o endpoint retorna username, email e role de qualquer user_id diferente do usuário autenticado. Não há autorização por objeto, permitindo a um usuário autenticado consultar dados de outras contas.",
+    "recomendacao": "Imponha uma verificação de autorização para o objeto solicitado antes de retornar os dados, ou limite a consulta ao usuário identificado pela sessão."
+  },
+  {
+    "arquivo": "python/database.py",
+    "linha_inicial": 86,
+    "linha_final": 87,
+    "cwe": "CWE-1392",
+    "severidade": "alta",
+    "descricao": "A inicialização cria uma conta administrativa com credenciais fixas e previsíveis (`admin`/`password`). Um atacante sem conta pode usar essas credenciais conhecidas para obter acesso administrativo.",
+    "recomendacao": "Remova credenciais administrativas padrão e exija configuração inicial de uma senha forte, armazenada com hash."
+  }
+]

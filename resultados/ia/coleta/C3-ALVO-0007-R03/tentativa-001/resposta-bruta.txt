@@ -1,0 +1,47 @@
+[
+  {
+    "arquivo": "sqli/dao/student.py",
+    "linha_inicial": 47,
+    "linha_final": 48,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O valor controlado pelo usuário em `name` é interpolado diretamente na instrução SQL antes da execução. A requisição POST de criação de estudantes não exige autenticação, permitindo que um atacante forneça uma carga SQL e altere a consulta, com potencial para ler ou modificar dados acessíveis pela conexão.",
+    "recomendacao": "Use parâmetros do driver para `name`, mantendo o texto SQL constante, por exemplo `VALUES (%(name)s)`, e passe o dicionário separadamente a `execute`."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 57,
+    "linha_final": 59,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A rota POST de estudantes chama `Student.create` sem autenticação ou autorização. Um atacante não autenticado pode criar registros de estudantes arbitrários e alterar a integridade dos dados da aplicação.",
+    "recomendacao": "Aplique `@authorize(ensure_admin=True)` ao handler ou imponha uma verificação equivalente antes de executar `Student.create`."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 70,
+    "linha_final": 73,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A rota POST de cursos chama `Course.create` sem autenticação ou autorização. Um atacante não autenticado pode criar cursos arbitrários e modificar a integridade do catálogo.",
+    "recomendacao": "Aplique `@authorize(ensure_admin=True)` ao handler ou imponha uma verificação equivalente antes de executar `Course.create`."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 101,
+    "linha_final": 110,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A rota POST de avaliações de cursos aceita e persiste `review_text` sem autenticação ou autorização. Qualquer atacante pode inserir avaliações arbitrárias associadas a qualquer curso.",
+    "recomendacao": "Exija autenticação e autorização apropriada antes de processar a criação da avaliação."
+  },
+  {
+    "arquivo": "sqli/views.py",
+    "linha_inicial": 120,
+    "linha_final": 134,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "A rota POST de avaliação de alunos persiste uma pontuação fornecida pelo cliente sem autenticação ou autorização. Embora `points` seja limitado entre 0 e 5, qualquer atacante pode atribuir notas a qualquer aluno e curso, comprometendo a integridade dos registros acadêmicos.",
+    "recomendacao": "Aplique `@authorize(ensure_admin=True)` ao handler ou valide explicitamente a autorização do usuário antes de executar `Mark.create`."
+  }
+]

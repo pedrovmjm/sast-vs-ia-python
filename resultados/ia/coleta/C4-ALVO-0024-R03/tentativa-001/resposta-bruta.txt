@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 41,
+    "linha_final": 45,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O caminho controlado pelo atacante é concatenado a \"static/\" e combinado com o diretório da aplicação sem normalização ou validação de confinamento. Sequências como \"../\" podem escapar do diretório estático e fazer o servidor abrir e retornar arquivos arbitrários acessíveis ao processo.",
+    "recomendacao": "Resolva o caminho com uma API segura, como tornado.web כדי servir arquivos estáticos, e valide que o caminho normalizado permanece dentro de um diretório estático permitido."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 74,
+    "linha_final": 74,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O argumento HTTP \"file\" é concatenado diretamente ao diretório \"read/\" e usado em io.open. Um atacante pode fornecer traversal, como \"../\", para ler arquivos fora do diretório pretendido e obter seu conteúdo na resposta.",
+    "recomendacao": "Aceite somente nomes de arquivo de uma allowlist ou use resolução canônica com verificação explícita de que o caminho final permanece dentro de \"read/\"."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 101,
+    "linha_final": 103,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "Os valores controlados pelos argumentos \"username\" e \"password\" são concatenados diretamente na consulta SQL. Um atacante pode alterar a estrutura da consulta, contornar a autenticação e potencialmente consultar dados adicionais da tabela Users.",
+    "recomendacao": "Use uma consulta parametrizada do SQLite, passando username e password como parâmetros separados."
+  },
+  {
+    "arquivo": "server.py",
+    "linha_inicial": 121,
+    "linha_final": 121,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "O argumento HTTP \"server\" é concatenado diretamente ao comando executado por os.popen. Metacaracteres de shell podem permitir que um atacante injete comandos arbitrários com os privilégios do processo.",
+    "recomendacao": "Evite shell e execute ping por uma API de subprocesso com lista de argumentos e validação restritiva de endereço; se shell for inevitável, use shell=False."
+  }
+]

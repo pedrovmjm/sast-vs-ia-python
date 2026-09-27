@@ -1,0 +1,137 @@
+[
+  {
+    "arquivo": "app.py",
+    "linha_inicial": 14,
+    "linha_final": 15,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave fixa 'dvga' é usada para a sessão Flask e para assinar tokens JWT. Um atacante que conheça esse valor pode forjar credenciais criptográficas aceitas pela aplicação, conforme o mecanismo consumidor.",
+    "recomendacao": "Carregar chaves aleatórias e exclusivas de um armazenamento seguro de configuração, sem valores fixos no código."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 20,
+    "linha_final": 21,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "get_identity decodifica um token fornecido pelo usuário com verify_signature e verify_exp desabilitados e usa diretamente o campo identity. Um atacante pode construir um token expirado ou sem assinatura para se passar por qualquer identidade, inclusive admin.",
+    "recomendacao": "Validar assinatura, algoritmo, expiração e demais claims com a chave configurada antes de aceitar identity."
+  },
+  {
+    "arquivo": "core/helpers.py",
+    "linha_inicial": 23,
+    "linha_final": 25,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O filename controlado pelo atacante é concatenado diretamente a WEB_UPLOADDIR e aberto para escrita. Um nome contendo componentes de caminho pode escapar do diretório de uploads e sobrescrever arquivos acessíveis ao processo.",
+    "recomendacao": "Usar um nome gerado pelo servidor ou secure_filename, resolver o caminho final e verificar que ele permanece dentro do diretório de uploads."
+  },
+  {
+    "arquivo": "core/view_override.py",
+    "linha_inicial": 46,
+    "linha_final": 57,
+    "cwe": "CWE-209",
+    "severidade": "media",
+    "descricao": "Erros GraphQL expõem stack trace, traceback de depuração e caminho absoluto do arquivo em extensions.exception. Um cliente capaz de provocar erro no endpoint GraphiQL pode obter detalhes internos da aplicação e do ambiente.",
+    "recomendacao": "Retornar mensagens genéricas em produção e registrar stack traces somente no servidor."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 143,
+    "linha_final": 150,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "EditPaste altera qualquer paste identificado por id sem autenticar o solicitante nem verificar proprietário ou permissão. Qualquer cliente que alcance a mutação pode modificar dados de terceiros.",
+    "recomendacao": "Exigir autenticação e autorizar a alteração com base no proprietário ou em uma permissão administrativa."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 166,
+    "linha_final": 171,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "DeletePaste exclui qualquer paste por id sem autenticação ou verificação de autorização. Um atacante pode remover dados arbitrários conhecendo ou enumerando identificadores.",
+    "recomendacao": "Exigir autenticação e verificar a autorização sobre o paste antes de executar a exclusão."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 212,
+    "linha_final": 213,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "scheme, host e path controlados pelo atacante são interpolados em um comando curl executado por shell. No modo easy, strip_dangerous_characters não remove nada, permitindo metacaracteres e execução de comandos no servidor.",
+    "recomendacao": "Substituir o shell por uma API HTTP; validar scheme, host, porta e path com allowlist e passar argumentos sem shell."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 318,
+    "linha_final": 321,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O filtro fornecido pelo cliente é interpolado em uma expressão SQL passada a text(). Aspas e operadores inseridos em filter podem alterar a cláusula e permitir leitura de registros além do filtro pretendido.",
+    "recomendacao": "Usar expressões SQLAlchemy parametrizadas, como comparações com bind parameters, sem interpolação de strings."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 344,
+    "linha_final": 346,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "Após uma verificação de credenciais baseada em senha armazenada em texto claro, cmd controlado pelo cliente é executado via helpers.run_cmd. No modo easy allowed_cmds retorna True, permitindo comandos arbitrários a qualquer atacante que use as credenciais padrão ou obtenha credenciais administrativas.",
+    "recomendacao": "Remover a execução de comandos recebidos do cliente; se indispensável, usar operações fixas sem shell e uma allowlist exata de argumentos."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 352,
+    "linha_final": 353,
+    "cwe": "CWE-78",
+    "severidade": "alta",
+    "descricao": "arg é concatenado ao comando ps e executado por shell sem validação. Um atacante pode inserir metacaracteres para executar comandos arbitrários através de systemDebug.",
+    "recomendacao": "Usar subprocess com lista de argumentos e validar arg, ou remover a aceitação de argumentos controlados pelo cliente."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 358,
+    "linha_final": 361,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "readAndBurn retorna e exclui qualquer paste marcado como burn apenas com um id fornecido pelo cliente, sem autenticação ou verificação de proprietário. Qualquer cliente pode consumir o conteúdo efêmero de outro usuário.",
+    "recomendacao": "Exigir autenticação e associar o acesso ao proprietário ou a um token de acesso específico do paste."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 365,
+    "linha_final": 369,
+    "cwe": "CWE-78",
+    "severidade": "media",
+    "descricao": "systemHealth executa um pipeline de shell para obter informações do sistema e expõe o resultado diretamente a qualquer cliente que invoque o campo. Isso permite divulgação de informações operacionais do servidor sem autorização.",
+    "recomendacao": "Restringir o campo a administradores e obter a métrica por API segura, sem shell, retornando somente dados mínimos."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 380,
+    "linha_final": 383,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O resolver audits retorna todos os registros de auditoria sem autenticação ou autorização. As entradas podem conter consultas, nomes de operações e dados fornecidos por usuários, permitindo exposição de informações internas.",
+    "recomendacao": "Restringir auditorias a administradores autorizados e aplicar filtragem de dados sensíveis antes da persistência ou exibição."
+  },
+  {
+    "arquivo": "core/views.py",
+    "linha_inicial": 385,
+    "linha_final": 389,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "delete_all_pastes remove todos os registros de Paste sem qualquer autenticação ou autorização. Um cliente não autenticado pode causar perda completa dos dados de pastes.",
+    "recomendacao": "Exigir autenticação administrativa e autorização explícita antes da exclusão em massa."
+  },
+  {
+    "arquivo": "setup.py",
+    "linha_inicial": 63,
+    "linha_final": 64,
+    "cwe": "CWE-1392",
+    "severidade": "alta",
+    "descricao": "A inicialização cria o usuário admin com a senha fixa 'changeme' e o usuário operator com senha fixa 'password123'. Como app.py executa setup.py na inicialização, essas credenciais previsíveis podem permitir login administrativo se a interface estiver acessível.",
+    "recomendacao": "Exigir definição de senhas fortes e únicas durante a implantação e impedir inicialização com credenciais padrão conhecidas."
+  }
+]

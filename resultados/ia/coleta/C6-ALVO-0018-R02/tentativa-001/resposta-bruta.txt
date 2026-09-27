@@ -1,0 +1,65 @@
+[
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 147,
+    "linha_final": 155,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "O endpoint de perfil é registrado sem aplicar o decorador de autenticação, pois token_required está comentado. Qualquer cliente pode fornecer um user_id arbitrário e obter username, email, país, função, permissões e equipe de outro usuário.",
+    "recomendacao": "Exigir autenticação e autorização antes de consultar o perfil, restringindo o acesso ao próprio usuário ou a administradores autorizados."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 212,
+    "linha_final": 220,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint de exclusão de usuários é público: a verificação token_required está comentada e delete aceita diretamente qualquer user_id informado na URL. Um cliente não autenticado pode excluir qualquer usuário existente.",
+    "recomendacao": "Exigir autenticação e verificar explicitamente uma permissão administrativa antes de executar a exclusão."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 254,
+    "linha_final": 254,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "picture_url é controlada pelo cliente e passada diretamente a requests.get. O endpoint não exige autenticação nem restringe destinos, permitindo SSRF para interagir com serviços internos ou endpoints acessíveis apenas pelo servidor.",
+    "recomendacao": "Restringir o destino a uma allowlist de esquemas, hosts e portas permitidos, bloquear endereços internos e definir timeout e limites de resposta."
+  },
+  {
+    "arquivo": "server/config.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave fixa just_another_secret é usada como SECRET_KEY para sessões Flask e tokens JWT. Qualquer pessoa que obtenha o código pode forjar sessões ou tokens válidos e assumir identidades.",
+    "recomendacao": "Carregar uma chave criptograficamente aleatória a partir de um segredo externo e rotacionável, fora do código-fonte."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 137,
+    "linha_final": 138,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "search_query vem diretamente da requisição e é interpolada na consulta SQL executada no dashboard. Um usuário autenticado pode injetar expressões SQL, alterando a consulta e potencialmente extraindo dados de outras tabelas.",
+    "recomendacao": "Usar parâmetros vinculados para search_query e manter user_id como parâmetro separado, por exemplo com LIKE ?."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 262,
+    "linha_final": 264,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O nome do arquivo enviado pelo usuário é usado sem sanitização em os.path.join(UPLOAD_FOLDER, filename) e file.save. Um usuário autenticado pode fornecer componentes .. e gravar arquivos fora do diretório de uploads; o nome também é persistido no banco para posterior acesso.",
+    "recomendacao": "Aplicar secure_filename, rejeitar nomes que não sejam nomes simples e resolver o caminho final verificando que ele permanece dentro de UPLOAD_FOLDER."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 403,
+    "linha_final": 403,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "As senhas de usuários registrados são derivadas apenas com MD5 por custom_hash e comparadas dessa forma no login. Se o banco for obtido, hashes rápidos e sem salt podem ser quebrados offline com baixo custo, permitindo reutilização das senhas.",
+    "recomendacao": "Substituir MD5 por um KDF específico para senhas, como Argon2id, scrypt ou bcrypt, com salt aleatório individual e migração dos hashes existentes."
+  }
+]

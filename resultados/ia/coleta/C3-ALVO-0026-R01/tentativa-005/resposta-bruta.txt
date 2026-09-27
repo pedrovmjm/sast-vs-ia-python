@@ -1,0 +1,137 @@
+[
+  {
+    "arquivo": "bad/api_post.py",
+    "linha_inicial": 26,
+    "linha_final": 27,
+    "cwe": "CWE-922",
+    "severidade": "media",
+    "descricao": "A chave de API recebida é gravada em /tmp/supersecret.txt sem criação explícita com permissões restritivas. Em sistemas multiusuário, outro usuário local pode ler o arquivo e reutilizar a chave para autenticar requisições como o usuário legítimo.",
+    "recomendacao": "Armazene a chave em local protegido, crie o arquivo com permissões exclusivas do usuário e valide suas permissões antes de utilizá-lo."
+  },
+  {
+    "arquivo": "bad/db.py",
+    "linha_inicial": 7,
+    "linha_final": 9,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A inicialização cria contas com credenciais fixas e previsíveis, incluindo admin/123456. Após a inicialização, qualquer atacante que conheça esses valores pode autenticar-se nessas contas.",
+    "recomendacao": "Não crie credenciais fixas; gere credenciais temporárias aleatórias e force sua substituição no primeiro acesso."
+  },
+  {
+    "arquivo": "bad/db_init.py",
+    "linha_inicial": 9,
+    "linha_final": 13,
+    "cwe": "CWE-256",
+    "severidade": "alta",
+    "descricao": "As senhas iniciais são inseridas diretamente no banco em texto simples. Uma leitura do arquivo SQLite ou de seu backup expõe imediatamente as credenciais reutilizáveis no login.",
+    "recomendacao": "Armazene somente hashes de senha derivados com um KDF apropriado, usando salt único por usuário."
+  },
+  {
+    "arquivo": "bad/db_init.py",
+    "linha_inicial": 9,
+    "linha_final": 13,
+    "cwe": "CWE-798",
+    "severidade": "alta",
+    "descricao": "A inicialização define credenciais administrativas e de usuários fixas e conhecidas, como admin/SuperSecret. Se a base for inicializada em produção, essas credenciais permitem acesso direto às contas.",
+    "recomendacao": "Remova credenciais embutidas e estabeleça credenciais iniciais aleatórias, únicas e obrigatoriamente alteradas no primeiro acesso."
+  },
+  {
+    "arquivo": "bad/libapi.py",
+    "linha_inicial": 19,
+    "linha_final": 21,
+    "cwe": "CWE-155",
+    "severidade": "media",
+    "descricao": "O username controlável pelo cliente é concatenado em um padrão glob usado para remover arquivos de chaves. Um username contendo curingas, como *, pode fazer a rotina remover arquivos de chaves de outros usuários, causando indisponibilidade de autenticação.",
+    "recomendacao": "Não use entrada do usuário como padrão glob; valide o username com uma allowlist e remova somente o arquivo associado a um identificador já validado."
+  },
+  {
+    "arquivo": "bad/libapi.py",
+    "linha_inicial": 40,
+    "linha_final": 42,
+    "cwe": "CWE-155",
+    "severidade": "alta",
+    "descricao": "O valor X-APIKEY é controlado pelo atacante e concatenado diretamente em um padrão glob. Curingas podem fazer a busca corresponder à chave de outro usuário; o primeiro arquivo correspondente determina a identidade retornada, permitindo autenticação sem possuir a chave legítima.",
+    "recomendacao": "Compare chaves por igualdade após validação estrita, sem interpolá-las em padrões glob, e associe a chave a um registro autenticado."
+  },
+  {
+    "arquivo": "bad/libsession.py",
+    "linha_inicial": 5,
+    "linha_final": 6,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "O cookie de sessão contém apenas JSON codificado em Base64 e é enviado ao cliente sem assinatura ou MAC. Um atacante pode fabricar um cookie com qualquer username e, após o carregamento, obter a identidade correspondente.",
+    "recomendacao": "Use sessões assinadas pelo framework ou um token autenticado com MAC, com validação de integridade e expiração."
+  },
+  {
+    "arquivo": "bad/libsession.py",
+    "linha_inicial": 14,
+    "linha_final": 22,
+    "cwe": "CWE-347",
+    "severidade": "alta",
+    "descricao": "O conteúdo do cookie é apenas decodificado e desserializado; nenhuma assinatura, MAC ou validação de integridade é verificada. Assim, o atacante pode alterar username e assumir a sessão de qualquer conta nas rotas que confiam em g.session.",
+    "recomendacao": "Rejeite cookies sem autenticação criptográfica e carregue a identidade somente de sessões assinadas e validadas."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 12,
+    "linha_final": 12,
+    "cwe": "CWE-89",
+    "severidade": "critica",
+    "descricao": "Username e password recebidos no login são interpolados diretamente na consulta SQL. Um atacante pode fornecer entrada SQL especialmente construída para alterar a condição WHERE e obter autenticação sem conhecer a senha.",
+    "recomendacao": "Use parâmetros vinculados na consulta, por exemplo, WHERE username = ? AND password = ?, e valide os tipos e limites dos campos."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 27,
+    "linha_final": 27,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "A criação de usuário concatena username e password controlados pelo cliente em um comando INSERT. A rota de criação chama essa função, permitindo injeção SQL e possível alteração do conteúdo da base.",
+    "recomendacao": "Substitua a interpolação por parâmetros vinculados e armazene a senha somente como hash."
+  },
+  {
+    "arquivo": "bad/libuser.py",
+    "linha_inicial": 39,
+    "linha_final": 39,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "A alteração de senha concatena a nova senha e o username na consulta UPDATE. Entradas controladas pelo cliente podem modificar a consulta e alterar registros além da conta pretendida.",
+    "recomendacao": "Use UPDATE users SET password = ? WHERE username = ? com parâmetros vinculados e valide a autorização da operação."
+  },
+  {
+    "arquivo": "bad/mod_api.py",
+    "linha_inicial": 45,
+    "linha_final": 49,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A rota GET /api/post/<username> retorna as publicações do username fornecido sem autenticação ou verificação de autorização. Qualquer cliente pode consultar dados de qualquer usuário.",
+    "recomendacao": "Exija autenticação e autorize explicitamente o acesso ao proprietário dos posts ou a uma política de leitura pública."
+  },
+  {
+    "arquivo": "bad/mod_api.py",
+    "linha_inicial": 60,
+    "linha_final": 67,
+    "cwe": "CWE-639",
+    "severidade": "alta",
+    "descricao": "A identidade autenticada é colocada em data['username'], mas request.get_json() é mesclado depois e pode sobrescrevê-la. O username controlado pelo cliente é então usado no INSERT, permitindo criar posts em nome de outro usuário com uma chave válida.",
+    "recomendacao": "Não aceite username no corpo da requisição; use exclusivamente a identidade retornada por authenticate(request)."
+  },
+  {
+    "arquivo": "bad/mod_mfa.py",
+    "linha_inicial": 65,
+    "linha_final": 71,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A desativação de MFA é executada por uma requisição GET autenticada sem token CSRF. Uma página controlada pelo atacante pode induzir o navegador de uma vítima autenticada a enviar a requisição e remover sua proteção MFA.",
+    "recomendacao": "Altere a operação para POST e exija um token CSRF imprevisível validado no servidor."
+  },
+  {
+    "arquivo": "bad/mod_user.py",
+    "linha_inicial": 61,
+    "linha_final": 77,
+    "cwe": "CWE-352",
+    "severidade": "alta",
+    "descricao": "A alteração de senha é realizada por POST sem proteção CSRF. Um atacante pode induzir um usuário autenticado a submeter uma nova senha escolhida pelo atacante, especialmente porque a sessão é enviada automaticamente pelo navegador.",
+    "recomendacao": "Exija token CSRF associado à sessão e valide-o antes de executar password_change."
+  }
+]

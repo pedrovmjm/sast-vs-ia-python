@@ -1,0 +1,38 @@
+[
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 34,
+    "linha_final": 35,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "O valor controlado pelo atacante em username e password é interpolado diretamente na consulta SQL executada. Um atacante pode enviar sintaxe SQL especialmente construída para alterar a condição da consulta, contornar o login ou consultar/manipular dados acessíveis pela conexão SQLite.",
+    "recomendacao": "Use uma consulta parametrizada, por exemplo c.execute(\"SELECT * FROM users WHERE username = ? AND password = ?\", (username, password)), e valide os dados conforme necessário."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 47,
+    "linha_final": 48,
+    "cwe": "CWE-862",
+    "severidade": "media",
+    "descricao": "A rota /dashboard não verifica autenticação nem autorização e aceita o valor do cookie session, que é totalmente controlável pelo cliente, como identidade do usuário. Qualquer requisição pode acessar a rota e apresentar um nome arbitrário, permitindo falsificação da identidade exibida.",
+    "recomendacao": "Exija uma sessão autenticada e validada no servidor antes de atender /dashboard; não use diretamente um cookie fornecido pelo cliente como identidade."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 48,
+    "linha_final": 48,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O valor controlado pelo atacante no cookie session é inserido sem escape em uma resposta HTML. Ao acessar /dashboard com um cookie contendo markup ou JavaScript, o navegador pode executar script no contexto da aplicação.",
+    "recomendacao": "Renderize a mensagem com escaping contextual de HTML, usando templates Flask/Jinja com autoescape, e valide a identidade a partir de uma sessão server-side."
+  },
+  {
+    "arquivo": "app/app.py",
+    "linha_inicial": 55,
+    "linha_final": 55,
+    "cwe": "CWE-79",
+    "severidade": "media",
+    "descricao": "O parâmetro q da URL é controlado pelo atacante e concatenado diretamente na resposta HTML sem escaping. Um link criado pelo atacante pode fazer JavaScript executar no navegador da vítima na origem da aplicação.",
+    "recomendacao": "Insira q em template com autoescape habilitado ou aplique escaping HTML contextual antes de incluí-lo na resposta."
+  }
+]

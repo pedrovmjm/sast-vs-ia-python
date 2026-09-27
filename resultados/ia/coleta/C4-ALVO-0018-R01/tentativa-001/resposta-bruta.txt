@@ -1,0 +1,101 @@
+[
+  {
+    "arquivo": "db/create_dummy_data.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "As senhas dos usuários são armazenadas usando MD5 sem salt. Se o banco de dados for obtido, os hashes podem ser quebrados com técnicas e tabelas pré-computadas, permitindo recuperar credenciais reutilizáveis.",
+    "recomendacao": "Substituir MD5 por um KDF adaptativo específico para senhas, como Argon2id, bcrypt ou scrypt, usando salt aleatório por senha."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 157,
+    "linha_final": 168,
+    "cwe": "CWE-639",
+    "severidade": "media",
+    "descricao": "O endpoint GET /api/v1/profile não aplica token_required e aceita user_id diretamente nos parâmetros. Qualquer requisição pode consultar o perfil de qualquer usuário existente, incluindo email, função, permissões e equipe.",
+    "recomendacao": "Exigir autenticação e autorizar explicitamente o acesso ao usuário solicitado; para autoatendimento, usar o identificador do usuário autenticado em vez de um user_id arbitrário."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 223,
+    "linha_final": 226,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint DELETE /api/v1/delete-user/<user_id> tem o decorator de autenticação e a verificação de autorização comentados. Um atacante não autenticado pode fornecer qualquer user_id existente e a aplicação executa DELETE no banco.",
+    "recomendacao": "Reativar autenticação e exigir autorização de função, verificando no servidor se o usuário autenticado pode excluir a conta indicada."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 243,
+    "linha_final": 257,
+    "cwe": "CWE-862",
+    "severidade": "alta",
+    "descricao": "O endpoint de atualização de foto não exige autenticação e aceita username controlado pelo cliente. Assim, qualquer atacante que conheça um nome de usuário pode buscar e gravar uma nova foto associada à conta desse usuário.",
+    "recomendacao": "Exigir autenticação e autorização para a conta alvo, obtendo o usuário a partir da identidade autenticada e não de um username fornecido na requisição."
+  },
+  {
+    "arquivo": "server/api/v1/api_v1.py",
+    "linha_inicial": 251,
+    "linha_final": 257,
+    "cwe": "CWE-918",
+    "severidade": "media",
+    "descricao": "picture_url é recebido diretamente do cliente e usado em requests.get sem allowlist de destinos, bloqueio de endereços internos ou validação de esquema. Um atacante pode induzir o servidor a realizar requisições para serviços internos ou outros destinos arbitrários; a resposta é posteriormente processada como imagem.",
+    "recomendacao": "Permitir somente esquemas e destinos aprovados, resolver e bloquear endereços privados, locais e de metadados, limitar redirecionamentos e configurar timeout e limites de resposta."
+  },
+  {
+    "arquivo": "server/config.py",
+    "linha_inicial": 5,
+    "linha_final": 5,
+    "cwe": "CWE-489",
+    "severidade": "media",
+    "descricao": "DEBUG está fixado como True e run.py usa esse valor diretamente em app.run. Se a aplicação for iniciada por esse entrypoint e exposta a clientes, exceções podem habilitar a interface de depuração do Flask, revelando detalhes internos e potencialmente permitindo execução interativa dependendo das proteções do servidor.",
+    "recomendacao": "Definir DEBUG como False por padrão e habilitá-lo somente por configuração controlada em ambiente de desenvolvimento."
+  },
+  {
+    "arquivo": "server/config.py",
+    "linha_inicial": 7,
+    "linha_final": 7,
+    "cwe": "CWE-321",
+    "severidade": "alta",
+    "descricao": "A chave secreta usada para assinar sessões Flask e tokens JWT está hardcoded no código. Qualquer pessoa que obtenha o código pode forjar cookies de sessão assinados e impersonar usuários, inclusive manipulando user_id e username.",
+    "recomendacao": "Carregar uma chave criptograficamente aleatória a partir de um segredo externo à base de código, com rotação e armazenamento seguro."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 136,
+    "linha_final": 137,
+    "cwe": "CWE-89",
+    "severidade": "alta",
+    "descricao": "search_query é concatenado diretamente na instrução SQL do dashboard. Um usuário autenticado pode inserir sintaxe SQL no parâmetro search e alterar a consulta, potencialmente obtendo ou manipulando resultados conforme as capacidades do SQLite e o contexto da requisição.",
+    "recomendacao": "Usar parâmetros vinculados para o termo de busca, por exemplo, mantendo o SQL fixo e passando '%' + search_query + '%' como parâmetro."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 261,
+    "linha_final": 263,
+    "cwe": "CWE-22",
+    "severidade": "alta",
+    "descricao": "O nome original do arquivo enviado é concatenado com UPLOAD_FOLDER sem normalização por secure_filename ou verificação de caminho. Um usuário autenticado pode fornecer componentes como ../ para fazer a aplicação gravar fora do diretório de uploads e potencialmente sobrescrever arquivos acessíveis ao processo.",
+    "recomendacao": "Normalizar o nome com secure_filename, rejeitar caminhos absolutos e verificar que o caminho resolvido permanece dentro do diretório de uploads."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 171,
+    "linha_final": 172,
+    "cwe": "CWE-352",
+    "severidade": "media",
+    "descricao": "O endpoint POST /update_profile altera dados da conta usando apenas a sessão como controle e não valida token CSRF. Um site externo pode induzir um navegador já autenticado a enviar uma requisição de alteração usando os cookies da sessão.",
+    "recomendacao": "Adicionar tokens CSRF imprevisíveis validados no servidor para requisições que alteram estado, além de configurar cookies SameSite adequadamente."
+  },
+  {
+    "arquivo": "server/routes.py",
+    "linha_inicial": 391,
+    "linha_final": 400,
+    "cwe": "CWE-916",
+    "severidade": "media",
+    "descricao": "custom_hash armazena senhas com MD5 sem salt. A obtenção do banco permite ataques offline eficientes para recuperar senhas dos usuários, que podem ser reutilizadas em outros serviços.",
+    "recomendacao": "Substituir custom_hash por Argon2id, bcrypt ou scrypt com salt aleatório e fator de custo adequado."
+  }
+]
