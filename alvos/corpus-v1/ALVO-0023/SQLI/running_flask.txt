@@ -1,0 +1,47 @@
+
+In the Terminal/CLI
+
+Create a virtual enviroment:
+------------------------------------
+/home/linux/IdeaProjects
+-------------------------------------
+
+-------------------------------------------
+pip install flask
+-----------------------------------------
+
+---------------------------------------------------------
+python -c "import flask; print(flask.__version__)"
+-------------------------------------------------------------
+
+
+then you can create your base app and all the folders, files and code
+
+
+To run your web application, you’ll first tell Flask where to find the application
+(the main.py file in your case) with the FLASK_APP environment variable:
+
+--------------------------------------------------------
+export FLASK_APP=main
+-------------------------------------------------------
+Then run it in development mode with the FLASK_ENV environment variable:
+
+--------------------------------------------------------------
+export FLASK_ENV=development
+---------------------------------------------------------------
+
+Lastly, run the application using the flask run command:
+
+----------------
+flask run
+---------------
+Once the application is running the output will be something like this:
+
+Output
+ * Serving Flask app "main" (lazy loading)
+ * Environment: development
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 813-894-335

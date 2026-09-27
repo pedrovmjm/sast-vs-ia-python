@@ -1,0 +1,35 @@
+services:
+  app:
+    environment:
+      - DEBUG
+      - PUBLIC_IP_SERVICE_URL
+      - SUPER_SECRET_NAME
+      - SUPER_SECRET_TOKEN
+    image: ${APP_IMAGE:-python-insecure-app:latest}
+
+  proxy:
+    build: ./caddy
+    container_name: caddy
+    depends_on:
+      app:
+        condition: service_started
+    environment:
+      - LETSENCRYPT_EMAIL
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 5s
+      retries: 5
+    ports:
+      - "80:80"
+      - "443:443"
+      - "1337:1337" # app
+    restart: always
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    command: ["caddy", "run", "--watch", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+
+volumes:
+  caddy_data:

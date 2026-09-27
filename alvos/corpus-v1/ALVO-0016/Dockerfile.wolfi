@@ -1,0 +1,29 @@
+# syntax=docker/dockerfile:1
+
+FROM chainguard/wolfi-base:latest@sha256:ae238a181d95804645919b2671d50ae77477efbfb299544491346e2911125aaf AS wolfi-debug
+
+ARG NONROOT=nonroot
+ARG VIRTUAL_ENV=/opt/venv
+ARG WORKDIR=/app
+ENV NONROOT=${NONROOT} \
+  LANG=C.UTF-8 \
+  LC_ALL=C.UTF-8 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1 \
+  VIRTUAL_ENV=${VIRTUAL_ENV} \
+  WORKDIR=${WORKDIR} \
+  PATH="${VIRTUAL_ENV}/bin:${PATH}"
+WORKDIR $WORKDIR
+COPY --chown=$NONROOT ./requirements/base.txt requirements/base.txt
+COPY --chown=$NONROOT ./requirements/common.txt requirements/common.txt
+RUN apk update\
+  && apk add python-3.13 \
+  && chown $NONROOT:$NONROOT $WORKDIR \
+  && python3 -m venv $VIRTUAL_ENV \
+  && chown -R $NONROOT:$NONROOT $VIRTUAL_ENV \
+  && python3 -m pip install --no-cache-dir -r requirements/base.txt \
+  && python3 -m uv pip install --no-cache --no-deps -r requirements/common.txt
+USER $NONROOT
+COPY --chown=$NONROOT app app
+ENTRYPOINT [ "" ]
+CMD [ "python3", "-m", "fastapi", "run", "app/main.py", "--port", "1337" ]

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{% block title %} Welcome to SQL Injection! {% endblock %}</h1>
+
+</br>
+
+<p>
+    This web app allows you to read, write, edit and delete posts.
+    </br>
+    </br>
+
+</p>
+
+{% for post in posts %}
+<a href="{{ url_for('post', post_id=post['id']) }}">
+    <h2>{{ post['title'] }}</h2>
+</a>
+<span class="badge badge-primary">{{ post['created'] }}</span>
+<a href="{{ url_for('edit', id=post['id']) }}">
+    <span class="badge badge-warning">Edit</span>
+</a>
+<hr>
+{% endfor %}
+{% endblock %}

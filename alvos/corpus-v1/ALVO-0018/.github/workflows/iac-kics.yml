@@ -1,0 +1,40 @@
+name: IaC Scan - KICS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  security-events: write
+  actions: read
+  contents: read
+
+jobs:
+  kics:
+    name: Run IaC Scan with KICS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Prepare writable output folder
+        run: |
+          mkdir -p kics-results
+          chmod -R 777 kics-results  # allow container to write to host
+
+      - name: Run KICS with SARIF output
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/project \
+            checkmarx/kics:v2.1.9-ubi8 \
+            scan -p /project/Dockerfile \
+            -o /project/kics-results \
+            --exclude-severities info --report-formats sarif || true
+        
+      - name: Upload SARIF results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: kics-results/results.sarif

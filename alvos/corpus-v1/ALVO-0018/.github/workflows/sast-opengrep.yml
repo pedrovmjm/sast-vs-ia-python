@@ -1,0 +1,35 @@
+name: SAST - OpenGrep
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  security-events: write
+  actions: read
+  contents: read
+
+jobs:
+  sast:
+    name: Run OpenGrep SAST
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Download OpenGrep CLI
+        run: |
+          curl -L -o opengrep https://github.com/opengrep/opengrep/releases/download/v1.3.0/opengrep_manylinux_x86
+          chmod +x opengrep
+
+      - name: Run OpenGrep scan and generate SARIF
+        run: |
+          ./opengrep scan . --config auto --metrics on --sarif-output=opengrep-results.sarif
+
+      - name: Upload SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: opengrep-results.sarif

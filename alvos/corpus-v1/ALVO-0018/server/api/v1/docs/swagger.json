@@ -1,0 +1,334 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/delete-user/{user_id}": {
+            "parameters": [
+                {
+                    "name": "user_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer"
+                }
+            ],
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "User successfully deleted",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteSuccess"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "summary": "Delete a user from the application",
+                "description": "Delete a user from the database without proper authorization checks. This endpoint represents a Broken Function Level Authorization vulnerability.",
+                "operationId": "delete_user_delete",
+                "tags": [
+                    "api/v1"
+                ]
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "responses": {
+                    "405": {
+                        "description": "Method not allowed"
+                    },
+                    "401": {
+                        "description": "Invalid username or password"
+                    },
+                    "400": {
+                        "description": "Please provide username and password"
+                    },
+                    "200": {
+                        "description": "Login successful",
+                        "schema": {
+                            "$ref": "#/definitions/LoginResponse"
+                        }
+                    }
+                },
+                "summary": "Handles user login",
+                "operationId": "post_user_login",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/LoginDetails"
+                        }
+                    }
+                ],
+                "tags": [
+                    "api/v1"
+                ]
+            }
+        },
+        "/api/v1/profile": {
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "User profile not found"
+                    },
+                    "400": {
+                        "description": "User ID is required"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/UserProfile"
+                        }
+                    }
+                },
+                "summary": "Retrieves the profile information of a user based on the provided user ID",
+                "operationId": "get_user_profile",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "type": "integer",
+                        "required": true,
+                        "description": "User ID is required"
+                    }
+                ],
+                "tags": [
+                    "api/v1"
+                ]
+            }
+        },
+        "/api/v1/update-profile": {
+            "post": {
+                "responses": {
+                    "403": {
+                        "description": "Unauthorized to modify other user profiles."
+                    },
+                    "401": {
+                        "description": "Authentication required."
+                    },
+                    "200": {
+                        "description": "Profile updated successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                },
+                "summary": "Updates a user profile information",
+                "operationId": "post_user_profile_update",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UserProfileUpdate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "api/v1"
+                ]
+            }
+        },
+        "/api/v1/update_picture": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Update the user's profile picture by fetching it from a provided URL",
+                "description": "This endpoint is vulnerable to SSRF, allowing external service interaction.",
+                "operationId": "post_profile_picture",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/ProfilePicture"
+                        }
+                    }
+                ],
+                "tags": [
+                    "api/v1"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "ThreatByte API",
+        "version": "1.0",
+        "description": "API endpoints for the ThreatByte application"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "api/v1",
+            "description": "ThreatByte API"
+        }
+    ],
+    "definitions": {
+        "LoginDetails": {
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "User's username or email"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "User's password"
+                }
+            },
+            "type": "object"
+        },
+        "LoginResponse": {
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "Response message after successful login"
+                },
+                "user": {
+                    "type": "object",
+                    "description": "User information returned on successful login"
+                },
+                "session_id": {
+                    "type": "string",
+                    "description": "Session ID to be used for subsequent requests"
+                }
+            },
+            "type": "object"
+        },
+        "UserProfile": {
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "User's username"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "User's email address"
+                },
+                "country": {
+                    "type": "string",
+                    "description": "User's country of residence"
+                },
+                "role": {
+                    "type": "string",
+                    "description": "User's role"
+                },
+                "permissions": {
+                    "type": "string",
+                    "description": "User's permissions"
+                },
+                "team": {
+                    "type": "string",
+                    "description": "User's team"
+                }
+            },
+            "type": "object"
+        },
+        "UserProfileUpdate": {
+            "required": [
+                "user_id"
+            ],
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "description": "The user ID to update"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "New email address"
+                },
+                "country": {
+                    "type": "string",
+                    "description": "New country of residence"
+                },
+                "team": {
+                    "type": "string",
+                    "description": "New team assignment"
+                },
+                "role": {
+                    "type": "string",
+                    "description": "User role (sensitive data)"
+                },
+                "permissions": {
+                    "type": "string",
+                    "description": "User permissions (sensitive data)"
+                }
+            },
+            "type": "object"
+        },
+        "Response": {
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "description": "Success status of the operation"
+                },
+                "message": {
+                    "type": "string",
+                    "description": "Response message"
+                }
+            },
+            "type": "object"
+        },
+        "DeleteSuccess": {
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "Confirmation of successful deletion"
+                }
+            },
+            "type": "object"
+        },
+        "Error": {
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "A description of the error"
+                }
+            },
+            "type": "object"
+        },
+        "ProfilePicture": {
+            "required": [
+                "picture_url",
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "Username of the user"
+                },
+                "picture_url": {
+                    "type": "string",
+                    "description": "URL to fetch the profile picture from"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}

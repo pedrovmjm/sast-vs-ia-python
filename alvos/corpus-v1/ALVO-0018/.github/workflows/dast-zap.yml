@@ -1,0 +1,59 @@
+name: DAST - ZAP Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies and init DB
+        run: |
+          pip install -r requirements.txt
+          python db/create_db_tables.py
+
+      - name: Start ThreatByte app in background
+        run: |
+          nohup python run.py > server.log 2>&1 &
+          sleep 5
+
+      - name: Wait until app is available
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:5000 > /dev/null; then
+              echo "ThreatByte is up!"
+              break
+            fi
+            sleep 3
+          done
+
+      - name: Run ZAP Baseline Scan via Docker
+        run: |
+          mkdir -p zap-output
+          chmod 777 zap-output
+          docker run --rm \
+            --network=host \
+            -v ${{ github.workspace }}/zap-output:/zap/wrk \
+            zaproxy/zap-stable zap-baseline.py \
+              -t http://localhost:5000 \
+              -r zap-report.html \
+              -J zap-report.json \
+              -a -I
+
+      - name: Upload ZAP reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-dast-report
+          path: zap-results/

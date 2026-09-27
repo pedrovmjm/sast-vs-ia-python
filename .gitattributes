@@ -4,3 +4,9 @@
 *.png binary
 *.jpg binary
 *.jpeg binary
+
+# Dados experimentais são artefatos byte a byte; nunca normalize fim de linha.
+/alvos/** -text
+/oracle/** -text
+/execucoes/** -text
+/resultados/** -text
