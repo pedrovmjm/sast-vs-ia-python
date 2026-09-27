@@ -18,15 +18,15 @@ param(
     [string]$Finalidade = 'piloto',
 
     [ValidateNotNullOrEmpty()]
-    [string]$Modelo = 'gpt-5.6-luna',
+    [string]$Modelo = 'gpt-5.6-luna-medium',
 
     [ValidateSet('WSL','Nativo')]
-    [string]$ModoCursor = 'WSL',
+    [string]$ModoCursor = 'Nativo',
 
     [string]$DistribuicaoWsl,
 
     [ValidateNotNullOrEmpty()]
-    [string]$ExecutavelCursor = 'cursor-agent',
+    [string]$ExecutavelCursor = 'agent',
 
     [ValidateRange(1,86400)]
     [int]$TimeoutSegundos = 3600,
@@ -41,6 +41,51 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'comum.ps1')
 
+function Resolve-CursorNativo {
+    param(
+        [Parameter(Mandatory = $true)][string]$Comando,
+        [switch]$PermitirAusente
+    )
+
+    $resolvido = @(Get-Command $Comando -CommandType Application,ExternalScript `
+        -ErrorAction SilentlyContinue | Select-Object -First 1)
+    if ($resolvido.Count -eq 0) {
+        if ($PermitirAusente) {
+            return [pscustomobject]@{ executavel = $Comando; prefixo_argumentos = @() }
+        }
+        throw "Cursor Agent nativo não encontrado no PATH: $Comando"
+    }
+
+    $origem = [string]$resolvido[0].Source
+    if (-not $origem) { $origem = [string]$resolvido[0].Path }
+    Assert-Ia ([bool]$origem) "não foi possível resolver o caminho do Cursor Agent: $Comando"
+
+    $extensao = [IO.Path]::GetExtension($origem).ToLowerInvariant()
+    if ($extensao -in @('.cmd','.bat')) {
+        $companheiroPowerShell = [IO.Path]::ChangeExtension($origem, '.ps1')
+        Assert-Ia (Test-Path -LiteralPath $companheiroPowerShell -PathType Leaf) `
+            "launcher $extensao do Cursor não possui wrapper PowerShell correspondente: $origem"
+        $origem = $companheiroPowerShell
+        $extensao = '.ps1'
+    }
+
+    if ($extensao -eq '.ps1') {
+        $windowsPowerShell = Join-Path $env:SystemRoot `
+            'System32/WindowsPowerShell/v1.0/powershell.exe'
+        Assert-Ia (Test-Path -LiteralPath $windowsPowerShell -PathType Leaf) `
+            'Windows PowerShell não encontrado para iniciar o Cursor Agent nativo'
+        return [pscustomobject]@{
+            executavel = $windowsPowerShell
+            prefixo_argumentos = @(
+                '-NoLogo', '-NoProfile', '-NonInteractive',
+                '-ExecutionPolicy', 'Bypass', '-File', $origem
+            )
+        }
+    }
+
+    return [pscustomobject]@{ executavel = $origem; prefixo_argumentos = @() }
+}
+
 $execucaoId = "$Condicao-$Alvo-R$('{0:D2}' -f $Repeticao)"
 $tentativaNome = 'tentativa-{0:D3}' -f $Tentativa
 $namespace = $Finalidade.ToLowerInvariant()
@@ -48,10 +93,13 @@ $area = Join-Path $script:IaRepo "execucoes/ia/$namespace/$execucaoId/$tentativa
 $hibrido = $Condicao -eq 'C5'
 
 $executavelEfetivo = $ExecutavelCursor
-$argumentos = @(
-    '-p', '--mode=ask', '--sandbox', 'enabled',
+$prefixoCursorNativo = @()
+$sandboxCursor = if ($ModoCursor -eq 'Nativo') { 'disabled' } else { 'enabled' }
+$argumentosCursor = @(
+    '-p', '--trust', '--mode=ask', '--sandbox', $sandboxCursor,
     '--model', $Modelo, '--output-format', 'stream-json'
 )
+$argumentos = @($argumentosCursor)
 if ($ModoCursor -eq 'WSL') {
     $executavelEfetivo = 'wsl.exe'
     $areaWsl = '<AREA_WSL_RESOLVIDA_NA_EXECUCAO>'
@@ -65,11 +113,15 @@ if ($ModoCursor -eq 'WSL') {
     }
     $argumentos = @()
     if ($DistribuicaoWsl) { $argumentos += @('-d',$DistribuicaoWsl) }
-    $argumentos += @(
-        '--cd', $areaWsl, '--exec', $ExecutavelCursor,
-        '-p', '--mode=ask', '--sandbox', 'enabled',
-        '--model', $Modelo, '--output-format', 'stream-json'
-    )
+    $argumentos += @('--cd', $areaWsl, '--exec', $ExecutavelCursor)
+    $argumentos += @($argumentosCursor)
+}
+else {
+    $launcher = Resolve-CursorNativo -Comando $ExecutavelCursor `
+        -PermitirAusente:$SomentePlanejar
+    $executavelEfetivo = [string]$launcher.executavel
+    $prefixoCursorNativo = @($launcher.prefixo_argumentos)
+    $argumentos = @($prefixoCursorNativo) + @($argumentosCursor)
 }
 
 if ($SomentePlanejar) {
@@ -104,7 +156,9 @@ $prepararArea = {
             deny = @('Write(**)','Shell(*)')
         }
     }
-    Write-IaJsonNovo (Join-Path $cursorDir 'sandbox.json') $sandbox
+    if ($ModoCursor -eq 'WSL') {
+        Write-IaJsonNovo (Join-Path $cursorDir 'sandbox.json') $sandbox
+    }
     Write-IaJsonNovo (Join-Path $cursorDir 'cli.json') $permissoes
 }
 
@@ -140,12 +194,10 @@ $interpretador = {
             if ($null -ne $sessaoEvento) { $sessao = [string]$sessaoEvento }
             $uso = Get-IaValor $evento 'usage'
             if ($null -ne $uso) {
-                $entrada = Get-IaValor $uso 'input_tokens'
-                $saida = Get-IaValor $uso 'output_tokens'
-                $total = Get-IaValor $uso 'total_tokens'
-                if ($null -ne $entrada) { $tokensEntrada = [long]$entrada }
-                if ($null -ne $saida) { $tokensSaida = [long]$saida }
-                if ($null -ne $total) { $tokensTotal = [long]$total }
+                $tokens = ConvertFrom-IaUsoCursor $uso
+                $tokensEntrada = $tokens.entrada
+                $tokensSaida = $tokens.saida
+                $tokensTotal = $tokens.total
             }
         }
     }
@@ -173,7 +225,8 @@ $obterVersao = if ($ModoCursor -eq 'WSL') {
     }
 } else {
     {
-        $linhas = @(& $ExecutavelCursor --version 2>&1)
+        $argumentosVersao = @($prefixoCursorNativo) + @('--version')
+        $linhas = @(& $executavelEfetivo @argumentosVersao 2>&1)
         if ($LASTEXITCODE -ne 0) { throw 'não foi possível obter versão do Cursor Agent' }
         return ($linhas -join ' ').Trim()
     }

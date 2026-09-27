@@ -55,6 +55,53 @@ function Get-IaValor {
     return $propriedade.Value
 }
 
+function ConvertFrom-IaUsoCursor {
+    param([AllowNull()][object]$Uso)
+
+    if ($null -eq $Uso) {
+        return [pscustomobject]@{
+            entrada = $null
+            saida = $null
+            total = $null
+        }
+    }
+
+    $entradaDireta = Get-IaValor $Uso 'inputTokens'
+    if ($null -eq $entradaDireta) { $entradaDireta = Get-IaValor $Uso 'input_tokens' }
+    $saida = Get-IaValor $Uso 'outputTokens'
+    if ($null -eq $saida) { $saida = Get-IaValor $Uso 'output_tokens' }
+    $cacheLeitura = Get-IaValor $Uso 'cacheReadTokens'
+    if ($null -eq $cacheLeitura) { $cacheLeitura = Get-IaValor $Uso 'cache_read_tokens' }
+    $cacheEscrita = Get-IaValor $Uso 'cacheWriteTokens'
+    if ($null -eq $cacheEscrita) { $cacheEscrita = Get-IaValor $Uso 'cache_write_tokens' }
+    $total = Get-IaValor $Uso 'totalTokens'
+    if ($null -eq $total) { $total = Get-IaValor $Uso 'total_tokens' }
+
+    $componentesEntrada = @(
+        @($entradaDireta, $cacheLeitura, $cacheEscrita) |
+            Where-Object { $null -ne $_ }
+    )
+    $entrada = $null
+    if ($componentesEntrada.Count -gt 0) {
+        [long]$somaEntrada = 0
+        foreach ($componente in $componentesEntrada) { $somaEntrada += [long]$componente }
+        $entrada = $somaEntrada
+    }
+    if ($null -ne $saida) { $saida = [long]$saida }
+    if ($null -ne $total) {
+        $total = [long]$total
+    }
+    elseif ($null -ne $entrada -and $null -ne $saida) {
+        $total = [long]$entrada + [long]$saida
+    }
+
+    return [pscustomobject]@{
+        entrada = $entrada
+        saida = $saida
+        total = $total
+    }
+}
+
 function Assert-IaIdentificador {
     param([string]$Valor, [string]$Campo)
     Assert-Ia ([bool]($Valor -match '^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$')) `
@@ -447,6 +494,11 @@ function Invoke-IaExecucao {
         Join-Path $script:IaRepo 'config/agentes/codex-c4-v1.json'
     }
     $config = Read-IaJson $configPath
+    $modeloCliConfigurado = Get-IaValor $config 'modelo_cli_solicitado'
+    if ($null -ne $modeloCliConfigurado) {
+        Assert-Ia ($Modelo -eq [string]$modeloCliConfigurado) `
+            "modelo solicitado diverge da configuração congelada: $Modelo"
+    }
     Assert-Ia ((Get-IaSha256 $promptBasePath) -eq [string]$config.prompt_sha256) `
         'hash do prompt-base diverge da configuração congelada'
     Assert-Ia ((Get-IaSha256 $schemaPath) -eq [string]$config.schema_saida_sha256) `

@@ -5,6 +5,8 @@
   "produto": "Cursor",
   "perfil": "principal",
   "modelo_solicitado": "GPT-5.6 Luna",
+  "modelo_cli_solicitado": "gpt-5.6-luna-medium",
+  "modelo_perfil_solicitado": "medium",
   "repeticoes": 3,
   "alvos": 26,
   "entrada": "alvos/corpus-v1/ALVO-NNNN",

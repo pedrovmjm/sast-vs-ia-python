@@ -10,6 +10,31 @@ function Assert-True([bool]$Condicao, [string]$Mensagem) {
     if (-not $Condicao) { throw $Mensagem }
 }
 
+$usoCursorAtual = [pscustomobject]@{
+    inputTokens = 3
+    outputTokens = 2704
+    cacheReadTokens = 0
+    cacheWriteTokens = 14266
+}
+$tokensCursorAtual = ConvertFrom-IaUsoCursor $usoCursorAtual
+Assert-True ([long]$tokensCursorAtual.entrada -eq 14269) `
+    'tokens de entrada do Cursor devem incluir leitura e escrita de cache'
+Assert-True ([long]$tokensCursorAtual.saida -eq 2704) `
+    'tokens de saída camelCase do Cursor não foram interpretados'
+Assert-True ([long]$tokensCursorAtual.total -eq 16973) `
+    'total do Cursor deve ser calculado quando a CLI não o expõe'
+
+$usoCursorLegado = [pscustomobject]@{
+    input_tokens = 100
+    output_tokens = 20
+    total_tokens = 120
+}
+$tokensCursorLegado = ConvertFrom-IaUsoCursor $usoCursorLegado
+Assert-True ([long]$tokensCursorLegado.entrada -eq 100 -and
+    [long]$tokensCursorLegado.saida -eq 20 -and
+    [long]$tokensCursorLegado.total -eq 120) `
+    'parser deve preservar compatibilidade com uso de tokens snake_case'
+
 $cursorConfigPath = Join-Path $Repo 'config/agentes/cursor-c3-v1.json'
 $codexConfigPath = Join-Path $Repo 'config/agentes/codex-c4-v1.json'
 $codexC6ConfigPath = Join-Path $Repo 'config/agentes/codex-c6-v1.json'
@@ -26,6 +51,8 @@ Assert-True ([string]$cursorConfig.schema_saida_sha256 -eq [string]$codexConfig.
     'Cursor e Codex devem congelar exatamente o mesmo schema'
 Assert-True ([string]$cursorConfig.modelo_solicitado -eq [string]$codexConfig.modelo_solicitado) `
     'Cursor e Codex devem solicitar o mesmo modelo'
+Assert-True ([string]$cursorConfig.modelo_cli_solicitado -eq 'gpt-5.6-luna-medium') `
+    'Cursor deve congelar o identificador exato do perfil principal disponível'
 Assert-True ([string]$codexC6Config.condicao -eq 'C6') `
     'configuração híbrida do Codex deve declarar C6'
 Assert-True ([string]$codexC6Config.prompt_sha256 -eq [string]$codexConfig.prompt_sha256) `
@@ -186,8 +213,32 @@ foreach ($caso in $casos) {
     Assert-True ([string]$plano.saida -like 'resultados/ia/piloto/*') `
         'plano piloto deve usar namespace separado da coleta'
     if ($caso[2] -eq 'cursor') {
+        Assert-True ([string]$plano.modo_cursor -eq 'Nativo') `
+            'Cursor deve usar o modo nativo do Windows por padrão'
+        Assert-True ('--trust' -in @($plano.argumentos)) `
+            'Cursor não interativo deve confiar explicitamente na área isolada da tentativa'
+        Assert-True ('--force' -notin @($plano.argumentos) -and
+            '--yolo' -notin @($plano.argumentos)) `
+            'Cursor não pode liberar comandos com --force ou --yolo'
         Assert-True ('--mode=ask' -in @($plano.argumentos)) 'Cursor deve usar modo ask'
-        Assert-True ('enabled' -in @($plano.argumentos)) 'sandbox do Cursor deve estar habilitado'
+        Assert-True ([string]$plano.modelo_solicitado -eq `
+            [string]$cursorConfig.modelo_cli_solicitado) `
+            'plano Cursor deve usar o identificador de modelo congelado'
+        $indiceSandbox = [Array]::IndexOf([object[]]$plano.argumentos, '--sandbox')
+        Assert-True ($indiceSandbox -ge 0 -and
+            [string]$plano.argumentos[$indiceSandbox + 1] -eq 'disabled') `
+            'Cursor nativo deve usar allowlist porque o sandbox não existe no Windows'
+        $agentInstalado = @(Get-Command agent -CommandType Application,ExternalScript `
+            -ErrorAction SilentlyContinue | Select-Object -First 1)
+        if ($agentInstalado.Count -eq 1 -and
+            [IO.Path]::GetExtension([string]$agentInstalado[0].Source) -eq '.ps1') {
+            Assert-True ([IO.Path]::GetFileName([string]$plano.executavel) -eq 'powershell.exe') `
+                'launcher agent.ps1 deve ser iniciado por powershell.exe'
+            Assert-True ('-File' -in @($plano.argumentos)) `
+                'launcher PowerShell do Cursor deve usar -File'
+            Assert-True ([string]$agentInstalado[0].Source -in @($plano.argumentos)) `
+                'plano deve registrar o caminho resolvido de agent.ps1'
+        }
     }
     else {
         Assert-True ('read-only' -in @($plano.argumentos)) 'Codex deve usar sandbox somente leitura'
@@ -208,6 +259,24 @@ Assert-True ([int]$planoLote.chamadas_planejadas -eq 2) `
     'lote C4 novo deve planejar duas chamadas'
 Assert-True (@($planoLote.ordem | ForEach-Object { $_.alvo }) -join ',' -eq `
     'ALVO-0001,ALVO-0002') 'lote C4 deve ter ordem determinística por alvo'
+
+$planoLoteC3Texto = & (Join-Path $Repo 'scripts/executar-c3-cursor-lote.ps1') `
+    -Finalidade coleta -Repeticoes 1 -Alvos @('ALVO-0001','ALVO-0002') `
+    -SomentePlanejar
+$planoLoteC3 = ($planoLoteC3Texto -join "`n") | ConvertFrom-Json -ErrorAction Stop
+Assert-True ([string]$planoLoteC3.condicao -eq 'C3') 'lote Cursor deve declarar C3'
+Assert-True ([string]$planoLoteC3.ferramenta -eq 'cursor') `
+    'lote C3 deve declarar Cursor'
+Assert-True ([int]$planoLoteC3.alvos -eq 2) 'lote C3 deve respeitar seleção de alvos'
+Assert-True ([int]$planoLoteC3.tarefas_total -eq 2) `
+    'lote C3 de uma repetição e dois alvos deve conter duas tarefas'
+Assert-True (([int]$planoLoteC3.chamadas_planejadas +
+    [int]$planoLoteC3.tarefas_concluidas) -eq 2) `
+    'lote C3 deve classificar todas as tarefas como concluídas ou planejadas'
+Assert-True ([string]$planoLoteC3.versao_cursor_fixada -ne '') `
+    'lote C3 deve fixar a versão do Cursor'
+Assert-True (Test-Path -LiteralPath ([string]$planoLoteC3.executavel_cursor_fixado) `
+    -PathType Leaf) 'lote C3 nativo deve fixar o executável por caminho'
 
 $testeNome = 'ALVO-0001-alertas-sast-teste-executores.json'
 $testePath = Join-Path $Repo "execucoes/ia/alertas/$testeNome"
@@ -250,6 +319,30 @@ try {
             -Alvo $alvoLote -Destino $destinoLote 2>&1)
         [void](($geracaoLote -join "`n") | ConvertFrom-Json -ErrorAction Stop)
     }
+    $planoC5Texto = & (Join-Path $Repo 'scripts/executar-c5-cursor-sast-lote.ps1') `
+        -Finalidade coleta -Repeticoes 1 -Alvos @('ALVO-0001','ALVO-0002') `
+        -AlertasDiretorio $testeLoteDir -SomentePlanejar
+    $planoC5 = ($planoC5Texto -join "`n") | ConvertFrom-Json -ErrorAction Stop
+    Assert-True ([string]$planoC5.condicao -eq 'C5') 'lote híbrido Cursor deve declarar C5'
+    Assert-True ([string]$planoC5.ferramenta -eq 'cursor') `
+        'lote C5 deve declarar Cursor'
+    Assert-True ([bool]$planoC5.hibrido) 'lote C5 deve declarar entrada híbrida'
+    Assert-True ([int]$planoC5.alvos -eq 2) 'lote C5 deve respeitar seleção de alvos'
+    Assert-True ([int]$planoC5.tarefas_total -eq 2) `
+        'lote C5 de uma repetição e dois alvos deve conter duas tarefas'
+    Assert-True (([int]$planoC5.chamadas_planejadas +
+        [int]$planoC5.tarefas_concluidas) -eq 2) `
+        'lote C5 deve classificar todas as tarefas como concluídas ou planejadas'
+    Assert-True ([string]$planoC5.versao_cursor_fixada -ne '') `
+        'lote C5 deve fixar a versão do Cursor'
+    Assert-True (Test-Path -LiteralPath ([string]$planoC5.executavel_cursor_fixado) `
+        -PathType Leaf) 'lote C5 nativo deve fixar o executável por caminho'
+    Assert-True ([string]$planoC5.lock_alertas_sha256 -match '^[0-9a-f]{64}$') `
+        'lote C5 deve registrar o hash do lock de alertas'
+    Assert-True (@($planoC5.ordem | Where-Object {
+        [string]$_.alertas_sast_sha256 -notmatch '^[0-9a-f]{64}$'
+    }).Count -eq 0) 'lote C5 deve congelar o hash dos alertas por tarefa'
+
     $planoC6Texto = & (Join-Path $Repo 'scripts/executar-c6-codex-sast-lote.ps1') `
         -Finalidade coleta -Repeticoes 1 -Alvos @('ALVO-0001','ALVO-0002') `
         -AlertasDiretorio $testeLoteDir -Modelo 'modelo-sintetico-teste-executores' `

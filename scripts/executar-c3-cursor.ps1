@@ -4,10 +4,10 @@ param(
     [ValidateRange(1,3)][int]$Repeticao = 1,
     [ValidateRange(1,2147483647)][int]$Tentativa = 1,
     [ValidateSet('piloto','coleta')][string]$Finalidade = 'piloto',
-    [string]$Modelo = 'gpt-5.6-luna',
-    [ValidateSet('WSL','Nativo')][string]$ModoCursor = 'WSL',
+    [string]$Modelo = 'gpt-5.6-luna-medium',
+    [ValidateSet('WSL','Nativo')][string]$ModoCursor = 'Nativo',
     [string]$DistribuicaoWsl,
-    [string]$ExecutavelCursor = 'cursor-agent',
+    [string]$ExecutavelCursor = 'agent',
     [ValidateRange(1,86400)][int]$TimeoutSegundos = 3600,
     [switch]$SomentePlanejar,
     [switch]$ConfirmarExecucao
