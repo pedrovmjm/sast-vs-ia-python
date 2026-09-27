@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "tipo": "auditoria-coleta-ia",
+  "condicao": "C4",
+  "ferramenta": "codex",
+  "finalidade": "coleta",
+  "estado": "concluida",
+  "janela_execucao_utc": {
+    "inicio": "2026-09-17T20:28:53.121238Z",
+    "termino": "2026-09-17T23:54:19.891213Z"
+  },
+  "entrada": {
+    "alvos": 26,
+    "repeticoes": 3,
+    "unidades_previstas": 78,
+    "prompt_base_sha256": "1d3e269aa36dd7f95e8d42923e19dfbc453b1b04e769fac45de82c323dc17c63",
+    "schema_saida_sha256": "6e0b2f29d5f3275d05fb52a2b207cfc8aa1a842264e5f53fd42d7cb600f3a189",
+    "configuracoes_historicas": [
+      {
+        "configuracao_sha256": "a177d2a9e39626dc2746de294982766537aadea2b1afc4f8a438d8188fb9aa65",
+        "tentativas": 78,
+        "unidades_selecionadas": 70,
+        "modelo_verificacao_presente": false
+      },
+      {
+        "configuracao_sha256": "aa3f8e34b1df8ccaee15b22260bc72bed2ef350ed3850b3f96936c63ac8b1af2",
+        "tentativas": 12,
+        "unidades_selecionadas": 8,
+        "modelo_verificacao_presente": true
+      }
+    ]
+  },
+  "fechamento": {
+    "unidades_validas": 78,
+    "unidades_pendentes": 0,
+    "chamadas_planejadas": 0,
+    "tentativas_preservadas": 90,
+    "manifestos_concluida": 84,
+    "manifestos_falha": 6,
+    "unidades_com_retentativa": 8,
+    "concluidas_legadas_substituidas_na_selecao": 6,
+    "falhas_por_tipo": {
+      "formato": 6
+    },
+    "falhas_por_causa": {
+      "linha_fora_do_arquivo": 4,
+      "arquivo_inexistente": 2,
+      "transporte_ou_cli": 0
+    },
+    "tentativa_final_das_unidades": {
+      "1": 70,
+      "2": 5,
+      "3": 2,
+      "4": 1
+    }
+  },
+  "retentativas": [
+    {"execucao_id":"C4-ALVO-0003-R01","tentativas":3,"sequencia":"concluida-legada,falha,concluida-selecionada","tentativa_selecionada":3},
+    {"execucao_id":"C4-ALVO-0007-R02","tentativas":3,"sequencia":"concluida-legada,falha,concluida-selecionada","tentativa_selecionada":3},
+    {"execucao_id":"C4-ALVO-0009-R01","tentativas":2,"sequencia":"falha,concluida-selecionada","tentativa_selecionada":2},
+    {"execucao_id":"C4-ALVO-0009-R03","tentativas":2,"sequencia":"concluida-legada,concluida-selecionada","tentativa_selecionada":2},
+    {"execucao_id":"C4-ALVO-0013-R01","tentativas":2,"sequencia":"falha,concluida-selecionada","tentativa_selecionada":2},
+    {"execucao_id":"C4-ALVO-0015-R02","tentativas":2,"sequencia":"concluida-legada,concluida-selecionada","tentativa_selecionada":2},
+    {"execucao_id":"C4-ALVO-0016-R01","tentativas":4,"sequencia":"concluida-legada,falha,falha,concluida-selecionada","tentativa_selecionada":4},
+    {"execucao_id":"C4-ALVO-0016-R02","tentativas":2,"sequencia":"concluida-legada,concluida-selecionada","tentativa_selecionada":2}
+  ],
+  "lotes": [
+    {"lote":"C4-coleta-20260917T210337474Z","concluidas":24,"puladas_concluidas":0,"falhas":2,"sha256":"16b7a261a71b6d0a8a0bdeefaf227ec52239c41df5bf80ced64f1e358f6a14be"},
+    {"lote":"C4-coleta-20260917T213747494Z","concluidas":26,"puladas_concluidas":0,"falhas":0,"sha256":"9169dae0ffcc111b03283987ecf7e6d89f526fa6375dae06c68824df3d35d929"},
+    {"lote":"C4-coleta-20260917T222225197Z","concluidas":26,"puladas_concluidas":0,"falhas":0,"sha256":"9919e131691606c37381c075f49e17fb2e4b4dfb0c36d226f3bf7d9a65cbeba5"},
+    {"lote":"C4-coleta-20260917T232903202Z","concluidas":5,"puladas_concluidas":70,"falhas":3,"sha256":"5a810f7643b67a760b827902275a1e6aacde33d82c112f4f79e680f88d116315"},
+    {"lote":"C4-coleta-20260917T235224603Z","concluidas":2,"puladas_concluidas":75,"falhas":1,"sha256":"284f06ce8c140801ef12e6592fb774945fdf9939628fa7b7b286ec8782ee5427"},
+    {"lote":"C4-coleta-20260917T235420022Z","concluidas":1,"puladas_concluidas":77,"falhas":0,"sha256":"61c51cd56baf2edc83cee86a6be7829dfc06e2248017da97b704b5942d4d21b3"},
+    {"lote":"C4-coleta-20260918T021235672Z","concluidas":0,"puladas_concluidas":78,"falhas":0,"sha256":"811ec2212c2d7600192f8f7f7e58d08458d2b7305ffdf7f11ad9de91f5d7430e"}
+  ],
+  "resultados_descritivos_sem_oracle": {
+    "achados_validos": 705,
+    "media_achados_por_unidade": 9.04,
+    "por_repeticao": [
+      {"repeticao":1,"unidades":26,"achados":254,"tokens_total":761299,"duracao_soma_segundos":2141.548518},
+      {"repeticao":2,"unidades":26,"achados":227,"tokens_total":754749,"duracao_soma_segundos":1985.543957},
+      {"repeticao":3,"unidades":26,"achados":224,"tokens_total":754289,"duracao_soma_segundos":1965.886660}
+    ]
+  },
+  "consumo": {
+    "todas_as_90_tentativas": {
+      "tokens_entrada": 2338419,
+      "tokens_saida": 328431,
+      "tokens_total": 2666850,
+      "duracao_soma_segundos": 6882.561240
+    },
+    "78_tentativas_selecionadas": {
+      "tokens_entrada": 1979425,
+      "tokens_saida": 290912,
+      "tokens_total": 2270337,
+      "duracao_soma_segundos": 6092.979135
+    }
+  },
+  "metadados": {
+    "versao_cliente": "codex-cli 0.154.0",
+    "modelo_solicitado": "gpt-5.6-luna",
+    "modelo_exibido": null,
+    "modelo_verificacao_nas_8_correcoes": "nao_exposto_jsonl_codex",
+    "modelo_verificacao_nas_70_legadas": null
+  },
+  "integridade": {
+    "planejamento_reexecutado_sem_api": true,
+    "tarefas_total": 78,
+    "tarefas_concluidas": 78,
+    "chamadas_planejadas": 0,
+    "manifestos_historicos_reescritos": 0
+  },
+  "oracle_consultado": false,
+  "observacao": "Seis manifestos antigos marcados como concluida foram substituidos na selecao por tentativas que passaram pelo validador atual de caminhos e linhas; os originais continuam preservados. As metricas sao descritivas e nao incluem pontuacao contra o oracle."
+}

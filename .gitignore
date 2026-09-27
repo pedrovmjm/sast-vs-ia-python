@@ -12,13 +12,37 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 
-# Artefatos de terceiros e dados sensíveis/gerados do experimento
+# Caches de aquisição e conteúdo cuja licença impede redistribuição
 /benchmark/
-/alvos/
-/oracle/
-/execucoes/
-/resultados/
 /docker/regras-semgrep/
+
+# O corpus é publicado apenas quando há licença explícita e não há segredo
+/alvos/corpus-v1/*
+
+# Entradas integrais incorporadas aos prompts permanecem reconstruíveis por hash
+/resultados/ia/**/payload-codigo.json
+/resultados/ia/**/prompt.txt
+/resultados/ia/**/eventos.jsonl
+!/resultados/ia/**/C4-*/**/eventos.jsonl
+!/resultados/ia/**/C6-*/**/eventos.jsonl
+
+# Para alvos redistribuíveis, publique também prompt, payload e eventos Cursor
+!/resultados/ia/**/C*-ALVO-0002-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0003-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0005-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0007-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0008-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0012-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0014-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0016-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0017-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0018-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0019-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0020-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0023-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0024-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0025-R*/**/[ep]*
+!/resultados/ia/**/C*-ALVO-0026-R*/**/[ep]*
 
 # Planejamento e ferramentas locais que não integram o artefato final
 /.specs/
@@ -28,6 +52,7 @@ __pycache__/
 /build/
 /dist/
 /htmlcov/
+/.reproducao-*/
 .coverage
 
 # Sistema operacional e metadados de download
@@ -48,3 +73,37 @@ Thumbs.db
 *.synctex.gz
 *.toc
 *.pdf
+
+# Snapshots redistribuíveis do corpus; estas exceções devem permanecer por último
+!/alvos/corpus-v1/ALVO-0002/
+!/alvos/corpus-v1/ALVO-0002/**
+!/alvos/corpus-v1/ALVO-0003/
+!/alvos/corpus-v1/ALVO-0003/**
+!/alvos/corpus-v1/ALVO-0005/
+!/alvos/corpus-v1/ALVO-0005/**
+!/alvos/corpus-v1/ALVO-0007/
+!/alvos/corpus-v1/ALVO-0007/**
+!/alvos/corpus-v1/ALVO-0008/
+!/alvos/corpus-v1/ALVO-0008/**
+!/alvos/corpus-v1/ALVO-0012/
+!/alvos/corpus-v1/ALVO-0012/**
+!/alvos/corpus-v1/ALVO-0014/
+!/alvos/corpus-v1/ALVO-0014/**
+!/alvos/corpus-v1/ALVO-0016/
+!/alvos/corpus-v1/ALVO-0016/**
+!/alvos/corpus-v1/ALVO-0017/
+!/alvos/corpus-v1/ALVO-0017/**
+!/alvos/corpus-v1/ALVO-0018/
+!/alvos/corpus-v1/ALVO-0018/**
+!/alvos/corpus-v1/ALVO-0019/
+!/alvos/corpus-v1/ALVO-0019/**
+!/alvos/corpus-v1/ALVO-0020/
+!/alvos/corpus-v1/ALVO-0020/**
+!/alvos/corpus-v1/ALVO-0023/
+!/alvos/corpus-v1/ALVO-0023/**
+!/alvos/corpus-v1/ALVO-0024/
+!/alvos/corpus-v1/ALVO-0024/**
+!/alvos/corpus-v1/ALVO-0025/
+!/alvos/corpus-v1/ALVO-0025/**
+!/alvos/corpus-v1/ALVO-0026/
+!/alvos/corpus-v1/ALVO-0026/**

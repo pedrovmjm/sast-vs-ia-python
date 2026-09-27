@@ -1,1 +1,1 @@
-"""Testes automatizados do harness experimental."""
+"""Testes automatizados do controlador experimental."""

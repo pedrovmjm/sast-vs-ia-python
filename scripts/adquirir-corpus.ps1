@@ -1,18 +1,33 @@
 [CmdletBinding()]
 param(
     [ValidatePattern("^[A-Za-z0-9][A-Za-z0-9._/:@-]{0,254}$")]
-    [string]$Imagem = "tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0"
+    [string]$Imagem = "tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0",
+
+    [string]$RaizDados
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $Repo = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
-$BenchmarkRoot = [IO.Path]::GetFullPath((Join-Path $Repo "benchmark"))
+$DadosRoot = $Repo
+if (-not [string]::IsNullOrWhiteSpace($RaizDados)) {
+    $DadosRoot = if ([IO.Path]::IsPathRooted($RaizDados)) {
+        [IO.Path]::GetFullPath($RaizDados)
+    }
+    else {
+        [IO.Path]::GetFullPath((Join-Path $Repo $RaizDados))
+    }
+    $prefixoRepo = $Repo.TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if (-not $DadosRoot.StartsWith($prefixoRepo, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "RaizDados deve permanecer dentro do repositorio"
+    }
+}
+$BenchmarkRoot = [IO.Path]::GetFullPath((Join-Path $DadosRoot "benchmark"))
 $CacheRoot = [IO.Path]::GetFullPath((Join-Path $BenchmarkRoot "corpus-realvuln-v1"))
-$AlvosRoot = [IO.Path]::GetFullPath((Join-Path $Repo "alvos"))
-$OracleRoot = [IO.Path]::GetFullPath((Join-Path $Repo "oracle"))
-$EvidenciasRoot = [IO.Path]::GetFullPath((Join-Path $Repo "evidencias"))
+$AlvosRoot = [IO.Path]::GetFullPath((Join-Path $DadosRoot "alvos"))
+$OracleRoot = [IO.Path]::GetFullPath((Join-Path $DadosRoot "oracle"))
+$EvidenciasRoot = [IO.Path]::GetFullPath((Join-Path $DadosRoot "evidencias"))
 $CorpusLockPath = Join-Path $Repo "config/corpus-realvuln-v1.lock.json"
 $PoliticaPath = Join-Path $Repo "config/politica-sanitizacao-v1.json"
 $EspelhosLockPath = Join-Path $Repo "config/espelhos-corpus-realvuln-v1.lock.json"

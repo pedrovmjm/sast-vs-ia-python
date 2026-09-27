@@ -28,13 +28,13 @@ d98e9fc91273702c9547663b6906d1fc494d4fcc refs/tags/v1.0^{}
 
 O segundo valor é o commit desembrulhado da tag anotada e será a revisão obrigatória. O [manifesto v1.0](https://raw.githubusercontent.com/kolega-ai/Real-Vuln-Benchmark/d98e9fc91273702c9547663b6906d1fc494d4fcc/benchmark-manifest.json) contém 26 URLs e commits, exatamente o corpus descrito nos capítulos. A [branch atual](https://github.com/kolega-ai/Real-Vuln-Benchmark) já publica v2.0.0 com 66 repositórios; portanto, clonar a branch padrão alteraria o experimento.
 
-Os campos upstream `ground_truth_content_hash` e `default_prompt_version` usam apenas 12 dígitos hexadecimais depois do prefixo `sha256:`. Eles serão tratados como identificadores abreviados, não como SHA-256 completos; o harness calculará e armazenará hashes SHA-256 completos dos artefatos efetivamente adquiridos. A documentação v1 também apresenta variação entre F2 e F3 como medida primária; antes da avaliação final, a implementação do scorer fixado será inspecionada e a escolha efetiva registrada.
+Os campos upstream `ground_truth_content_hash` e `default_prompt_version` usam apenas 12 dígitos hexadecimais depois do prefixo `sha256:`. Eles são tratados como identificadores abreviados, não como SHA-256 completos; o controlador calcula e armazena hashes SHA-256 completos dos artefatos efetivamente adquiridos. A documentação v1 também apresenta variação entre F2 e F3 como medida primária; antes da avaliação final, a implementação do scorer fixado será inspecionada e a escolha efetiva registrada.
 
 ### Divergência de licença
 
 Na revisão fixada, o [arquivo `LICENSE`](https://raw.githubusercontent.com/kolega-ai/Real-Vuln-Benchmark/d98e9fc91273702c9547663b6906d1fc494d4fcc/LICENSE) contém o texto MIT, enquanto o [`pyproject.toml`](https://raw.githubusercontent.com/kolega-ai/Real-Vuln-Benchmark/d98e9fc91273702c9547663b6906d1fc494d4fcc/pyproject.toml) declara `Apache-2.0`. Este projeto não escolherá silenciosamente qual metadado “vence”. A cópia será mantida fora do histórico autoral, com os arquivos upstream intactos; qualquer distribuição pública deverá registrar a divergência ou obter esclarecimento dos mantenedores.
 
-Cada um dos 26 repositórios-alvo mantém ainda sua própria licença. Os snapshots ficarão fora do Git autoral e não serão redistribuídos até que exista um inventário de licença por alvo.
+Cada um dos 26 repositórios-alvo mantém sua própria situação de licença. A revisão de publicação identificou 16 snapshots com licença explícita e sem material sensível; eles são redistribuídos com os avisos originais. Os outros dez permanecem reconstruíveis por origem, commit e inventário SHA-256. A lista e as justificativas estão em `DADOS_AUDITAVEIS.md`.
 
 ## Regras do Semgrep
 

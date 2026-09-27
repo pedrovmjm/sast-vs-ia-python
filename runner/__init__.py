@@ -1,1 +1,1 @@
-"""Harness experimental do TCC."""
+"""Controlador experimental do TCC."""

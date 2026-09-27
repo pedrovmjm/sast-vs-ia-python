@@ -8,8 +8,8 @@ pode ser editado à mão.
 |---|---|---|---|
 | **A. Contratos congelados** | `config/` | O autor, uma única vez, antes da coleta | **Não** depois do *freeze*. Editar invalida os resultados. |
 | **B. Esquemas de validação** | `runner/schemas/` | O autor, ao definir o formato | Sim, mas cria uma nova versão do esquema |
-| **C. Estado de execução** | `execucoes/` | O harness, durante a coleta | **Nunca** |
-| **D. Saída bruta e derivada** | `resultados/` | O harness, por tentativa | **Nunca**. É o dado primário |
+| **C. Estado de execução** | `execucoes/` | O controlador, durante a coleta | **Nunca** |
+| **D. Saída bruta e derivada** | `resultados/` | O controlador, por tentativa | **Nunca**. É o dado primário |
 | **E. Evidência publicada** | `evidencias/` | Scripts de auditoria, ao fechar uma etapa | **Nunca**. É o que o TCC cita |
 
 Fora dessas cinco há o `oracle/`, que é material de terceiros e nunca é
@@ -122,8 +122,8 @@ tentativas C1/C2 usadas como fonte. O lote recusa conteúdo divergente.
 
 O perfil não deve ser atualizado retrospectivamente para refletir o andamento:
 seu SHA-256 está registrado nos manifestos. O estado operacional atual fica nas
-auditorias de fechamento em `evidencias/coleta-c3/`, `coleta-c5/` e
-`coleta-c6/`.
+auditorias de fechamento em `evidencias/coleta-c3/`, `coleta-c4/`,
+`coleta-c5/` e `coleta-c6/`.
 
 ### `agentes/schema-relatorio-ia-v1.json`
 
@@ -228,7 +228,7 @@ Um *array* de `Achado v1`. O ponto central do esquema é o par
 
 O campo `*_original` é o valor cru da ferramenta; o outro é a forma normalizada
 por um mapa fechado. **Quando não existe mapa congelado, o normalizado fica
-`null`** — o harness nunca chuta. Por isso `recomendacao` é sempre `null` em C1
+`null`** — o controlador nunca chuta. Por isso `recomendacao` é sempre `null` em C1
 (o Bandit não emite recomendação) e `confianca` normalizada é sempre `null` em
 C2 (o Semgrep não usa a escala fechada). `texto_original` guarda o resultado
 nativo inteiro em JSON canônico, e `saida_bruta_sha256` liga o achado ao
@@ -273,7 +273,7 @@ desempenho.**
 | `manifestos/<execucao_id>-T<NNN>.json` | Os 63 manifestos terminais preservados (52 sucessos + 11 tentativas anteriores). O sufixo `T001`/`T003` é o número da tentativa |
 | `auditoria-m2-t08.json` | O fechamento do marco. Ver abaixo |
 
-### `coleta-c3/`, `coleta-c5/` e `coleta-c6/` — condições de IA
+### `coleta-c3/`, `coleta-c4/`, `coleta-c5/` e `coleta-c6/` — condições de IA
 
 Cada `auditoria-m3-cN.json` resume cobertura, passagens do lote, retentativas,
 falhas preservadas, achados descritivos, tokens, duração, metadados e verificações

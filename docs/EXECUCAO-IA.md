@@ -333,8 +333,9 @@ Todas as falhas foram de formato; não houve falha de transporte ou da CLI. Em
 C3, 18 respostas referenciaram linhas fora do arquivo e uma referenciou arquivo
 inexistente. Em C5, as 13 falhas referenciaram linhas fora do arquivo. As
 evidências compactas estão em `evidencias/coleta-c3/auditoria-m3-c3.json` e
-`evidencias/coleta-c5/auditoria-m3-c5.json`. As respostas brutas continuam
-somente em `resultados/`, fora do Git.
+`evidencias/coleta-c5/auditoria-m3-c5.json`. As respostas brutas publicáveis
+estão em `resultados/`; entradas integrais seguem a política de licenças em
+[`DADOS_AUDITAVEIS.md`](DADOS_AUDITAVEIS.md).
 
 ### Planejar C6 com os alertas SAST congelados
 
@@ -427,10 +428,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 
 As novas saídas usaram tentativas adicionais e as anteriores permanecem
 imutáveis. Setenta manifestos selecionados foram produzidos pela versão anterior
-do harness: usam `cli_versao`, guardam o hash da resposta em
+do executor: usam `cli_versao`, guardam o hash da resposta em
 `artefatos_sha256["resposta-bruta.txt"]` e não trazem `modelo_verificacao`.
 Esses campos devem ser compatibilizados na auditoria, nunca reescritos nos
 manifestos históricos.
+
+O fechamento equivalente está em
+`evidencias/coleta-c4/auditoria-m3-c4.json`: 78 unidades válidas, 90 tentativas
+preservadas e os dois hashes de configuração observados. A explicação do
+layout legado e da seleção das tentativas está em
+[`FLUXO-E-RASTREABILIDADE.md`](FLUXO-E-RASTREABILIDADE.md).
 
 ## Tentativas, falhas e artefatos
 

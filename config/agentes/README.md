@@ -56,6 +56,9 @@ produto criaria um tratamento diferente e confundiria o efeito comparado. Toda
 orientação que afeta a análise fica, portanto, explícita no prompt compartilhado
 e versionado.
 
+O mapa completo de executores, arquivos entregues e controles de restrição está
+em [`docs/FLUXO-E-RASTREABILIDADE.md`](../../docs/FLUXO-E-RASTREABILIDADE.md).
+
 ## Referências de elaboração
 
 - OpenAI, *Model guidance — Prompting best practices*:
