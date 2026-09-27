@@ -20,6 +20,10 @@ __pycache__/
 /resultados/
 /docker/regras-semgrep/
 
+# Planejamento e ferramentas locais que não integram o artefato final
+/.specs/
+/spc-driven/
+
 # Saídas de construção e cobertura
 /build/
 /dist/

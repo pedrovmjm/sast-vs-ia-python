@@ -92,21 +92,22 @@ do Docker Desktop). Em vez de esconder isso, o projeto registra a decisão:
 | `versions` | Versões efetivamente observadas no host |
 | `allowed_actions` | **O escopo.** O waiver do M1 vale para `sast-smoke`; o do M2 vale para `M2-T06/T07/T08` e nada mais |
 | `required_controls` | Os controles compensatórios que continuam obrigatórios: sem rede, alvo somente leitura, usuário não root, capabilities removidas, `no-new-privileges`, sem `docker.sock` |
-| `approval` | Referência à decisão em `.specs/project/STATE.md` |
+| `approval` | Identificador, referência histórica e, quando aplicável, commit da aprovação. As referências para `.specs/` permanecem como valores congelados; o conteúdo decisório está no próprio waiver e nas evidências de risco |
 
 São **dois** arquivos de propósito: a decisão AD-009 estabelece que a exceção do
 M1 não se estende implicitamente ao M2.
 
 ### `agentes/cursor-c3-v1.json`, `agentes/codex-c4-v1.json` e `agentes/codex-c6-v1.json`
 
-Perfis das condições de IA. Os dois arquivos são idênticos exceto por
-`condicao` e `produto` — é o que materializa a exigência de instrução e
-permissões equivalentes entre Cursor e Codex.
+Perfis das condições de IA. Eles compartilham prompt, schema e restrições. Os
+campos específicos de cada cliente registram o identificador aceito pela CLI e
+as limitações de observabilidade do produto.
 
 | Chave | Significado |
 |---|---|
 | `perfil` | `principal`. O perfil complementar (Auto no Cursor, GPT-5.6 Terra no Codex) só é habilitado se aprovado no piloto |
 | `modelo_solicitado` | `GPT-5.6 Luna` nos dois produtos |
+| `modelo_cli_solicitado` | Identificador exato usado pela CLI do Cursor: `gpt-5.6-luna-medium` |
 | `repeticoes` / `alvos` | 3 e 26, ou seja, 78 execuções por condição |
 | `prompt_sha256` / `schema_saida_sha256` | Amarram o perfil ao texto exato da instrução e ao contrato de saída |
 | `restricoes` | Somente leitura, sem executar código ou testes, sem Bandit/Semgrep, sem oracle, sem `docker.sock`, **sessão nova por repetição**, mesma instrução |
@@ -120,8 +121,9 @@ SHA-256 do `alertas-sast.json`, contagens antes/depois da deduplicação e as
 tentativas C1/C2 usadas como fonte. O lote recusa conteúdo divergente.
 
 O perfil não deve ser atualizado retrospectivamente para refletir o andamento:
-seu SHA-256 está registrado nos 92 manifestos C6. O estado operacional atual
-fica em `.specs/project/STATE.md` e na auditoria de fechamento.
+seu SHA-256 está registrado nos manifestos. O estado operacional atual fica nas
+auditorias de fechamento em `evidencias/coleta-c3/`, `coleta-c5/` e
+`coleta-c6/`.
 
 ### `agentes/schema-relatorio-ia-v1.json`
 
@@ -173,7 +175,7 @@ malsucedida, exatamente como o Capítulo 7 exige.
 > manifesto órfão em `C2-ALVO-0001-R01/tentativa-001`: o contêiner terminou e
 > gravou o manifesto, mas o controlador foi interrompido antes de registrar o
 > desfecho, então a tentativa foi refeita. Sempre conte pela fila ou pela maior
-> tentativa de cada `execucao_id`. Ver `AUDITORIA-CAPITULO-07.md`, item C-13.
+> tentativa de cada `execucao_id`.
 
 ---
 
@@ -271,11 +273,12 @@ desempenho.**
 | `manifestos/<execucao_id>-T<NNN>.json` | Os 63 manifestos terminais preservados (52 sucessos + 11 tentativas anteriores). O sufixo `T001`/`T003` é o número da tentativa |
 | `auditoria-m2-t08.json` | O fechamento do marco. Ver abaixo |
 
-### `coleta-c6/` — fechamento da condição híbrida Codex
+### `coleta-c3/`, `coleta-c5/` e `coleta-c6/` — condições de IA
 
-`auditoria-m3-c6.json` resume cobertura, quatro passagens do lote, retentativas,
+Cada `auditoria-m3-cN.json` resume cobertura, passagens do lote, retentativas,
 falhas preservadas, achados descritivos, tokens, duração, metadados e verificações
-de integridade. Não contém pontuação contra o oracle.
+de integridade. As auditorias não contêm respostas brutas nem pontuação contra o
+oracle.
 
 ### Como ler `auditoria-m2-t08.json`
 
@@ -324,5 +327,4 @@ O mesmo nome de campo carrega valores diferentes conforme quem o escreveu:
 Os dois estão corretos e nenhum contradiz o outro: o segundo é imune a
 reformatação e reordenação de chaves, o primeiro não. **Mas o campo se chama
 `corpus_lock_sha256` nos dois casos**, sem indicar a convenção. Ao comparar
-hashes entre artefatos, confirme antes qual convenção cada um usa. Ver
-`AUDITORIA-CAPITULO-07.md`, item C-6.
+hashes entre artefatos, confirme antes qual convenção cada um usa.

@@ -106,6 +106,14 @@ Os arquivos em `resultados/` são ignorados pelo Git. A evidência pequena cont�
 
 O exit code `1` do Bandit representa achados e é aceito pelo executor. Esses números demonstram integração, não desempenho: a fumaça usa um único alvo e não deve ser incorporada às métricas do Capítulo 8.
 
-## 6. Limites atuais
+## 6. Escopo deste procedimento
 
-O primeiro marco não adquire os 26 alvos, não executa a coleta principal, não acessa o oracle e não pontua resultados. Cursor, Codex, modelos e cotas serão validados no piloto do marco correspondente. Antes de distribuir a imagem, ainda é obrigatória a revisão das licenças dos pacotes transitivos indicada em `FONTES_E_INTEGRIDADE.md`.
+Este procedimento reproduz apenas o ambiente e a fumaça do primeiro marco; ele
+não refaz automaticamente as coletas principais. O corpus de 26 alvos e as
+coletas C1–C6 já foram concluídos por seus executores específicos. C3–C6 são
+documentadas em `EXECUCAO-IA.md`.
+
+O oracle não foi consultado nas auditorias descritivas das condições de IA. A
+pontuação e as métricas adjudicadas são uma etapa separada. Antes de distribuir
+a imagem, continua obrigatória a revisão das licenças dos pacotes transitivos
+indicada em `FONTES_E_INTEGRIDADE.md`.

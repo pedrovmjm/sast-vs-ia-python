@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "tipo": "auditoria-coleta-ia",
+  "condicao": "C3",
+  "ferramenta": "cursor",
+  "finalidade": "coleta",
+  "estado": "concluida",
+  "janela_execucao_utc": {
+    "inicio": "2026-09-27T19:26:37.301220Z",
+    "termino": "2026-09-27T20:43:55.488822Z"
+  },
+  "entrada": {
+    "alvos": 26,
+    "repeticoes": 3,
+    "unidades_previstas": 78,
+    "configuracao_sha256": "c7e58d7c4be9dffd080cbc9d0491d7aa77f72d64d05437ef9972feaf7d9a8446",
+    "prompt_base_sha256": "1d3e269aa36dd7f95e8d42923e19dfbc453b1b04e769fac45de82c323dc17c63",
+    "schema_saida_sha256": "6e0b2f29d5f3275d05fb52a2b207cfc8aa1a842264e5f53fd42d7cb600f3a189"
+  },
+  "fechamento": {
+    "unidades_validas": 78,
+    "unidades_pendentes": 0,
+    "chamadas_planejadas": 0,
+    "tentativas_preservadas": 97,
+    "tentativas_concluidas": 78,
+    "tentativas_falha": 19,
+    "unidades_com_retentativa": 14,
+    "falhas_por_tipo": {
+      "formato": 19
+    },
+    "falhas_por_causa": {
+      "linha_fora_do_arquivo": 18,
+      "arquivo_inexistente": 1,
+      "transporte_ou_cli": 0
+    },
+    "tentativa_final_das_unidades": {
+      "1": 64,
+      "2": 12,
+      "3": 1,
+      "6": 1
+    }
+  },
+  "retentativas": [
+    {"execucao_id":"C3-ALVO-0001-R03","tentativas":3,"sequencia":"falha,falha,concluida"},
+    {"execucao_id":"C3-ALVO-0003-R03","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0006-R01","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0007-R02","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0007-R03","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0009-R03","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0014-R02","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0015-R02","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0016-R03","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0019-R01","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0021-R01","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0025-R02","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C3-ALVO-0026-R01","tentativas":6,"sequencia":"falha,falha,falha,falha,falha,concluida"},
+    {"execucao_id":"C3-ALVO-0026-R02","tentativas":2,"sequencia":"falha,concluida"}
+  ],
+  "lotes": [
+    {"lote":"C3-coleta-20260927T201545742Z","concluidas":64,"puladas_concluidas":0,"falhas":14,"sha256":"b0e27e66a1c95bd942e6fc0e5bcfbc2e03bd71160b2c9794a7236b55f1aab460"},
+    {"lote":"C3-coleta-20260927T202904860Z","concluidas":12,"puladas_concluidas":64,"falhas":2,"sha256":"604b1111401d02d8ce325131315d5a2071aa02a9a39866eb9e80508b8ed85b4d"},
+    {"lote":"C3-coleta-20260927T203606177Z","concluidas":1,"puladas_concluidas":76,"falhas":1,"sha256":"c4b7f208ee6f370be7eb2330620c3f11389759cbcc453f0b55b433d1f628578f"},
+    {"lote":"C3-coleta-20260927T203754344Z","concluidas":0,"puladas_concluidas":77,"falhas":1,"sha256":"1682b1532976b2334ef86329712f785f6c09243c565b04c0a1b25f30296eccbf"},
+    {"lote":"C3-coleta-20260927T204008189Z","concluidas":0,"puladas_concluidas":77,"falhas":1,"sha256":"caa98622c243c4a794c66517558ab5ba07014419cbdf4b81328928270f5bc7fb"},
+    {"lote":"C3-coleta-20260927T204356660Z","concluidas":1,"puladas_concluidas":77,"falhas":0,"sha256":"697998ed9bf0811b8e7f8607724ba92e33a0c08dcffdca979e87dc12820ade26"}
+  ],
+  "resultados_descritivos_sem_oracle": {
+    "achados_validos": 711,
+    "media_achados_por_unidade": 9.12,
+    "minimo_achados_por_unidade": 1,
+    "maximo_achados_por_unidade": 30,
+    "relatorios_vazios": 0,
+    "por_repeticao": [
+      {"repeticao":1,"unidades":26,"achados":249,"tokens_total":686503,"duracao_soma_segundos":938.552671},
+      {"repeticao":2,"unidades":26,"achados":239,"tokens_total":691034,"duracao_soma_segundos":960.629565},
+      {"repeticao":3,"unidades":26,"achados":223,"tokens_total":686694,"duracao_soma_segundos":940.144077}
+    ]
+  },
+  "consumo": {
+    "todas_as_97_tentativas": {
+      "tokens_entrada": 2327424,
+      "tokens_saida": 364464,
+      "tokens_total": 2691888,
+      "duracao_soma_segundos": 3627.675727
+    },
+    "78_tentativas_validas": {
+      "tokens_entrada": 1780758,
+      "tokens_saida": 283473,
+      "tokens_total": 2064231,
+      "duracao_soma_segundos": 2839.326313
+    },
+    "19_tentativas_invalidas": {
+      "tokens_entrada": 546666,
+      "tokens_saida": 80991,
+      "tokens_total": 627657,
+      "duracao_soma_segundos": 788.349414
+    }
+  },
+  "metadados": {
+    "versao_cliente": "2026.09.26-dd393fe",
+    "modelo_solicitado": "gpt-5.6-luna-medium",
+    "modelo_exibido": "GPT-5.6 Luna 272K Medium",
+    "modelo_verificacao": "evento_jsonl",
+    "sessoes_unicas": 97,
+    "sessoes_nulas": 0,
+    "contadores_tokens_nulos": 0,
+    "violacoes": 0
+  },
+  "integridade": {
+    "verificacoes_sha256_e_entrada": 951,
+    "divergencias": 0,
+    "respostas_validas_revalidadas": 78
+  },
+  "oracle_consultado": false,
+  "observacao": "As 19 falhas de formato permanecem preservadas e não foram convertidas em ausência de achados. As métricas deste arquivo são somente descritivas; TP, FP, FN, TN e métricas derivadas dependem de etapa posterior explicitamente autorizada."
+}

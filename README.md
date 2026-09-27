@@ -1,67 +1,85 @@
 # Harness experimental do TCC
 
-Este repositório implementa o protocolo comparativo descrito em `06-metodologia.tex` e `07-desenvolvimento.tex`. O primeiro marco está reproduzível: ambiente Docker fixado, adaptadores Bandit/Semgrep, executor isolado, fumaça sintética e uma primeira execução descartável sobre um alvo RealVuln v1.0.
+Este repositório contém o texto do TCC e o harness usado para comparar seis
+condições de análise de segurança sobre 26 aplicações Python do RealVuln v1.0.
+As coletas C1–C6 estão concluídas. As saídas brutas permanecem locais e
+imutáveis; o Git guarda código, contratos congelados e evidências compactas de
+auditoria.
 
-O host usa somente Git, PowerShell e Docker Desktop. Python, Bandit e Semgrep são executados dentro da imagem `tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0`. Código dos alvos é tratado como dado: não é importado, testado nem executado.
+O host usa Git, PowerShell, Docker Desktop e as CLIs autenticadas de Cursor e
+Codex. Python, Bandit e Semgrep são executados na imagem
+`tcc-sast:py3.12.13-bandit1.9.4-semgrep1.172.0`. O código dos alvos é tratado
+como dado: não é importado, testado nem executado.
 
-## Verificação rápida
+## Verificação
 
-Com o Docker Desktop em execução:
+Com o Docker Desktop em execução, rode o gate rápido:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 quick
 ```
 
-O gate completo do marco é:
+O gate completo também reconstrói a imagem, executa integrações Docker, a
+fumaça sintética, `compileall`, `pip check` e as sondas de isolamento:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gate.ps1 build
 ```
 
-Ele reconstrói a imagem, executa todos os testes, as integrações Docker e a fumaça sintética, verifica isolamento, dependências e versões. A execução validada em 11 de agosto de 2026 passou com 132 testes Python, 18 testes do wrapper e 8 testes de integração Docker, sem falhas ou testes ignorados.
-
-## Primeira execução RealVuln
-
-A evidência rastreada está em `evidencias/primeira-execucao/`. Ela registra `finalidade=fumaca` e `status=descartavel`; portanto, não integra a futura coleta principal. C1 e C2 receberam uma entrada de seis arquivos com o mesmo inventário `tree-sha256-v1`, SHA-256 `60913ac90d496cf087a5fe6e9a4dbb04882c862a93f7d094eebb692d41467206`.
-
-Para uma reprodução local independente, depois de adquirir o bundle fixado de regras Semgrep conforme `docs/EXECUCAO.md`, use nomes novos para não sobrescrever a evidência publicada:
+Os executores de IA possuem testes próprios, sem chamadas externas:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/executar-fumaca-realvuln.ps1 `
-  -AlvoId ALVO-REPRO-LOCAL `
-  -EvidenciaNome reproducao-local
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-executores-ia.ps1
 ```
 
-Consulte `docs/EXECUCAO.md` para preparação completa, artefatos e controles. A proveniência, licenças e riscos conhecidos estão em `docs/FONTES_E_INTEGRIDADE.md`.
+## Documentação mantida
 
-## Documentação
-
-Comece por [`docs/README.md`](docs/README.md), que é o índice e a visão geral do artefato:
-
-- [`docs/ESTRUTURA.md`](docs/ESTRUTURA.md): o que é cada pasta, quem a gera e o que pode ser apagado;
-- [`docs/ARTEFATOS_JSON.md`](docs/ARTEFATOS_JSON.md): o significado de cada arquivo `.json`, campo a campo;
-- [`docs/EXECUCAO-IA.md`](docs/EXECUCAO-IA.md): configuração e execução separada dos cenários C3–C6 com Cursor e Codex;
-- [`docs/FLUXO-C6-CODEX-SAST.md`](docs/FLUXO-C6-CODEX-SAST.md): como os alertas de C1/C2 são congelados, enviados ao Codex e auditados em C6;
-- [`docs/AUDITORIA-CAPITULO-06.md`](docs/AUDITORIA-CAPITULO-06.md) e [`docs/AUDITORIA-CAPITULO-07.md`](docs/AUDITORIA-CAPITULO-07.md): onde os capítulos divergem do repositório atual.
+- [`docs/EXECUCAO.md`](docs/EXECUCAO.md): ambiente, gates e fumaça RealVuln;
+- [`docs/EXECUCAO-IA.md`](docs/EXECUCAO-IA.md): preparação, planejamento e
+  execução de C3–C6;
+- [`docs/ARTEFATOS_JSON.md`](docs/ARTEFATOS_JSON.md): contratos e artefatos
+  produzidos pelo harness;
+- [`docs/FONTES_E_INTEGRIDADE.md`](docs/FONTES_E_INTEGRIDADE.md): proveniência,
+  licenças e controles de integridade.
 
 ## Estrutura essencial
 
-- `config/`: lock de fontes e exceção auditável do host;
-- `docker/`: imagem e dependências fixadas; regras Semgrep locais são ignoradas;
-- `runner/`: modelos, adaptadores, preparação e executor;
-- `scripts/`: gates, testes de integração e CLIs do host;
-- `tests/`: unidades, fixtures próprias e verificações da evidência;
-- `evidencias/`: manifestos e resumos pequenos, próprios para auditoria;
-- `benchmark/`, `alvos/` e `resultados/`: terceiros ou artefatos gerados, ignorados pelo Git.
+- `config/`: fontes, filas, políticas e perfis congelados;
+- `docker/`: imagem e dependências fixadas;
+- `runner/`: modelos, adaptadores, preparação e executor SAST;
+- `scripts/`: gates, testes de integração e executores C1–C6;
+- `tests/`: testes unitários e fixtures próprias;
+- `evidencias/`: inventários e auditorias pequenas, próprias para Git;
+- `benchmark/`, `alvos/`, `oracle/`, `execucoes/` e `resultados/`: dados de
+  terceiros ou saídas geradas, mantidos localmente e ignorados pelo Git.
 
-## Estado atual
+## Estado das coletas
 
-O corpus dos 26 alvos foi adquirido e validado, e a coleta censitária de C1 e C2 foi concluída em 11 de agosto de 2026: 52 execuções terminais, 26 pares C1/C2, nenhuma falha na fila final e 11 tentativas malsucedidas preservadas em disco. A auditoria de fechamento está em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`.
+| Condição | Ferramenta | Entrada | Fechamento |
+|---|---|---|---|
+| C1 | Bandit 1.9.4 | código sanitizado | 26/26 |
+| C2 | Semgrep CE 1.172.0 | código sanitizado | 26/26 |
+| C3 | Cursor, GPT-5.6 Luna | código sanitizado | 78/78; 97 tentativas preservadas |
+| C4 | Codex, GPT-5.6 Luna | código sanitizado | 78/78 |
+| C5 | Cursor, GPT-5.6 Luna | código + alertas C1/C2 | 78/78; 91 tentativas preservadas |
+| C6 | Codex, GPT-5.6 Luna | código + alertas C1/C2 | 78/78; 92 tentativas preservadas |
 
-As condições de IA estão especificadas em `config/agentes/`. C4 e C6 possuem
-78 unidades válidas e zero chamadas pendentes em cada condição; C3 e C5 ainda
-não foram coletadas. C6 consumiu o conjunto congelado de 1.410 alertas C1/C2 e
-preservou 92 tentativas: 78 concluídas e 14 falhas de formato anteriores. O
-fechamento está em `evidencias/coleta-c6/auditoria-m3-c6.json`. A pontuação
-contra o oracle e as métricas adjudicadas do Capítulo 8 pertencem ao marco
-seguinte.
+As auditorias publicadas estão em:
+
+- `evidencias/coleta-c1-c2/auditoria-m2-t08.json`;
+- `evidencias/coleta-c3/auditoria-m3-c3.json`;
+- `evidencias/coleta-c5/auditoria-m3-c5.json`;
+- `evidencias/coleta-c6/auditoria-m3-c6.json`.
+
+C5 e C6 consumiram o mesmo conjunto congelado de 1.410 alertas C1/C2 por
+repetição. As falhas anteriores permanecem preservadas e nunca são contadas
+como relatórios sem achados. O oracle não foi consultado nessas auditorias;
+TP, FP, FN, TN e métricas derivadas pertencem à etapa de avaliação.
+
+## Política de versionamento
+
+O repositório remoto recebe somente o necessário para reprodução e auditoria.
+Saídas brutas, corpus, oracle, regras adquiridas e artefatos de build continuam
+locais por volume, licença, cegamento ou possibilidade de regeneração. O
+histórico de planejamento (`.specs/`), a skill usada para produzi-lo e auditorias
+editoriais transitórias não fazem parte do artefato final.

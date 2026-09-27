@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "tipo": "auditoria-coleta-ia",
+  "condicao": "C5",
+  "ferramenta": "cursor",
+  "finalidade": "coleta",
+  "estado": "concluida",
+  "janela_execucao_utc": {
+    "inicio": "2026-09-27T20:51:37.718105Z",
+    "termino": "2026-09-27T22:12:09.425408Z"
+  },
+  "entrada": {
+    "alvos": 26,
+    "repeticoes": 3,
+    "unidades_previstas": 78,
+    "alertas_antes_deduplicacao": 1416,
+    "alertas_por_repeticao": 1410,
+    "alertas_removidos_por_deduplicacao": 6,
+    "alertas_lock": "config/agentes/alertas-sast-c6-v1.lock.json",
+    "alertas_lock_sha256": "0bf2846dd4bd316852ae820525c7cde678eb34bfd0a8ea576af5c5b6112b2068",
+    "configuracao_sha256": "c7e58d7c4be9dffd080cbc9d0491d7aa77f72d64d05437ef9972feaf7d9a8446",
+    "prompt_base_sha256": "1d3e269aa36dd7f95e8d42923e19dfbc453b1b04e769fac45de82c323dc17c63",
+    "schema_saida_sha256": "6e0b2f29d5f3275d05fb52a2b207cfc8aa1a842264e5f53fd42d7cb600f3a189"
+  },
+  "fechamento": {
+    "unidades_validas": 78,
+    "unidades_pendentes": 0,
+    "chamadas_planejadas": 0,
+    "tentativas_preservadas": 91,
+    "tentativas_concluidas": 78,
+    "tentativas_falha": 13,
+    "unidades_com_retentativa": 3,
+    "falhas_por_tipo": {
+      "formato": 13
+    },
+    "falhas_por_causa": {
+      "linha_fora_do_arquivo": 13,
+      "arquivo_inexistente": 0,
+      "transporte_ou_cli": 0
+    },
+    "tentativa_final_das_unidades": {
+      "1": 75,
+      "2": 1,
+      "6": 1,
+      "8": 1
+    }
+  },
+  "retentativas": [
+    {"execucao_id":"C5-ALVO-0003-R02","tentativas":8,"sequencia":"falha,falha,falha,falha,falha,falha,falha,concluida"},
+    {"execucao_id":"C5-ALVO-0016-R03","tentativas":6,"sequencia":"falha,falha,falha,falha,falha,concluida"},
+    {"execucao_id":"C5-ALVO-0026-R02","tentativas":2,"sequencia":"falha,concluida"}
+  ],
+  "lotes": [
+    {"lote":"C5-coleta-20260927T214207411Z","concluidas":75,"puladas_concluidas":0,"falhas":3,"sha256":"5de77e29283b610f1d98e4728bd4c33f97d0982b8b193f540fe11a0cf178b867"},
+    {"lote":"C5-coleta-20260927T214558212Z","concluidas":1,"puladas_concluidas":75,"falhas":2,"sha256":"d4980b7d94e8b13b7384b686c7b5312e66f769d2f3a64446c3759bed958f5954"},
+    {"lote":"C5-coleta-20260927T214927859Z","concluidas":0,"puladas_concluidas":76,"falhas":2,"sha256":"b15530c38aee7affba5291c69362483eb265365f92e38146fad24bb71b65f11a"},
+    {"lote":"C5-coleta-20260927T215534363Z","concluidas":0,"puladas_concluidas":76,"falhas":2,"sha256":"9a27ed8c472c62084930fb75149807884388aa5a705ac984bfb1cc79af654e57"},
+    {"lote":"C5-coleta-20260927T215844756Z","concluidas":0,"puladas_concluidas":76,"falhas":2,"sha256":"1777c258be17c0c64e9df2d1759347fe366ac4f670d642e5aa0d309ff9ab3033"},
+    {"lote":"C5-coleta-20260927T220116597Z","concluidas":1,"puladas_concluidas":76,"falhas":1,"sha256":"f18339b914e8c6ca8a3d538d5e0af4ef59a490147b2de4a4f792531eed81d8ad"},
+    {"lote":"C5-coleta-20260927T220358543Z","concluidas":0,"puladas_concluidas":77,"falhas":1,"sha256":"1a2e14bbb82456744fc3a451f1f47fdb90a3a0257b995e40cf14d2404c9d1aa7"},
+    {"lote":"C5-coleta-20260927T221210534Z","concluidas":1,"puladas_concluidas":77,"falhas":0,"sha256":"e7d4a1a7b739856350faae26b7dacd030f398ed5aab91df0a4e6658db83a4efa"}
+  ],
+  "resultados_descritivos_sem_oracle": {
+    "achados_validos": 714,
+    "media_achados_por_unidade": 9.15,
+    "minimo_achados_por_unidade": 1,
+    "maximo_achados_por_unidade": 41,
+    "relatorios_vazios": 0,
+    "por_repeticao": [
+      {"repeticao":1,"unidades":26,"achados":241,"tokens_total":869208,"duracao_soma_segundos":965.219365},
+      {"repeticao":2,"unidades":26,"achados":235,"tokens_total":871111,"duracao_soma_segundos":979.921432},
+      {"repeticao":3,"unidades":26,"achados":238,"tokens_total":871830,"duracao_soma_segundos":976.507052}
+    ]
+  },
+  "consumo": {
+    "todas_as_91_tentativas": {
+      "tokens_entrada": 3175877,
+      "tokens_saida": 322021,
+      "tokens_total": 3497898,
+      "duracao_soma_segundos": 3375.844293
+    },
+    "78_tentativas_validas": {
+      "tokens_entrada": 2330853,
+      "tokens_saida": 281296,
+      "tokens_total": 2612149,
+      "duracao_soma_segundos": 2921.647849
+    },
+    "13_tentativas_invalidas": {
+      "tokens_entrada": 845024,
+      "tokens_saida": 40725,
+      "tokens_total": 885749,
+      "duracao_soma_segundos": 454.196444
+    }
+  },
+  "metadados": {
+    "versao_cliente": "2026.09.26-dd393fe",
+    "modelo_solicitado": "gpt-5.6-luna-medium",
+    "modelo_exibido": "GPT-5.6 Luna 272K Medium",
+    "modelo_verificacao": "evento_jsonl",
+    "sessoes_unicas": 91,
+    "sessoes_nulas": 0,
+    "contadores_tokens_nulos": 0,
+    "violacoes": 0
+  },
+  "integridade": {
+    "verificacoes_sha256_e_entrada": 1079,
+    "divergencias": 0,
+    "respostas_validas_revalidadas": 78
+  },
+  "oracle_consultado": false,
+  "observacao": "As 13 falhas de formato permanecem preservadas e não foram convertidas em ausência de achados. As métricas deste arquivo são somente descritivas; TP, FP, FN, TN e métricas derivadas dependem de etapa posterior explicitamente autorizada."
+}
