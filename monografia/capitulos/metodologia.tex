@@ -61,7 +61,7 @@ Nas condições C3 e C4, os agentes poderão ler e pesquisar os arquivos do repo
 
 \section{Universo, Corpus e Unidade de Análise}\label{sec:universo-amostra}
 
-O universo de interesse compreende vulnerabilidades classificáveis por CWE em projetos Python. O corpus experimental será a versão 1.0 do RealVuln descrita por \citeonline{Pellew2026RealVuln}, composta por 26 repositórios Python intencionalmente vulneráveis e 796 entradas manualmente rotuladas, das quais 676 representam vulnerabilidades e 120 representam padrões seguros incluídos como falsos-positivos armadilha. Essa versão será usada integralmente, caracterizando um censo do \textit{release} escolhido, e não uma nova amostra construída pelo autor.
+O universo de interesse compreende vulnerabilidades classificáveis por CWE em projetos Python. O corpus experimental será a versão 1.0 do RealVuln descrita por \citeonline{Pellew2026RealVuln}, composta por 26 repositórios Python intencionalmente vulneráveis e 817 entradas, 697 vulnerabilidades, 120 armadilhas. Essa versão será usada integralmente, caracterizando um censo do \textit{release} escolhido, e não uma nova amostra construída pelo autor.
 
 A escolha do RealVuln decorre de sua correspondência direta com o objetivo do trabalho: o benchmark foi projetado para comparar ferramentas baseadas em regras e scanners baseados em LLM sobre os mesmos repositórios, publica o código-fonte, o \textit{ground truth}, o algoritmo de correspondência e os scripts de pontuação, além de incluir exemplos seguros necessários ao cálculo de falsos positivos \cite{Pellew2026RealVuln}. O VUDENC permanece relevante como evidência histórica sobre detecção em Python, mas não será o corpus principal deste experimento porque sua rotulagem automática e sua granularidade em janelas de tokens exigiriam uma reconstrução de \textit{ground truth} incompatível com a comparação em nível de repositório.
 
@@ -107,7 +107,7 @@ IA empresarial & Cursor & Versão do cliente, estratégia de seleção, modelo s
 \hline
 IA empresarial & OpenAI Codex & Versão do cliente, modelo solicitado e efetivamente exibido, nível de raciocínio, modo de contexto, data e hora, instrução, permissões, duração, consumo de tokens informado e identificador da sessão \\
 \hline
-Dados & RealVuln v1.0 & 26 repositórios, manifesto, 796 entradas rotuladas, \textit{ground truth} e avaliador fixados por \textit{hash} \\
+Dados & RealVuln v1.0 & 26 repositórios, manifesto, 817 entradas rotuladas, \textit{ground truth} e avaliador fixados por \textit{hash} \\
 \hline
 Infraestrutura & \textit{Harness} em Python & Código versionado, esquema comum, registros brutos, normalização e cálculo das métricas \\
 \hline
@@ -262,7 +262,7 @@ O protocolo será executado na seguinte ordem:
 \item Reportar resultados por condição, repositório, CWE e severidade, preservando tanto os dados agregados quanto as falhas de execução.
 \end{enumerate}
 
-Prompts autorais, configurações, referência da imagem Docker, versão do Bandit, scripts de normalização, manifestos permitidos pelas licenças e evidências pequenas serão versionados como artefatos de reprodução do estudo. Para as regras Semgrep serão publicados origem, revisão, caminhos selecionados, hash e procedimento de aquisição, mas não os arquivos cuja licença proíbe redistribuição. Resultados brutos e código de terceiros serão preservados fora do histórico autoral e distribuídos somente quando as licenças e a sensibilidade dos dados permitirem. O \texttt{oracle/} será preservado para auditoria, mas permanecerá separado das áreas de trabalho usadas durante a coleta.
+Prompts, configurações, imagem Docker, regras do Semgrep, versão do Bandit, scripts de normalização, manifestos permitidos pela licença dos dados e resultados brutos serão versionados como artefatos de reprodução do estudo. O \texttt{oracle/} será preservado para auditoria, mas permanecerá separado das áreas de trabalho usadas durante a coleta.
 
 \section{Viabilidade da Pesquisa}\label{sec:viabilidade-pesquisa}
 

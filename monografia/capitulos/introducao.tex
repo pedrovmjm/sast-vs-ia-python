@@ -1,0 +1,57 @@
+% ----------------------------------------------------------
+% Introdução 
+% Capítulo sem numeração, mas presente no Sumário
+% ----------------------------------------------------------
+
+\chapter[Introdução]{Introdução}
+
+O desenvolvimento de software tem incorporado, de forma crescente, práticas de automação voltadas à produtividade, qualidade e segurança. Nesse contexto, ferramentas de Static Application Security Testing (SAST) são utilizadas para analisar código-fonte antes da execução da aplicação, identificando padrões inseguros, vulnerabilidades conhecidas e possíveis riscos de segurança em fases iniciais do ciclo de desenvolvimento \cite{owasp_sast,semgrep_ce}.
+
+Em projetos corporativos, esse tipo de verificação costuma ser integrado a pipelines de CI/CD, revisões de pull request e políticas de governança de código. Apesar de sua relevância, ferramentas SAST tradicionais apresentam limitações conhecidas, especialmente em relação à quantidade de falsos positivos, dificuldade de compreender contexto de negócio e limitaçã ona interpretação de fluxos distribuídos entre múltiplos arquivos e dependência de regras previamente definidas.
+
+Paralelamente, ferramentas de desenvolvimento assistido por IA passaram de simples autocompletes para agentes de codificação capazes de ler repositórios, editar arquivos, executar comandos, propor correções, revisar código e apoiar fluxos mais complexos de engenharia de software. Esses agentes foram criados em resposta à evolução dos modelos de linguagem aplicados a código e à necessidade de apoiar tarefas cada vez mais complexas, como refatorações, correção de bugs, geração de testes e revisão de alterações. A documentação do Codex descreve a ferramenta como um agente de codificação capaz de ler, editar e executar código, inclusive em ambientes locais, IDEs, aplicações desktop e nuvem \cite{openai_codex_cloud,openai_codex_cli}. O Cursor, por sua vez, posiciona-se como um ambiente de desenvolvimento com compreensão do codebase e recursos de agente para auxiliar o desenvolvedor em tarefas de programação \cite{cursor_home,cursor_agents}.
+
+O interesse pelo tema também se justifica pelo avanço recente da adoção dessas ferramentas na prática profissional. A pesquisa Stack Overflow Developer Survey 2025 indicou que 84\% dos respondentes usam ou planejam usar ferramentas de IA no processo de desenvolvimento, e que 51\% dos desenvolvedores profissionais usam essas ferramentas diariamente \cite{stackoverflow2025}. A OpenAI reportou, em 2026, mais de 2 milhões de desenvolvedores usando o Codex semanalmente e crescimento de 6 vezes no uso do Codex em ambientes ChatGPT Business e Enterprise desde janeiro \cite{openai_codex_pricing_2026}. Além disso, a própria página do Cursor afirma que a ferramenta é utilizada por mais de metade das empresas Fortune 500, indicando relevância empresarial para esse tipo de solução \cite{cursor_home}.
+
+Esse cenário cria uma questão relevante para a área de Segurança da Informação: ferramentas empresariais de desenvolvimento assistido por IA podem detectar vulnerabilidades em aplicações Python com qualidade comparável ou complementar às ferramentas SAST tradicionais? Além disso, uma abordagem híbrida, em que a IA analisa e enriquece os relatórios produzidos por SAST, pode melhorar a utilidade dos achados para desenvolvedores e equipes de segurança?
+
+
+
+\section{Motivação}\label{sec:motivacao}
+
+
+A motivação para o desenvolvimento desta pesquisa está no crescimento do uso de IA no desenvolvimento de software e na necessidade de compreender, de forma empírica, seus impactos na análise de segurança de código. Embora ferramentas de IA estejam sendo cada vez mais utilizadas por desenvolvedores, ainda há incertezas sobre sua confiabilidade, reprodutibilidade e capacidade de atuar em tarefas críticas, como identificação e explicação de vulnerabilidades.
+
+Os potenciais beneficiários da pesquisa são desenvolvedores, equipes de segurança de aplicações, times de DevSecOps, pesquisadores em engenharia de software e organizações que adotam ou pretendem adotar ferramentas de IA no ciclo de desenvolvimento. Desenvolvedores podem se beneficiar de recomendações mais claras e contextualizadas para correção de vulnerabilidades. Equipes de segurança podem se beneficiar de critérios comparativos para decidir quando utilizar SAST tradicional, IA pura ou abordagens híbridas. Organizações podem se beneficiar de evidências para orientar políticas de adoção de IA em processos de segurança de software.
+
+O problema a ser pesquisado pode ser descrito em uma frase: avaliar em que medida ferramentas empresariais de desenvolvimento assistido por IA podem detectar, explicar e priorizar vulnerabilidades em aplicações Python quando comparadas a ferramentas SAST tradicionais e a uma abordagem híbrida SAST + IA.
+
+ Atualmente, a literatura e o mercado tratam o problema principalmente por meio de três abordagens. A primeira é o uso de ferramentas SAST tradicionais, como Bandit e Semgrep Community Edition, baseadas em regras, padrões de código e análise sintática. A segunda é o uso de modelos de linguagem e agentes de codificação para revisão de código e identificação de problemas de segurança. A terceira, ainda em amadurecimento, envolve a combinação entre ferramentas estáticas e IA generativa para apoiar triagem, explicação, classificação e priorização dos achados.
+
+Essas soluções, entretanto, não resolvem completamente o problema. Ferramentas SAST tradicionais tendem a ser reproduzíveis e de baixo custo, mas apodem gerar muitos falsos positivos e ter dificuldade para contextualizar vulnerabilidades. Ferramentas de IA podem produzir explicações mais ricas e recomendações mais próximas da linguagem do desenvolvedor, mas apresentam riscos de alucinação, inconsistência, dependência de prompts e menor previsibilidade. A abordagem híbrida pode combinar pontos fortes das duas alternativas, mas ainda precisa ser avaliada com critérios claros, benchmarks adequados e métricas quantitativas e qualitativas.
+\section{Objetivos}\label{sec:objetivos}
+
+
+\subsection{Objetivo geral} \label{subsec:objetivo-geral}
+
+O objetivo geral deste trabalho é avaliar comparativamente abordagens tradicionais e baseadas em Inteligência Artificial para detecção, explicação e priorização de vulnerabilidades em aplicações Python, considerando ferramentas tradicionais de \textit{Static Application Security Testing} (SAST), ferramentas empresariais de desenvolvimento assistido por IA e uma abordagem híbrida SAST + IA.
+
+\subsection{Objetivos específicos} \label{subsec:objetivos-especificos}
+
+Os objetivos específicos são:
+
+\begin{enumerate}
+    \item Definir uma base teórica e técnica sobre SAST, agentes de codificação, segurança de aplicações Python e avaliação de ferramentas de detecção de vulnerabilidades.
+
+    \item Selecionar um conjunto de aplicações, benchmarks ou repositórios Python vulneráveis com informações de referência adequadas para avaliação comparativa.
+
+    \item Projetar um protocolo experimental padronizado para execução das abordagens SAST tradicional, IA pura e SAST + IA.
+
+    \item Construir um pipeline de coleta, normalização e organização dos resultados produzidos pelas ferramentas avaliadas.
+
+    \item Avaliar quantitativamente o desempenho das abordagens por meio de métricas como precisão, \textit{recall}, F1-score, taxa de falsos positivos, quantidade de vulnerabilidades identificadas, tempo de execução e custo estimado.
+
+    \item Avaliar qualitativamente a utilidade dos relatórios gerados, considerando aspectos como clareza das explicações, qualidade das recomendações, indicação de severidade, explorabilidade dos resultados e apoio à tomada de decisão.
+
+    \item Comparar os resultados obtidos e identificar os cenários em que ferramentas baseadas em IA podem substituir, complementar ou enriquecer ferramentas SAST tradicionais.
+\end{enumerate}
