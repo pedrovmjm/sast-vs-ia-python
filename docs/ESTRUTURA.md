@@ -105,7 +105,7 @@ nunca orquestra contêiner.
 | `executar-coleta-c1-c2.ps1` | Orquestra a fila completa de 52 execuções C1/C2, serialmente. |
 | `test-*.ps1` | Testes de integração dos scripts acima, executados pelo gate. |
 | `gerar-graficos-sast.py` | Lê `resultados/` e produz `evidencias/graficos-sast/` (CSV e SVG descritivos). Não calcula TP/FP/FN. |
-| `validar-repeticoes-ia.py` | Audita a completude das 312 execuções C3–C6. **Ainda sem entrada:** espera `resultados/ia/`, que não existe. |
+| `validar-repeticoes-ia.py` | Audita completude, estados e metadados das repetições C3–C6. `resultados/ia/` já contém as coletas C4 e C6; C3/C5 permanecem pendentes. |
 
 ### `config/` — contratos congelados
 
@@ -138,12 +138,13 @@ entre `resultados/` (grande, ignorado) e os capítulos.
 | `corpus-realvuln-v1/` | Inventário e registro de sanitização por alvo, resumo do corpus, saída do validador oficial e auditoria do *ground truth*. |
 | `primeira-execucao/` | Evidência da fumaça de 11/08 (M1): inventários, manifestos e resumo. `finalidade=fumaca`, `status=descartavel`. |
 | `coleta-c1-c2/` | Configuração congelada, fila inicial, os 63 manifestos terminais e a auditoria de fechamento do M2. |
+| `coleta-c6/` | Auditoria de fechamento da condição híbrida C6, com cobertura, retentativas, consumo e integridade, sem consultar o oracle. |
 | `graficos-sast/` | CSV e SVG descritivos de C1/C2. |
 | `host-observado-*.json`, `reavaliacao-risco-host-*.json` | Versões do host e a reavaliação de risco que autorizou a coleta. |
 
 ### `.specs/` — planejamento rastreável
 
-`project/` (visão, roadmap, estado e decisões AD-001 a AD-013) e `features/`
+`project/` (visão, roadmap, estado e decisões AD-001 a AD-016) e `features/`
 (spec, design e tasks por incremento). É onde as decisões de projeto ficam
 justificadas — material direto para o Capítulo 7 e para a defesa.
 

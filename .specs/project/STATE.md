@@ -2,8 +2,8 @@
 
 **Freeze M2-T06 (2026-08-11):** configuracao congelada em `evidencias/coleta-c1-c2/configuracao.json`, com imagem `sha256:3aab47b08e5defe0a01b869d710d3b8fdfe315673c73560bcb7b4c9b95a8cd51`; o hash canonico e o commit controlador estao registrados no proprio arquivo. Gate build verde e nenhuma fila/saida de coleta criada no freeze.
 
-**Última atualização:** 2026-09-26T18:55:00-03:00
-**Trabalho atual:** agentes-cursor-codex-c3-c6 — preparação do piloto C6
+**Última atualização:** 2026-09-26T21:34:27-03:00
+**Trabalho atual:** agentes-cursor-codex-c3-c6 — fechamento documental de C6; C3/C5 pendentes
 
 **Coleta M2-T07 concluida (2026-08-11):** fila com 52 itens terminais (52 concluidas e 0 falhas), 26 pares C1/C2; as nove falhas iniciais de formato Bandit foram corrigidas e reexecutadas. Auditoria em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`.
 
@@ -23,7 +23,15 @@
 
 **Razão:** C6 deve receber exatamente os alertas produzidos pela coleta SAST já encerrada. Aceitar um arquivo regenerado com conteúdo divergente confundiria o efeito do Codex com mudança de entrada.
 
-**Impacto:** foram preparados 26 arquivos com 1.410 alertas. O lote C6 planeja 78 tarefas e não reutiliza uma unidade concluída se o hash dos alertas diferir. Nenhuma chamada externa de C6 foi feita.
+**Impacto naquele checkpoint:** foram preparados 26 arquivos com 1.410 alertas. O lote C6 planejava 78 tarefas e não reutilizaria uma unidade concluída se o hash dos alertas diferisse. Nenhuma chamada externa de C6 havia sido feita.
+
+### AD-016: Encerrar C6 sem reescrever a configuração congelada (2026-09-26)
+
+**Decisão:** declarar C6 concluída após 78 unidades válidas e zero chamadas pendentes, preservando as 14 tentativas inválidas e mantendo imutável `config/agentes/codex-c6-v1.json`.
+
+**Razão:** as falhas foram de formato da resposta — 13 intervalos de linha fora do arquivo e um arquivo inexistente — e foram resolvidas por novas tentativas auditáveis. Alterar retrospectivamente o campo `estado` da configuração mudaria o hash registrado nos 92 manifestos.
+
+**Impacto:** a coleta contém 92 tentativas físicas, 78 concluídas e 14 falhas preservadas em sete unidades. O resumo descritivo está em `evidencias/coleta-c6/auditoria-m3-c6.json`; o oracle não foi consultado. O valor `estado=aguarda-piloto` na configuração representa o freeze histórico, não o estado operacional atual.
 
 ### AD-013: Reavaliação do risco do host M2 autorizada (2026-08-11)
 
@@ -123,7 +131,7 @@
 
 ## Bloqueadores ativos
 
-Nenhum bloqueador técnico impede o piloto C6. A chamada externa permanece condicionada a `-ConfirmarExecucao` e ainda não foi autorizada neste checkpoint.
+Nenhum bloqueador técnico permanece em C6. C3 e C5 ainda dependem dos pilotos e da disponibilidade observada do Cursor.
 
 C4 está operacionalmente concluída. Seu fechamento documental deve explicitar a compatibilidade dos 70 manifestos legados; não é necessário repetir as 70 análises para acrescentar campos que podem ser auditados nos artefatos preservados.
 

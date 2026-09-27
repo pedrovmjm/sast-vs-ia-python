@@ -14,6 +14,7 @@ Esta pasta documenta o artefato.
 |---|---|
 | entender o que cada pasta é e o que pode apagar | [`ESTRUTURA.md`](ESTRUTURA.md) |
 | saber o que significa cada arquivo `.json` | [`ARTEFATOS_JSON.md`](ARTEFATOS_JSON.md) |
+| entender exatamente o que C6 envia ao Codex e como os alertas SAST são auditados | [`FLUXO-C6-CODEX-SAST.md`](FLUXO-C6-CODEX-SAST.md) |
 | saber onde o Capítulo 6 diverge do que existe hoje | [`AUDITORIA-CAPITULO-06.md`](AUDITORIA-CAPITULO-06.md) |
 | saber onde o Capítulo 7 diverge do que existe hoje | [`AUDITORIA-CAPITULO-07.md`](AUDITORIA-CAPITULO-07.md) |
 | reproduzir o ambiente e a fumaça | [`EXECUCAO.md`](EXECUCAO.md) |
@@ -51,7 +52,7 @@ Esta pasta documenta o artefato.
 | **C3** | Cursor (GPT-5.6 Luna) | código sanitizado | Configurado, aguarda piloto |
 | **C4** | Codex (GPT-5.6 Luna) | código sanitizado | **Coleta concluída** — 78 unidades válidas; auditoria de metadados legados pendente |
 | **C5** | Cursor | código + `alertas-sast.json` de C1/C2 | Não iniciada |
-| **C6** | Codex | código + `alertas-sast.json` de C1/C2 | 26 entradas congeladas; aguarda piloto |
+| **C6** | Codex | código + `alertas-sast.json` de C1/C2 | **Coleta concluída** — 78 unidades válidas; 14 falhas de formato preservadas |
 
 C1 e C2 são determinísticas, por isso rodam uma vez (`R01`). C3 a C6 são
 estocásticas e terão **três repetições** por alvo — 78 execuções por condição,
@@ -126,6 +127,7 @@ Git.
 | Validação por terceiro (validador oficial do benchmark) | `evidencias/corpus-realvuln-v1/validacao-oficial.json` |
 | Configuração congelada da coleta | `evidencias/coleta-c1-c2/configuracao.json` |
 | Fechamento do M2: 52/52, 0 falhas, 11 tentativas preservadas | `evidencias/coleta-c1-c2/auditoria-m2-t08.json` |
+| Fechamento de C6: 78/78, 92 tentativas, 14 falhas preservadas | `evidencias/coleta-c6/auditoria-m3-c6.json` |
 | Achados e tempos por execução | `evidencias/graficos-sast/sast-resumo.csv` |
 | Fumaça do M1 (**não** entra nas métricas) | `evidencias/primeira-execucao/resumo.json` |
 
@@ -138,7 +140,7 @@ Git.
 | M0 | Git local, planejamento rastreável | Completo |
 | M1 | Ambiente, adaptadores, fumaça descartável | Completo |
 | M2 | Corpus, fila, coleta C1/C2 | **Completo** (auditoria fechada em 11/08/2026) |
-| M3 | Agentes C3–C6 e condições híbridas | Em andamento; C4 coletada e C6 pronta para piloto |
+| M3 | Agentes C3–C6 e condições híbridas | Em andamento; C4 e C6 coletadas, C3 e C5 pendentes |
 | M4 | Pontuação, análise e redação final | Não iniciado |
 
 O `ROADMAP.md` em `.specs/project/` ainda descreve o M2 como em andamento —

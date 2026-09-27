@@ -112,12 +112,16 @@ permissões equivalentes entre Cursor e Codex.
 | `restricoes` | Somente leitura, sem executar código ou testes, sem Bandit/Semgrep, sem oracle, sem `docker.sock`, **sessão nova por repetição**, mesma instrução |
 | `metadados_obrigatorios` | O que a sessão precisa registrar: versão do cliente, modelo solicitado/exibido, forma de verificação, id da sessão, tempos, tokens e hash da resposta bruta |
 | `metadados_nulos_permitidos` | Exceções explícitas de observabilidade. No Codex, `modelo_exibido` pode ser `null` quando o JSONL não expõe o modelo; `modelo_verificacao` explica a ausência |
-| `estado` | Situação operacional do perfil; C4 está coletada com auditoria dos metadados legados pendente e C6 aguarda piloto |
+| `estado` | Estado no momento do freeze. Pode ser histórico: C6 permanece `aguarda-piloto` no contrato imutável, embora a coleta já esteja concluída |
 
 O perfil C6 acrescenta `entrada_adicional`, `alertas_sast_lock` e o hash desse
 lock. `agentes/alertas-sast-c6-v1.lock.json` contém uma entrada por alvo com o
 SHA-256 do `alertas-sast.json`, contagens antes/depois da deduplicação e as
 tentativas C1/C2 usadas como fonte. O lote recusa conteúdo divergente.
+
+O perfil não deve ser atualizado retrospectivamente para refletir o andamento:
+seu SHA-256 está registrado nos 92 manifestos C6. O estado operacional atual
+fica em `.specs/project/STATE.md` e na auditoria de fechamento.
 
 ### `agentes/schema-relatorio-ia-v1.json`
 
@@ -266,6 +270,12 @@ desempenho.**
 | `fila-inicial.json` | A fila no instante zero: 52 itens, todos `pendente`, `historico` vazio. Comparada com `execucoes/fila-c1-c2.json`, mostra tudo o que aconteceu |
 | `manifestos/<execucao_id>-T<NNN>.json` | Os 63 manifestos terminais preservados (52 sucessos + 11 tentativas anteriores). O sufixo `T001`/`T003` é o número da tentativa |
 | `auditoria-m2-t08.json` | O fechamento do marco. Ver abaixo |
+
+### `coleta-c6/` — fechamento da condição híbrida Codex
+
+`auditoria-m3-c6.json` resume cobertura, quatro passagens do lote, retentativas,
+falhas preservadas, achados descritivos, tokens, duração, metadados e verificações
+de integridade. Não contém pontuação contra o oracle.
 
 ### Como ler `auditoria-m2-t08.json`
 

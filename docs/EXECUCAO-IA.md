@@ -14,6 +14,9 @@ próprio. Cada chamada executa uma única unidade
 Os lotes Codex usam `scripts/executar-c4-codex-lote.ps1` para C4 e
 `scripts/executar-c6-codex-sast-lote.ps1` para C6.
 
+Para uma explicação auditável do caminho completo C1/C2 → alertas → prompt →
+Codex → manifesto, consulte [`FLUXO-C6-CODEX-SAST.md`](FLUXO-C6-CODEX-SAST.md).
+
 Os adaptadores compartilhados ficam em `scripts/ia/executar-cursor.ps1` e
 `scripts/ia/executar-codex.ps1`. Normalmente eles não devem ser chamados
 diretamente.
@@ -234,10 +237,33 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -Finalidade coleta -Repeticoes '1,2,3' -SomentePlanejar
 ```
 
-Com o estado atual, ele deve informar 26 alvos, 78 tarefas, zero concluídas,
-78 chamadas planejadas e 1.410 alertas por repetição. A execução real exige
-trocar `-SomentePlanejar` por `-ConfirmarExecucao`. Cada unidade só é reutilizada
-quando resposta, modelo solicitado e hash dos alertas ainda são válidos.
+Antes da coleta, esse plano informava 26 alvos, 78 tarefas, zero concluídas e
+78 chamadas planejadas. A execução real exige trocar `-SomentePlanejar` por
+`-ConfirmarExecucao`. Cada unidade só é reutilizada quando resposta, modelo
+solicitado e hash dos alertas ainda são válidos.
+
+### Fechamento da coleta C6
+
+A coleta C6 foi encerrada em 26 de setembro de 2026. O plano atual informa 78
+tarefas concluídas e zero chamadas planejadas. Foram necessárias 92 chamadas:
+78 tentativas válidas e 14 falhas de formato preservadas em sete unidades.
+Quatro passagens do lote produziram, respectivamente:
+
+| Passagem | Concluídas novas | Puladas | Falhas |
+|---:|---:|---:|---:|
+| 1 | 71 | 0 | 7 |
+| 2 | 2 | 71 | 5 |
+| 3 | 3 | 73 | 2 |
+| 4 | 2 | 76 | 0 |
+
+As falhas foram 13 intervalos de linha fora do arquivo e uma referência a
+arquivo inexistente. Nenhuma foi falha de transporte ou da CLI. Os artefatos
+anteriores permanecem imutáveis; o resumo auditável está em
+`evidencias/coleta-c6/auditoria-m3-c6.json`.
+
+Para confirmar o fechamento sem consumir API, execute novamente o planejamento.
+O resultado esperado agora é `tarefas_concluidas=78` e
+`chamadas_planejadas=0`.
 
 ### Fechamento da correção de C4
 

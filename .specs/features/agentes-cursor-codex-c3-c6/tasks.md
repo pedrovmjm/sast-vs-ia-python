@@ -13,6 +13,8 @@
 - [ ] Verificar resposta JSON, metadados, sessão e tokens.
 - [ ] Registrar decisão de liberar ou bloquear a fila completa.
 
+**Estado em 2026-09-26:** o piloto C6 foi aprovado com resposta válida, sessão e tokens presentes, zero violações e hash de alertas correspondente ao lock. O item permanece aberto porque os pilotos C3 e C5 ainda não foram executados.
+
 ## M3-T03 — Executar C3/C4
 
 - [ ] Criar 78 tarefas C3 e 78 tarefas C4.
@@ -27,12 +29,14 @@
 - [x] Validar deduplicação e preservar origem Bandit/Semgrep.
 - [x] Confirmar que C5/C6 recebem bytes idênticos para cada alvo.
 
-**Estado em 2026-09-26:** 26 arquivos, 1.410 alertas após deduplicação e hashes congelados em `config/agentes/alertas-sast-c6-v1.lock.json`. O lote C6 completo planeja 78 chamadas; nenhuma foi executada.
+**Estado em 2026-09-26:** 26 arquivos, 1.410 alertas após deduplicação e hashes congelados em `config/agentes/alertas-sast-c6-v1.lock.json`.
 
 ## M3-T05 — Executar C5/C6
 
-- [ ] Criar 78 tarefas C5 e 78 tarefas C6.
-- [ ] Executar três repetições e preservar respostas brutas.
+- [x] Criar e concluir as 78 unidades C6, preservando todas as tentativas.
+- [ ] Criar e executar as 78 unidades C5.
+
+**Estado em 2026-09-26:** C6 foi encerrada com 78 unidades válidas, 92 tentativas físicas e 14 falhas de formato preservadas em sete unidades posteriormente concluídas. O plano final indica zero chamadas pendentes. Evidência em `evidencias/coleta-c6/auditoria-m3-c6.json`.
 
 ## M3-T06 — Avaliar e preparar gráficos
 
@@ -41,3 +45,5 @@
 - [ ] Calcular estabilidade em zero/uma/duas/três repetições.
 - [ ] Após autorização, executar o avaliador oracle para TP/FP/FN/TN.
 - [ ] Gerar dados CSV/SVG para os gráficos do Capítulo 8.
+
+**Parcial C6:** resumo descritivo sem oracle publicado; 700 achados nas 78 respostas válidas, 3.901.020 tokens em todas as tentativas e zero violações. A avaliação adjudicada continua pendente.

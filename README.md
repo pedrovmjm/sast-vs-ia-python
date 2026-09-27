@@ -41,6 +41,7 @@ Comece por [`docs/README.md`](docs/README.md), que é o índice e a visão geral
 - [`docs/ESTRUTURA.md`](docs/ESTRUTURA.md): o que é cada pasta, quem a gera e o que pode ser apagado;
 - [`docs/ARTEFATOS_JSON.md`](docs/ARTEFATOS_JSON.md): o significado de cada arquivo `.json`, campo a campo;
 - [`docs/EXECUCAO-IA.md`](docs/EXECUCAO-IA.md): configuração e execução separada dos cenários C3–C6 com Cursor e Codex;
+- [`docs/FLUXO-C6-CODEX-SAST.md`](docs/FLUXO-C6-CODEX-SAST.md): como os alertas de C1/C2 são congelados, enviados ao Codex e auditados em C6;
 - [`docs/AUDITORIA-CAPITULO-06.md`](docs/AUDITORIA-CAPITULO-06.md) e [`docs/AUDITORIA-CAPITULO-07.md`](docs/AUDITORIA-CAPITULO-07.md): onde os capítulos divergem do repositório atual.
 
 ## Estrutura essencial
@@ -57,9 +58,10 @@ Comece por [`docs/README.md`](docs/README.md), que é o índice e a visão geral
 
 O corpus dos 26 alvos foi adquirido e validado, e a coleta censitária de C1 e C2 foi concluída em 11 de agosto de 2026: 52 execuções terminais, 26 pares C1/C2, nenhuma falha na fila final e 11 tentativas malsucedidas preservadas em disco. A auditoria de fechamento está em `evidencias/coleta-c1-c2/auditoria-m2-t08.json`.
 
-As condições de IA estão especificadas em `config/agentes/`. A coleta C4 foi
-executada em 17 de setembro de 2026 e possui 78 unidades válidas, com todas as
-tentativas anteriores preservadas. C3, C5 e C6 ainda não foram coletadas. Para
-C6, os 26 arquivos de alertas C1/C2 já foram gerados e congelados por hash; o
-próximo passo é o piloto `C6-ALVO-0001-R01`. A pontuação contra o oracle e as
-métricas do Capítulo 8 pertencem ao marco seguinte.
+As condições de IA estão especificadas em `config/agentes/`. C4 e C6 possuem
+78 unidades válidas e zero chamadas pendentes em cada condição; C3 e C5 ainda
+não foram coletadas. C6 consumiu o conjunto congelado de 1.410 alertas C1/C2 e
+preservou 92 tentativas: 78 concluídas e 14 falhas de formato anteriores. O
+fechamento está em `evidencias/coleta-c6/auditoria-m3-c6.json`. A pontuação
+contra o oracle e as métricas adjudicadas do Capítulo 8 pertencem ao marco
+seguinte.

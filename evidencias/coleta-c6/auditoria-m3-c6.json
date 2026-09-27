@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0",
+  "tipo": "auditoria-coleta-ia",
+  "condicao": "C6",
+  "ferramenta": "codex",
+  "finalidade": "coleta",
+  "estado": "concluida",
+  "janela_execucao_utc": {
+    "inicio": "2026-09-26T22:10:39.712373Z",
+    "termino": "2026-09-27T00:34:27.386499Z"
+  },
+  "entrada": {
+    "alvos": 26,
+    "repeticoes": 3,
+    "unidades_previstas": 78,
+    "alertas_antes_deduplicacao": 1416,
+    "alertas_por_repeticao": 1410,
+    "alertas_removidos_por_deduplicacao": 6,
+    "alertas_lock": "config/agentes/alertas-sast-c6-v1.lock.json",
+    "alertas_lock_sha256": "0bf2846dd4bd316852ae820525c7cde678eb34bfd0a8ea576af5c5b6112b2068",
+    "configuracao_sha256": "bc603b579ad71c101627ddb5b09680ccfbb31325d5482cecee8d2c66862b68da",
+    "prompt_base_sha256": "1d3e269aa36dd7f95e8d42923e19dfbc453b1b04e769fac45de82c323dc17c63",
+    "schema_saida_sha256": "6e0b2f29d5f3275d05fb52a2b207cfc8aa1a842264e5f53fd42d7cb600f3a189"
+  },
+  "fechamento": {
+    "unidades_validas": 78,
+    "unidades_pendentes": 0,
+    "chamadas_planejadas": 0,
+    "tentativas_preservadas": 92,
+    "tentativas_concluidas": 78,
+    "tentativas_falha": 14,
+    "unidades_com_retentativa": 7,
+    "falhas_por_tipo": {
+      "formato": 14
+    },
+    "falhas_por_causa": {
+      "linha_fora_do_arquivo": 13,
+      "arquivo_inexistente": 1,
+      "transporte_ou_cli": 0
+    },
+    "tentativa_final_das_unidades": {
+      "1": 71,
+      "2": 2,
+      "3": 3,
+      "4": 2
+    }
+  },
+  "retentativas": [
+    {"execucao_id":"C6-ALVO-0003-R01","tentativas":4,"sequencia":"falha,falha,falha,concluida"},
+    {"execucao_id":"C6-ALVO-0003-R02","tentativas":3,"sequencia":"falha,falha,concluida"},
+    {"execucao_id":"C6-ALVO-0003-R03","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C6-ALVO-0016-R01","tentativas":3,"sequencia":"falha,falha,concluida"},
+    {"execucao_id":"C6-ALVO-0025-R01","tentativas":2,"sequencia":"falha,concluida"},
+    {"execucao_id":"C6-ALVO-0025-R03","tentativas":4,"sequencia":"falha,falha,falha,concluida"},
+    {"execucao_id":"C6-ALVO-0026-R01","tentativas":3,"sequencia":"falha,falha,concluida"}
+  ],
+  "lotes": [
+    {"lote":"C6-coleta-20260926T234525767Z","concluidas":71,"puladas_concluidas":0,"falhas":7,"sha256":"8d86a677d14f1ba23cdf4604503b2e8cbe74e2aba84a841258a9b8c412ad5a80"},
+    {"lote":"C6-coleta-20260927T001447054Z","concluidas":2,"puladas_concluidas":71,"falhas":5,"sha256":"86259aa9c5631de423f60da4eb76f76b40267b7b3cecbca7338c80576242125f"},
+    {"lote":"C6-coleta-20260927T002347850Z","concluidas":3,"puladas_concluidas":73,"falhas":2,"sha256":"487ed1e762cbea2a7265bf30c8e471d30f13547e2b0767f5c84b368937b32f80"},
+    {"lote":"C6-coleta-20260927T003427493Z","concluidas":2,"puladas_concluidas":76,"falhas":0,"sha256":"d0d99ab820099946396f06028b42ade44d28a1b92cdedd03ded6f60ffdd629e6"}
+  ],
+  "resultados_descritivos_sem_oracle": {
+    "achados_validos": 700,
+    "media_achados_por_unidade": 8.97,
+    "minimo_achados_por_unidade": 1,
+    "maximo_achados_por_unidade": 32,
+    "relatorios_vazios": 0,
+    "por_repeticao": [
+      {"repeticao":1,"unidades":26,"achados":231,"tokens_total":934978,"duracao_soma_segundos":1740.039668},
+      {"repeticao":2,"unidades":26,"achados":236,"tokens_total":938253,"duracao_soma_segundos":1887.518895},
+      {"repeticao":3,"unidades":26,"achados":233,"tokens_total":942387,"duracao_soma_segundos":1957.766152}
+    ]
+  },
+  "consumo": {
+    "todas_as_92_tentativas": {
+      "tokens_entrada": 3533069,
+      "tokens_saida": 367951,
+      "tokens_total": 3901020,
+      "duracao_soma_segundos": 6894.115172
+    },
+    "78_tentativas_validas": {
+      "tokens_entrada": 2517507,
+      "tokens_saida": 298111,
+      "tokens_total": 2815618,
+      "duracao_soma_segundos": 5585.324715
+    },
+    "14_tentativas_invalidas": {
+      "tokens_entrada": 1015562,
+      "tokens_saida": 69840,
+      "tokens_total": 1085402,
+      "duracao_soma_segundos": 1308.790457
+    }
+  },
+  "metadados": {
+    "versao_cliente": "codex-cli 0.154.0",
+    "modelo_solicitado": "gpt-5.6-luna",
+    "modelo_exibido": null,
+    "modelo_verificacao": "nao_exposto_jsonl_codex",
+    "sessoes_unicas": 92,
+    "sessoes_nulas": 0,
+    "contadores_tokens_nulos": 0,
+    "violacoes": 0
+  },
+  "integridade": {
+    "hashes_artefatos_verificados": 630,
+    "hashes_artefatos_divergentes": 0,
+    "registros_resumos_verificados": 312,
+    "registros_resumos_divergentes": 0,
+    "arquivos_alertas_verificados": 26,
+    "arquivos_alertas_divergentes": 0,
+    "faixas_alertas_invalidas": 0,
+    "respostas_validas_com_resposta_json": 78,
+    "falhas_com_resposta_json": 0
+  },
+  "oracle_consultado": false,
+  "observacao": "As 14 falhas de formato permanecem preservadas e não foram convertidas em ausência de achados. As métricas deste arquivo são somente descritivas; TP, FP, FN, TN e métricas derivadas dependem de etapa posterior explicitamente autorizada."
+}
