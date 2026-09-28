@@ -46,6 +46,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-executores-ia.p
   produzidos pela infraestrutura experimental;
 - [`docs/FLUXO-E-RASTREABILIDADE.md`](docs/FLUXO-E-RASTREABILIDADE.md): fluxo
   C1–C6, arquivos de agente e implementação das restrições;
+- [`docs/ISOLAMENTO-E-SAIDAS-CURSOR.md`](docs/ISOLAMENTO-E-SAIDAS-CURSOR.md):
+  significado de `Read(**)`, evidência de acesso e localização das saídas C3/C5;
 - [`docs/DADOS_AUDITAVEIS.md`](docs/DADOS_AUDITAVEIS.md): dados publicados,
   inventário SHA-256, licenças e reconstrução dos 26 alvos;
 - [`docs/FONTES_E_INTEGRIDADE.md`](docs/FONTES_E_INTEGRIDADE.md): proveniência,
@@ -65,7 +67,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-executores-ia.p
 - `evidencias/`: inventários e auditorias derivadas;
 - `monografia/`: fontes LaTeX da monografia, separados do artefato experimental;
 - `benchmark/`: cache local reconstruível, não versionado;
-- `docker/regras-semgrep/`: regras locais não redistribuídas por licença.
+- `docker/regras-semgrep/`: regras adquiridas localmente; o inventário e o script
+  de reconstrução são publicados, mas o conteúdo não é redistribuído por licença.
 
 ## Estado das coletas
 
@@ -84,7 +87,8 @@ As auditorias publicadas estão em:
 - `evidencias/coleta-c3/auditoria-m3-c3.json`;
 - `evidencias/coleta-c4/auditoria-m3-c4.json`;
 - `evidencias/coleta-c5/auditoria-m3-c5.json`;
-- `evidencias/coleta-c6/auditoria-m3-c6.json`.
+- `evidencias/coleta-c6/auditoria-m3-c6.json`;
+- `evidencias/publicacao/auditoria-acesso-cursor-v1.json`.
 
 C5 e C6 consumiram o mesmo conjunto congelado de 1.410 alertas C1/C2 por
 repetição. As falhas anteriores permanecem preservadas e nunca são contadas

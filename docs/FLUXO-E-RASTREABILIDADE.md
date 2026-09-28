@@ -60,10 +60,14 @@ C5 e C6 recebem adicionalmente
 revelam a origem do alvo, resultados de outras condições e o repositório
 original não entram no prompt nem na área de trabalho.
 
-Não foram carregados arquivos pessoais como `AGENTS.md`, regras do usuário ou
-skills durante as coletas. A opção Codex `--ignore-rules` e o diretório efêmero
-evitam herança de instruções. No Cursor, a área criada para a tentativa contém
-apenas o schema e `.cursor/cli.json`; o código segue pelo prompt em `stdin`.
+No Codex, `--ignore-rules`, `--ignore-user-config` e o diretório efêmero evitam
+herança de instruções pessoais. No Cursor, a área criada para a tentativa não
+contém `AGENTS.md`, `CLAUDE.md` ou `.cursor/rules`: ela contém somente o schema,
+`.cursor/cli.json` e, quando aplicável, `.cursor/sandbox.json`; o código segue
+pelo prompt em `stdin`. O cliente Cursor nativo ainda dependeu da autenticação e
+do estado global da instalação do usuário, que não foram congelados como uma
+fronteira de segurança. Essa ameaça à validade está registrada em
+[`ISOLAMENTO-E-SAIDAS-CURSOR.md`](ISOLAMENTO-E-SAIDAS-CURSOR.md).
 
 ## Como a restrição foi implementada
 
@@ -87,7 +91,10 @@ A restrição não depende de uma única frase no prompt. Ela possui camadas:
    coleta registrada usou o modo nativo, cujo argumento de sandbox aparece
    como `disabled`; nesse modo, a barreira observável foi a política de
    permissões da CLI mais a rejeição pós-execução. Essa limitação não é
-   ocultada.
+   ocultada. `Read(**)` expressa capacidade potencial, não leitura efetiva. A
+   auditoria dos 193 fluxos de evento C3/C5 encontrou zero `tool_call`; detalhes,
+   saídas e limitações estão em
+   [`ISOLAMENTO-E-SAIDAS-CURSOR.md`](ISOLAMENTO-E-SAIDAS-CURSOR.md).
 5. **Validação local.** `scripts/ia/comum.ps1` valida JSON, propriedades,
    caminhos, linhas, hashes, modelo e eventos proibidos antes de marcar uma
    tentativa como concluída. A IA não decide se a própria saída é válida.

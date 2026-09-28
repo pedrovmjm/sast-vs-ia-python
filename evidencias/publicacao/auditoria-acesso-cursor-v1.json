@@ -1,0 +1,1305 @@
+{
+    "schema_version":  "1.0",
+    "tipo":  "auditoria-acesso-cursor",
+    "conclusao":  "Read(**) concedia capacidade de leitura relativa ao workspace, mas nao evidencia uma leitura. Nenhuma chamada tool_call foi observada em C3 ou C5.",
+    "escopo":  [
+                   "C3/piloto",
+                   "C3/coleta",
+                   "C5/piloto",
+                   "C5/coleta"
+               ],
+    "fonte_integral_necessaria":  "A verificacao completa requer os eventos locais; eventos que incorporam codigo de alvos nao redistribuiveis permanecem fora do Git publico. Seus SHA-256 continuam registrados nos manifestos e neste inventario derivado.",
+    "criterios":  {
+                      "tool_call_permitido_observado":  0,
+                      "tool_use_ou_result_block_observado":  0,
+                      "cwd":  "termina na area execucoes/ia/\u003cfase\u003e/\u003cexecucao\u003e/\u003ctentativa\u003e",
+                      "arquivos_workspace":  [
+                                                 ".cursor/cli.json",
+                                                 ".cursor/sandbox.json somente quando criado",
+                                                 "schema-relatorio-ia-v1.json"
+                                             ],
+                      "cli_allow":  [
+                                        "Read(**)"
+                                    ],
+                      "cli_deny":  [
+                                       "Write(**)",
+                                       "Shell(*)"
+                                   ]
+                  },
+    "cenarios":  [
+                     {
+                         "condicao":  "C3",
+                         "fase":  "piloto",
+                         "tentativas":  4,
+                         "concluidas":  1,
+                         "falhas_preservadas":  3,
+                         "respostas_json_validas":  1,
+                         "arquivos_eventos":  4,
+                         "bytes_eventos":  138475,
+                         "tipos_evento":  {
+                                              "assistant":  2,
+                                              "result":  2,
+                                              "system":  2,
+                                              "thinking":  651,
+                                              "user":  2
+                                          },
+                         "permission_modes_evento_system":  {
+                                                                "default":  2
+                                                            },
+                         "tool_calls":  0,
+                         "tool_use_ou_result_blocks":  0,
+                         "eventos_system_com_cwd":  2,
+                         "cwd_fora_da_area_da_tentativa":  0,
+                         "cli_json_validados":  4,
+                         "workspaces_com_arquivos_inesperados":  0,
+                         "tentativas_com_sandbox_nativo_desabilitado":  2,
+                         "eventos_inventario":  [
+                                                    {
+                                                        "caminho":  "resultados/ia/piloto/C3-ALVO-0001-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  0,
+                                                        "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/piloto/C3-ALVO-0001-R01/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  0,
+                                                        "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/piloto/C3-ALVO-0001-R01/tentativa-003/eventos.jsonl",
+                                                        "tamanho_bytes":  53122,
+                                                        "sha256":  "beaeeca927f0edd05550184b9ceb676a8ff5784f6c940599bed97235d9b937aa",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/piloto/C3-ALVO-0001-R01/tentativa-004/eventos.jsonl",
+                                                        "tamanho_bytes":  85353,
+                                                        "sha256":  "70d9f0670801eee6ebd5ca0ae108de95e69f4b2164b718e42f93825b35c12363",
+                                                        "tool_calls":  0
+                                                    }
+                                                ]
+                     },
+                     {
+                         "condicao":  "C3",
+                         "fase":  "coleta",
+                         "tentativas":  97,
+                         "concluidas":  78,
+                         "falhas_preservadas":  19,
+                         "respostas_json_validas":  78,
+                         "arquivos_eventos":  97,
+                         "bytes_eventos":  9035680,
+                         "tipos_evento":  {
+                                              "assistant":  97,
+                                              "result":  97,
+                                              "system":  97,
+                                              "thinking":  17871,
+                                              "user":  97
+                                          },
+                         "permission_modes_evento_system":  {
+                                                                "default":  97
+                                                            },
+                         "tool_calls":  0,
+                         "tool_use_ou_result_blocks":  0,
+                         "eventos_system_com_cwd":  97,
+                         "cwd_fora_da_area_da_tentativa":  0,
+                         "cli_json_validados":  97,
+                         "workspaces_com_arquivos_inesperados":  0,
+                         "tentativas_com_sandbox_nativo_desabilitado":  97,
+                         "eventos_inventario":  [
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0001-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  24944,
+                                                        "sha256":  "53cec260cf8cba106247a88e12098a923f9d96ef20836eb3f75aad1d9ec21745",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0001-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  47051,
+                                                        "sha256":  "89b8a742439be33acd232b72173f5c5afcc307921c13461543e991d8072952b0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0001-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  26162,
+                                                        "sha256":  "c2bb49dbd38a564f2998dd2228aef4dd61b3d7cd832eb3136d9978b7f0288fc2",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0001-R03/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  37080,
+                                                        "sha256":  "760f324edca94e9adb7064d253cb71d334874a23306c9882e39c8e0ddd80aa2a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0001-R03/tentativa-003/eventos.jsonl",
+                                                        "tamanho_bytes":  38826,
+                                                        "sha256":  "6575da1c783c45c3fe8e67b576bde241ecbf15420c2181955b5dd5dc11a7cf63",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0002-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  132490,
+                                                        "sha256":  "9a940fcc9a73f72350d9ee3171f2adba174cff26e8d6362a566968e94950014d",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0002-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  175249,
+                                                        "sha256":  "63d37d8c2a19538dd295624a2ad03246b7a3aace68c21a51740850f99dff7fca",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0002-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  141136,
+                                                        "sha256":  "33687548ca64f2a7b7479f805ad6c52127dbfeb86a86814b80ce22959355c5b1",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0003-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  326609,
+                                                        "sha256":  "078264bd0604f35b382603eda2b62b7239185a2f194a7d10ff24a45638661c18",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0003-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  346876,
+                                                        "sha256":  "050738741573061f7a87d6212bd8c9a2116fbb0cea95481471c925969e4a6f25",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0003-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  360136,
+                                                        "sha256":  "efdd02cd67d6b6e3fed54d5b1bc34dcc56ef4d8d34c13df940c25a14d1c529c6",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0003-R03/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  377960,
+                                                        "sha256":  "f1e940bac3dfb0808c4abe857ea9f0a1bf76e88b3942b1e87f225aaaacc2c715",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0004-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  82107,
+                                                        "sha256":  "0b4d7baae8b51d7699bb9110c86c7f3e51caf130937904482b182c02e733b96c",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0004-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  116074,
+                                                        "sha256":  "cd714d5132ae09484be73ba89283187c26be87f0347292a15b3cf39daa551f51",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0004-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  100595,
+                                                        "sha256":  "66143471e8505d203f96cfc157b62f9bcd562438ac5d6653a62534e7fb1ba2a4",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0005-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  49354,
+                                                        "sha256":  "6bae8c20957f1cb16a0bde679f2933254c2ad07f3be2a35933bdb8372f1d4780",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0005-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  48612,
+                                                        "sha256":  "dd72364ea9760d4cc847caeee1e3bcd2698509f21ed336a9fcd8682612e351fc",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0005-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  73980,
+                                                        "sha256":  "864d28dc613fa0b76c0c7a3accb2ad4973a671d06468db6346ccc66e6a3eacef",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0006-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  60274,
+                                                        "sha256":  "e8282a79b200feabb88d7f583a6c8618b5f9ac4fe41bd614cc864170a2c8b563",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0006-R01/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  87616,
+                                                        "sha256":  "cd2f4e9a256f09bc40dcdb8e414cd79e119ad146cfb1833afa44b4347390556a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0006-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  62408,
+                                                        "sha256":  "6326a5cdf4bbca193ccf5bd708d812db607c4578f76bfe480cd8445e7e057383",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0006-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  50541,
+                                                        "sha256":  "96f6df6eb857b46b73c34036db3098701a151efcd084693bda23ce054c7511e8",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0007-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  102778,
+                                                        "sha256":  "5ffc09be2f2597e1aaf4bada845c82cfc31f0ae73cba4bd29c8826c9af59f5d6",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0007-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  63968,
+                                                        "sha256":  "2b454473ebe4246bd617528a055c3f1de86a100cca2ae8343ff5687d49bdff98",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0007-R02/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  64340,
+                                                        "sha256":  "8596f3d244f6fa7d76ed0473589e4e6c81d208fb34e6c4364e55f9d1f94c3900",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0007-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  64178,
+                                                        "sha256":  "442e9009865003199e7decc9477fef6f171e105f1e1a68aba114e7a2a8389d93",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0007-R03/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  81455,
+                                                        "sha256":  "b8420ffeff2a40dbfbbe7305eed37b6e70e99a3195984832c6190fc1f34fbfe0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0008-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  90199,
+                                                        "sha256":  "4baaa91380e12ae08fac9b2227943a4e10fff64d1bb222422d63627ccf60866f",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0008-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  57403,
+                                                        "sha256":  "effff5520a33863509515d920e7c35a99f9dd878e4a3ebe33a574049d556a4a5",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0008-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  92995,
+                                                        "sha256":  "8decddef3ba144ca9c2768d0cc5373467a335b7af12b24c76647b76610597501",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0009-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  53674,
+                                                        "sha256":  "0989a34820581c3da0e6bb41aac0d674d4857a6046f3c40ad4adc7fda9b2b3b0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0009-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  82005,
+                                                        "sha256":  "abccc17c367c4d0a6b6c222c3c2d02bd03af3ef3bee4ac3901465db5213541b3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0009-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  40978,
+                                                        "sha256":  "453db07c510022f8e3308e63a2afa480e554630c9752e14609daf5f2b3c9ab58",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0009-R03/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  38924,
+                                                        "sha256":  "19204b692235181f74acd1c984c2e82057a04dd66be4e87933e9e70eed30131d",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0010-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  57533,
+                                                        "sha256":  "545b4716f2cc941d902cf83f56212b3073e2468bca3a0d9483d4d498d8ba47f5",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0010-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  14267,
+                                                        "sha256":  "b59d080888d0aca5f3b99a390c23e05b111cb7a32b6ea066433eb8c53663f9e1",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0010-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  14499,
+                                                        "sha256":  "4414e2af6fd75a66569c04ad67f2c7f2fdf6071c4780b2930a063ae1e4e7967a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0011-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  40245,
+                                                        "sha256":  "8d143d122a1f375ecbf9ee99fc88c44f021316713fa44417ec1ebd049c0b696a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0011-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  25388,
+                                                        "sha256":  "a4c1bb33cccc3590021e15d633cfc02509c18357aafeba533c663dd5c03ca34a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0011-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  40462,
+                                                        "sha256":  "3375e581f555ee7d1b30bad1846f60ee4f23a583d51994921e0f4aa18b56dd1a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0012-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  64742,
+                                                        "sha256":  "53bf6abb6f8c7b882a366a9e45bc10d7dcc597e26c3a1aef4c7f653c78b950f7",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0012-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  87447,
+                                                        "sha256":  "3c5b664d8886af24ca71589e847601b8697535d967005686f10d2bebc62390ec",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0012-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  81600,
+                                                        "sha256":  "9ea927b6b6eecf7e775df30be29a6a4bc9e406f614e51d63e88023c724a0189b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0013-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  118255,
+                                                        "sha256":  "d225aa76420c2bea5e94b6e3a5acabe92588bc8a9bbc36d534d91149752f353c",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0013-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  70640,
+                                                        "sha256":  "27c6af30110c11e9191ec509a9505f26cbc94564a1a8c3fde94d61331fe37677",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0013-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  108235,
+                                                        "sha256":  "04a9a49d7e4f442d3452a2f1df03f5d3e7e0d7a9d771c59ed16b684035ca7828",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0014-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  233463,
+                                                        "sha256":  "b22b9b2fcda8ac1d75aab7a35914b8e465dc927229b394d966d8627aa6de19df",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0014-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  228337,
+                                                        "sha256":  "21d264d3317af20d26e36182bb1ef3e07ba7f360b6a9e3ea3034a3668b06e03d",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0014-R02/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  283115,
+                                                        "sha256":  "189f4c3d83a44735c673792fe62806c2d0e80626bc9eb7a8a6f0e71bab5ba8b0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0014-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  296297,
+                                                        "sha256":  "75b6f7b5851c7eb3b18d1aa987c0744bf8f3c8ea234e8fbfa9f8370e6cecc327",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0015-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  64264,
+                                                        "sha256":  "6e52f572eaea262c416e7e24ba935c428ebd3a36d49a01c688153ec930224870",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0015-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  76473,
+                                                        "sha256":  "d4441e4bb622db0a70b68a0ef50fd731936d1ca21b933537f12ca82474d77eaa",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0015-R02/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  87958,
+                                                        "sha256":  "c06f8918044bbbbfe2a7581cffe421ebc6415592d38f148f1be1e8002ffd2e6b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0015-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  40848,
+                                                        "sha256":  "154d676f808e9d7a6d849083a2add159a5bc17418e6b91a5881469dcf2efa2f9",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0016-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  13258,
+                                                        "sha256":  "832667d434b5acc513084eaefd7f64bb7173df178c475f755073a2b223978fb8",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0016-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  41081,
+                                                        "sha256":  "0cea751c02c126874481e9d8ccb618012ba2671cb38955649173c098a4b89ef0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0016-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  27020,
+                                                        "sha256":  "cc25a0e0f9106a9c3c1c30207d9efb475447a86ff0c317514cc8e9b026485ed3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0016-R03/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  14274,
+                                                        "sha256":  "4740629e1318aa13ee8337bdc5a62024092a626d93b55761c4b87d637997801e",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0017-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  9565,
+                                                        "sha256":  "26ae0d8fbcdb792822f2a94d87975e4782f5b4b61f8b66317b805cc8c3d3ff14",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0017-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  9393,
+                                                        "sha256":  "d461acdc70ffc2a3f8371ae302ce72da971d1ed6d2a5cf7f8e6c9071ba378b40",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0017-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  9721,
+                                                        "sha256":  "10eb6898d53b17053ee18d213af661f55b7f918dfebc20a2f51c5302055d9c7d",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0018-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  102533,
+                                                        "sha256":  "51dba47889fe25173b1833669c3cee35ac241113f02c3c026ecef946eb8b61a0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0018-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  70089,
+                                                        "sha256":  "675cf326f52d3dceab1ddc2f81697d684f593e52a61ff54ae63cfb22d103e194",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0018-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  83516,
+                                                        "sha256":  "532d09e0133adc27a08023676217436101688a36dcaca247549c007bb1667a2e",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0019-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  52522,
+                                                        "sha256":  "2d8d908e8debc0eec705e7bd6cc7eed6da6e1039af3470c5d5bdf4eac7e0597f",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0019-R01/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  96105,
+                                                        "sha256":  "b5b40fc08362ddbebd6b2b805cd297c6c80f60d2219993659cf539548cd349e2",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0019-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  56277,
+                                                        "sha256":  "b70ac67ade2991a6e9694e0428a19e4dc14a845b5fdf2a0be5523b57017e3e9b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0019-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  53596,
+                                                        "sha256":  "08a56e59dcdb410e9b96d47d272bed6f0d5b10639f7d73da33795c3072fb5f51",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0020-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  66402,
+                                                        "sha256":  "5f4480c1021f49e7a9e4f741b8bd76b0626b5e196cb5d04aa13eeec881f80863",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0020-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  39987,
+                                                        "sha256":  "dc0c0bf5eb73cb5ce10706fb25e1920fb0191117cb257793d71c2310d8fc26af",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0020-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  28982,
+                                                        "sha256":  "365da0837800cde06216f99a2164ab1f7bb6b7db4fe71b8e1267d38959584185",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0021-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  18758,
+                                                        "sha256":  "c649d65948f543c3d7a0afcabdaf316f70d1d492327f906899e9a8d6a1e96aeb",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0021-R01/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  18222,
+                                                        "sha256":  "01ba91a949e2f934d61c400034a5ca6e040aa2cf06fe84abf7eb904647dc8f80",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0021-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  59040,
+                                                        "sha256":  "b6c9f94930d376900b0e81c4bf16d9e68b39bcfcb7da79d12e544d7caf25689a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0021-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  74990,
+                                                        "sha256":  "8dfd1108752379b33a97735edd8ef4ecc278fdc357a22d2e04c84bd5a6bf8fe3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0022-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  87652,
+                                                        "sha256":  "0680a3a511c250c79b09614f034f7832b6920826dc91bac7c61c24500e919026",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0022-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  55325,
+                                                        "sha256":  "bc168112ff5f7f9b1c69294ef124f1e8899db36b5ebcf2f4cfa6eff489515446",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0022-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  138275,
+                                                        "sha256":  "b46a7e762dc5b5da39ec90f707706a2b53c9b94dedc27a0df21e017cc11287f1",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0023-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  58288,
+                                                        "sha256":  "4669f8aad5eaa9c0833f4a66c3de9ad3ebe38d303af350753cab384be46c1773",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0023-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  58552,
+                                                        "sha256":  "fe0badaa96452c93abb1095494ecfe91f15aa69190412b86c4d0365c31037572",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0023-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  74867,
+                                                        "sha256":  "c6da96b282ddc81da1f37500c64c809e8b8c03e76119ed2274b4d2ce900323ba",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0024-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  18762,
+                                                        "sha256":  "7434079d3028272426242917a90a6b2afa368c64fe0c9f1de81db89177ab02b3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0024-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  18802,
+                                                        "sha256":  "7179f4b005fbcc1d324e50d2641ab5c84a8654304293c48281c54e1c8674eacf",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0024-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  30819,
+                                                        "sha256":  "b2a692badee733a568776e41d52a7035da64c9ed3f1cb789940c1c6358ecc841",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0025-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  243974,
+                                                        "sha256":  "c2e3e58be30db2f3e94865b16c3bd75c592c2af4c79e871c447b029943d55ed2",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0025-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  194693,
+                                                        "sha256":  "1f590aa41a827a9f4bbbba76be5a771afc766f7342afb886c43909986134b496",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0025-R02/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  167711,
+                                                        "sha256":  "5583dd7cf0a783ddf1d2206418f18d849e466fe4db279b1798d3eb22515d6bdb",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0025-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  171684,
+                                                        "sha256":  "f5db8908ca62cfcc52a1afeb3341c42683d5f2972ab7e17d8b07f97d7bac6838",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  158891,
+                                                        "sha256":  "2c50cd00b1b47d5f49f5f4dc3b33636a551354538183950d457286f4edc790a1",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R01/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  110489,
+                                                        "sha256":  "210a08caaaaf2a4bdfd62d8f4d3051de9be8212e6898614ff8da7828f5b8bbea",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R01/tentativa-003/eventos.jsonl",
+                                                        "tamanho_bytes":  126402,
+                                                        "sha256":  "95be8864afcd60a9e37f9398d0b828ea6af1c83024942826b275f155f06a53c5",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R01/tentativa-004/eventos.jsonl",
+                                                        "tamanho_bytes":  124405,
+                                                        "sha256":  "e825cddd06df85d08aabbd375a65c7c495e396b36739b43b8c3b469a91fb10ef",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R01/tentativa-005/eventos.jsonl",
+                                                        "tamanho_bytes":  117152,
+                                                        "sha256":  "c97a7c405adb7f835ef4b2a4a437d66525adb7fb2f8263033887e1bc18407265",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R01/tentativa-006/eventos.jsonl",
+                                                        "tamanho_bytes":  128527,
+                                                        "sha256":  "e191c337a0bcca8cc5c0293d50eac62c1792ec770148da09865b62e7b4535514",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  110678,
+                                                        "sha256":  "b5720c4ee0f5b632726af66d0712cef5bead3e7c2fbbf13d8f8e64078fe966e3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R02/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  113077,
+                                                        "sha256":  "fb423edbedc5fbce8a8f143ad5a73a9f0027c43fd72bedeb55a4071c2f2c8dc0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C3-ALVO-0026-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  148279,
+                                                        "sha256":  "abd92fdb4b31eb1e7f662a0a74ba68ca1c5a1543f9f787edfe7bee126359013a",
+                                                        "tool_calls":  0
+                                                    }
+                                                ]
+                     },
+                     {
+                         "condicao":  "C5",
+                         "fase":  "piloto",
+                         "tentativas":  1,
+                         "concluidas":  1,
+                         "falhas_preservadas":  0,
+                         "respostas_json_validas":  1,
+                         "arquivos_eventos":  1,
+                         "bytes_eventos":  60804,
+                         "tipos_evento":  {
+                                              "assistant":  1,
+                                              "result":  1,
+                                              "system":  1,
+                                              "thinking":  162,
+                                              "user":  1
+                                          },
+                         "permission_modes_evento_system":  {
+                                                                "default":  1
+                                                            },
+                         "tool_calls":  0,
+                         "tool_use_ou_result_blocks":  0,
+                         "eventos_system_com_cwd":  1,
+                         "cwd_fora_da_area_da_tentativa":  0,
+                         "cli_json_validados":  1,
+                         "workspaces_com_arquivos_inesperados":  0,
+                         "tentativas_com_sandbox_nativo_desabilitado":  1,
+                         "eventos_inventario":  [
+                                                    {
+                                                        "caminho":  "resultados/ia/piloto/C5-ALVO-0001-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  60804,
+                                                        "sha256":  "9e3b48556fafa7fa9cf7aba1f187ddfcdc892a2683592b107f37c2bce4b4dd94",
+                                                        "tool_calls":  0
+                                                    }
+                                                ]
+                     },
+                     {
+                         "condicao":  "C5",
+                         "fase":  "coleta",
+                         "tentativas":  91,
+                         "concluidas":  78,
+                         "falhas_preservadas":  13,
+                         "respostas_json_validas":  78,
+                         "arquivos_eventos":  91,
+                         "bytes_eventos":  12302353,
+                         "tipos_evento":  {
+                                              "assistant":  91,
+                                              "result":  91,
+                                              "system":  91,
+                                              "thinking":  16561,
+                                              "user":  91
+                                          },
+                         "permission_modes_evento_system":  {
+                                                                "default":  91
+                                                            },
+                         "tool_calls":  0,
+                         "tool_use_ou_result_blocks":  0,
+                         "eventos_system_com_cwd":  91,
+                         "cwd_fora_da_area_da_tentativa":  0,
+                         "cli_json_validados":  91,
+                         "workspaces_com_arquivos_inesperados":  0,
+                         "tentativas_com_sandbox_nativo_desabilitado":  91,
+                         "eventos_inventario":  [
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0001-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  87228,
+                                                        "sha256":  "c6238cf305d4e61c1a25dd161f264273dfa10bfc768e555b57e3eb5641051aaf",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0001-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  110050,
+                                                        "sha256":  "069c56b223629a3fcb5393584a8048df55d22e9a054e74b72e8b4fee2e490b50",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0001-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  63320,
+                                                        "sha256":  "362a2b32cbaff2a2dae9547e06f022f96932872833a3bb38731a5846ca17b0e6",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0002-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  248830,
+                                                        "sha256":  "c3704348b50ca4073b1b0485f0d608d2139c016e0bd813f221f0e9809a0fb9c9",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0002-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  242784,
+                                                        "sha256":  "adf3b4b37e39cf55ea04666ca0e50bb51d902476177b25c02aa8173049d085c4",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0002-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  266568,
+                                                        "sha256":  "a0dace46416384d4769798e247715d3d23e6c9510c40fdab864c4bf6d99c04bb",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  428000,
+                                                        "sha256":  "68ef31a7371a749a760cec775d322039631e3386a28903a7102d0b0b95e6fccb",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  420486,
+                                                        "sha256":  "aea6b2768abee7ddfcb7cf490084b17aa76e4cc64d05bd7d989d5a8894df8b1c",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  390643,
+                                                        "sha256":  "002dbc18a959e87e14ae135ae861792222f28a2f5b311304e0b47791af5af4a0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-003/eventos.jsonl",
+                                                        "tamanho_bytes":  389995,
+                                                        "sha256":  "363e62b12bf0ea91ab1aab5f832ba04cf65a0808663b497dcf49a942aa61264d",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-004/eventos.jsonl",
+                                                        "tamanho_bytes":  457310,
+                                                        "sha256":  "1587151a3534f8fc68b89eb8ed6cda1a05c31c0f2f6f89a3ca8ba8cd8e923c11",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-005/eventos.jsonl",
+                                                        "tamanho_bytes":  401142,
+                                                        "sha256":  "1c748a370a20a3bb64db3d040be54665e7d13da7de0443ea66dac9858cd7602b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-006/eventos.jsonl",
+                                                        "tamanho_bytes":  416276,
+                                                        "sha256":  "dc128e8a4186fea47ec8c201650d643f825d1939edb3008926a45dac4e4bb334",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-007/eventos.jsonl",
+                                                        "tamanho_bytes":  401743,
+                                                        "sha256":  "8e8e1d5e33456e97901bc9374bd23d5e51f379153b6ee577be0720bd9b2ed88f",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R02/tentativa-008/eventos.jsonl",
+                                                        "tamanho_bytes":  402861,
+                                                        "sha256":  "56639892a5cc919b7d400c38d0685277568e4b276cf655161f306ccd7fe44b1f",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0003-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  462552,
+                                                        "sha256":  "05dedb9238453c759a0402a5483643762ff9a1e8aee5e63fca0e96c4e568a846",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0004-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  109233,
+                                                        "sha256":  "54c1637e6c1719203f11f24dd0ff62bf9d44e40749a1479e19a57f0c27cef82a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0004-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  95272,
+                                                        "sha256":  "3140776440122dacb00b4da3cd1d287267cb33814b9c9d0de514e93597ad063c",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0004-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  87933,
+                                                        "sha256":  "b2090ec565ef96637117554bd1159e06084f38ff99b0fc414f93cd0ad47625be",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0005-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  121827,
+                                                        "sha256":  "6fe48474abd55e475ef923a01f777fde48c8a436bc9f7a9a3ceb78cb888576e0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0005-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  74884,
+                                                        "sha256":  "d8793d7ca73ab32b4fa8f958f042c780aa337340cad6bb4bbeeb6d0cdc02fee2",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0005-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  85018,
+                                                        "sha256":  "5280d16fc3e74adc491d5fa5e1402e3fb34a98a8699a84d3b240f386bbaef497",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0006-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  78925,
+                                                        "sha256":  "0e73cca78fa4c8a50682ebca1e4c8916fde9dff4e564a5aff2a13c242eb3937a",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0006-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  113830,
+                                                        "sha256":  "18f247b73d0cf66b70830851cc1b69cf936bd2a00ec0bffc113d7ceeb36cf706",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0006-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  117732,
+                                                        "sha256":  "8089d3bf6361d3cc6b06c30312b1efd4da1405ce64177ab01d329b3a7d3d9c91",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0007-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  84125,
+                                                        "sha256":  "de4bd483abf4059def855fcb9bf7e75d7da9c7ebd7cc2b676c682955d16beccc",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0007-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  56249,
+                                                        "sha256":  "6e884699b8459a68420f5d5fcde4065a29bfd51d7b3a5d5726f75c01b12f9a9e",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0007-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  88937,
+                                                        "sha256":  "f0e7a7db7ccc0249a2906e802154d962b870f542c010a21e43e3460528eb829b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0008-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  67129,
+                                                        "sha256":  "13cd734c5755ad66bca7719b113add9c6481dc02da2a3ae0c251296699184e5b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0008-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  94633,
+                                                        "sha256":  "9977ad5e71c6dc398a3306ae41d738d2fe80091012eff59df4c39d7926703842",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0008-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  90501,
+                                                        "sha256":  "b11cfef9f3a427786642dfc735db5b396caad2bf6b8c405e90e17725a5b5d46b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0009-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  63414,
+                                                        "sha256":  "94d719ba88b20ac02221ec228819b626cb477dd5d7700a6196cdc1d811039279",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0009-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  53065,
+                                                        "sha256":  "71b71e0bed6cb730a93ed448cffbbc1a0e18ed746efabbe3fca37121178291ae",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0009-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  53933,
+                                                        "sha256":  "d93c1b88b67b7e7140b0d45a5b7ea4c5676579092790de4066525317f7269aa9",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0010-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  25118,
+                                                        "sha256":  "7e68791b8c1e519d6a8973a8a30e673ba20fbd8025306fe31100d9935c40cc51",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0010-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  25009,
+                                                        "sha256":  "738a90a7ededb590569e7fc8268aefa8f3ef99ea2785df4427b46e3b1cbcd72f",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0010-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  25707,
+                                                        "sha256":  "1cca9fc9a362ac8dbb0efbe8be7071cb127184e2994a696b25d45564a0736c19",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0011-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  22269,
+                                                        "sha256":  "380c4bf76ca4c9ba3f149d2fcd114389df4252a5a2fc073a40ee37d2f86a1223",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0011-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  22322,
+                                                        "sha256":  "b9670c192c3ed5edf997353f7761d8ad704a9991704485f4ab4f4a4c279496ed",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0011-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  21430,
+                                                        "sha256":  "69879fbbaf82877df12ec73f65a8067ae59487c81ca628237b605aa143d6ba25",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0012-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  115121,
+                                                        "sha256":  "5c00f5c5b83b61d6bfc622c86c41852e178f57d258ac91ebb46b4a6c3e8407cb",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0012-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  98588,
+                                                        "sha256":  "7be5947f9dfe29ceee7e5891d8db20a68746ba2ac55cceb2d8f6038698f4be48",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0012-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  84131,
+                                                        "sha256":  "b334ae000414c74c34a63881945c89fd8ebc192e4f62ac0d975f299ef7b25744",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0013-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  124190,
+                                                        "sha256":  "c44c7d4562b9d11bd9d6920d529bd0a14b9a84b009171b0238e1afd984d837d5",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0013-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  121348,
+                                                        "sha256":  "70e9fbb74b583f74268a2c6751cabf4db91b50234b65d2877f27eb51307e0acb",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0013-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  107411,
+                                                        "sha256":  "282f899a9b4c56e8aa4af9f3d6f198c0aaed8c31c04606356663622e17c05e15",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0014-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  395247,
+                                                        "sha256":  "bf1d429ca80b58ff6050040aa93f073b5a3d4ec95eb22e8810e5bc74239defc9",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0014-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  387743,
+                                                        "sha256":  "8d9d70af76a1ed958c15857a517786cf309b63083e2ca35c2ff3ab58c173a50d",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0014-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  393783,
+                                                        "sha256":  "d2a7069d26aa2667567d31dbf104fc68dbd0b98f70d9051c181edf1edfcbb237",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0015-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  100755,
+                                                        "sha256":  "3a1002e7a21bb19ff10dbee29b66563753800ea6bec341ac9c8831149f2891e2",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0015-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  120900,
+                                                        "sha256":  "1dea71bb8e49f85fae65434552f15523f43d0b0542e59153011f5990cf838267",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0015-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  113153,
+                                                        "sha256":  "931aabdc9fdc668b6914294625063a152cee267cdbc67011befae0ebdabc88ec",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  20542,
+                                                        "sha256":  "e4cac821cf27a57f2133950a84220c9eb827e0bbd19984c42fc6bde481e572d3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  34867,
+                                                        "sha256":  "58b00abae87f7e1ec0771785b2a731633232d69f8c298ba8e54bf0513e67e1b1",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  18424,
+                                                        "sha256":  "5033499fc3a766e6066374e484809a006d5078e9b326480d8a16bff54eb139bf",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R03/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  33031,
+                                                        "sha256":  "7fad5b41b470095f92eb389543479dbf383fcd86bbb96014d3b24cf739f19ec0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R03/tentativa-003/eventos.jsonl",
+                                                        "tamanho_bytes":  18397,
+                                                        "sha256":  "740d4398e58ab19360d09504ed547c79d424f2be0b79e5225ad3fc3ddccf1ed0",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R03/tentativa-004/eventos.jsonl",
+                                                        "tamanho_bytes":  19785,
+                                                        "sha256":  "a3c100fc906edeea1ea28945262197b48b3b5e8edd3a826b7330facfc03988c3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R03/tentativa-005/eventos.jsonl",
+                                                        "tamanho_bytes":  18643,
+                                                        "sha256":  "d7496eb31c47b6f0acb36a365c22d13fad7cf79771b8ac4f397b2cfbc4814112",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0016-R03/tentativa-006/eventos.jsonl",
+                                                        "tamanho_bytes":  30082,
+                                                        "sha256":  "4d605f31cb62e920b71955df3278362523c09bfcf013e84f54dfeec37e36e869",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0017-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  12585,
+                                                        "sha256":  "a9f43136c42432306e979463f1259a3bb90bb0c5bf0807570bc0b24ce3d50a0e",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0017-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  27275,
+                                                        "sha256":  "f92839a920747bd3845ca96aee79b3123a6ea9dc154eeb4fe20fc51baffa4367",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0017-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  24620,
+                                                        "sha256":  "158805816c8ed931b75225fc8386ccc839422fe10dca979fbaaf6c03b6e7efbe",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0018-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  112440,
+                                                        "sha256":  "17e8c0af00d25e2c9fb4374e64ded97b4bc70322bcc8b3af28d0271c7dd27438",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0018-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  120905,
+                                                        "sha256":  "82e2c6f3f057987a4b956d8a893e103f4df8031fe0954748ab21bbf45e4a9bba",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0018-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  137085,
+                                                        "sha256":  "1480d863d8b3b981e76becb11a741298240a1fb9c853352afc6dbb60ed3d23e5",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0019-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  46158,
+                                                        "sha256":  "ba6c316de583bd8a5dff7f46f750651ae69e9582cf57076ddd977ee39584c05e",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0019-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  70375,
+                                                        "sha256":  "4153f2e5094324f1ace0793d621cbb32670feeefa6c8aeb7f9086bc2699e9c46",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0019-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  92671,
+                                                        "sha256":  "8acc4fa4cf11e9f5ae6a0c8035faa3b85bc95f596cc5459ee09d87eb57014fd5",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0020-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  33885,
+                                                        "sha256":  "b5f2b91d839e12f3687bbf40bcce53e6efeb50093d48a6facc490780e81db4fe",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0020-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  57338,
+                                                        "sha256":  "e30c3de73aed7284f45096a972ada5b13203063f85d8aa2e202702184393b70b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0020-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  43813,
+                                                        "sha256":  "ebb817d8eb40395b50f06d43ffb9a6f89dbadfae7aa7a15f211131375ab3ad09",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0021-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  44972,
+                                                        "sha256":  "2d39189a19b03d709f3fc5dcd4f0f31e6b7361a40be5dc09f701325f23433d57",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0021-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  41538,
+                                                        "sha256":  "2df0fa32825d13bbe6d5ac3d2a54959f9561684c5ad57708dbb557925ddf64f5",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0021-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  41153,
+                                                        "sha256":  "d65840cb4b3781bd8010d5d37b68e098d008f6dd8d8a2576321d0531fde8355b",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0022-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  104097,
+                                                        "sha256":  "48ecf758d7a12b2fd9a3d7adb5218426e5ce44613bc4853107cb5bb458d1988c",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0022-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  101372,
+                                                        "sha256":  "5acfbacc5c5b5e6e604c1d5ac9eaca0b41f192da8b51c4cc9b8ae435b9086296",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0022-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  63658,
+                                                        "sha256":  "64f7b24c437ee5dd582a9f1099bb5def80984e59645666fca414570985127fe1",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0023-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  72323,
+                                                        "sha256":  "47522025fbeac50f5f3ab20ba1583e8722e63ff47432f0d7ccb7a04dd3418b6e",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0023-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  83274,
+                                                        "sha256":  "d94103869cc5a6e15c2889190870f77934e0b75ed29f41e92a7033c063925c44",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0023-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  84124,
+                                                        "sha256":  "0aab2622d699a6da2f4088b14dc1ba413e173e6b4b49c5310306db6e8d5d65ce",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0024-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  96598,
+                                                        "sha256":  "cb7c0bdf34cc588c6ad7247b3e855139e02dcee2206b1352515c6a95dbb6db60",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0024-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  35426,
+                                                        "sha256":  "1d232cd22f47b27b7b9baea4943f3a4e9057aac9a5c358f067f9225296404d3f",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0024-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  34723,
+                                                        "sha256":  "351d7999bee8e56d86ccc01ea5bae67efe21c40ed1806326908749163756f5c8",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0025-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  226322,
+                                                        "sha256":  "d01d585a78128c51e79c2ee983a950fa04017d5b963913c097f3c94137c1b9b3",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0025-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  242778,
+                                                        "sha256":  "45733129ec69c480e8cbd8e5d88608aff98a529ea2aa23e6987216fc9d4935e1",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0025-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  234755,
+                                                        "sha256":  "f776f53984806362f48896c7adc959d86ac40a8a767c9703913b68a659604279",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0026-R01/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  195749,
+                                                        "sha256":  "0c1c63ef4700a39c009705d140f4af5a2eae03d2fb92917ccc0ef2d8257dcf72",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0026-R02/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  222794,
+                                                        "sha256":  "f55078ad73643794c649e77bbfde03732fe87ee6b51021067898b1700f42bc4e",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0026-R02/tentativa-002/eventos.jsonl",
+                                                        "tamanho_bytes":  180298,
+                                                        "sha256":  "ab473795b122aebfcf26a396ba19f1a39ba1c61d499ef19b9a98f349b0281541",
+                                                        "tool_calls":  0
+                                                    },
+                                                    {
+                                                        "caminho":  "resultados/ia/coleta/C5-ALVO-0026-R03/tentativa-001/eventos.jsonl",
+                                                        "tamanho_bytes":  192825,
+                                                        "sha256":  "489fb9dd83767a1cdb51f71b6255f90f8c9c6ed5d186ce30940754475a1d161a",
+                                                        "tool_calls":  0
+                                                    }
+                                                ]
+                     }
+                 ]
+}

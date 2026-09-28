@@ -13,24 +13,29 @@ Execute os comandos a partir da raiz deste repositório.
 
 ## 1. Adquirir as regras Semgrep fixadas
 
-As regras não são redistribuídas porque possuem licença própria. O commit permitido é `40b8c63f75dc7c22c8a77482d73bfb864b146f7e` e somente `python/` entra no bundle local.
+As regras não são redistribuídas porque possuem licença própria. O commit permitido é `40b8c63f75dc7c22c8a77482d73bfb864b146f7e` e somente `python/` é fornecido como configuração ao Semgrep.
 
 Em uma cópia nova do repositório, execute:
 
 ```powershell
-New-Item -ItemType Directory -Path benchmark -Force | Out-Null
-$fonteRegras = Join-Path (Resolve-Path benchmark) "semgrep-rules-t02"
-git clone --no-checkout https://github.com/semgrep/semgrep-rules.git $fonteRegras
-git -C $fonteRegras config core.hooksPath NUL
-git -C $fonteRegras config core.autocrlf false
-git -C $fonteRegras config submodule.recurse false
-git -C $fonteRegras checkout --detach 40b8c63f75dc7c22c8a77482d73bfb864b146f7e
-New-Item -ItemType Directory -Path docker/regras-semgrep -ErrorAction Stop | Out-Null
-Copy-Item -LiteralPath (Join-Path $fonteRegras "python") `
-  -Destination docker/regras-semgrep/python -Recurse -ErrorAction Stop
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File scripts/adquirir-regras-semgrep.ps1 -AceitarLicencaSemgrep
 ```
 
-Não execute hooks, submódulos, testes ou outros arquivos adquiridos. O gate confere que a árvore `python/` contém 717 arquivos e possui SHA-256 canônico `29eb41850a07fee98955446524423ddd9e9f5040cbf7e301788b791386ee8309`. Uma divergência bloqueia C2.
+O parâmetro confirma que o usuário leu e aceitou a
+[Semgrep Rules License v1.0](https://semgrep.dev/legal/rules-license/). O script
+não executa hooks, submódulos, testes ou arquivos adquiridos. Ele materializa o
+checkout em uma área temporária, remove os metadados Git e compara os 732
+arquivos com o inventário publicado. A árvore `python/` deve conter 717 arquivos
+e possuir SHA-256 canônico
+`29eb41850a07fee98955446524423ddd9e9f5040cbf7e301788b791386ee8309`.
+
+Para verificar uma cópia local já adquirida:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File scripts/adquirir-regras-semgrep.ps1 -Verificar
+```
 
 ## 2. Construir e verificar o ambiente
 

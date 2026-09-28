@@ -58,6 +58,9 @@ e versionado.
 
 O mapa completo de executores, arquivos entregues e controles de restrição está
 em [`docs/FLUXO-E-RASTREABILIDADE.md`](../../docs/FLUXO-E-RASTREABILIDADE.md).
+O significado de `Read(**)`, o diretório efetivo do Cursor e a localização das
+saídas C3/C5 estão detalhados em
+[`docs/ISOLAMENTO-E-SAIDAS-CURSOR.md`](../../docs/ISOLAMENTO-E-SAIDAS-CURSOR.md).
 
 ## Referências de elaboração
 

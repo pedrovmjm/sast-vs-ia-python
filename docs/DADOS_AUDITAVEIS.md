@@ -50,8 +50,11 @@ Os snapshots integrais publicados são:
   inventários já registrados;
 - `docker/regras-semgrep/` não é publicado porque o Semgrep Rules License 1.0
   permite uso, mas proíbe disponibilizar as regras a terceiros. O commit e os
-  hashes permanecem em `config/fontes.lock.json` e
-  `docs/FONTES_E_INTEGRIDADE.md`.
+  hashes permanecem em `config/fontes.lock.json`, no inventário
+  `evidencias/publicacao/inventario-regras-semgrep-v1.json` e em
+  `docs/FONTES_E_INTEGRIDADE.md`. O script
+  `scripts/adquirir-regras-semgrep.ps1` reconstrói e verifica o pacote após o
+  usuário aceitar explicitamente a licença.
 
 Para esses dez alvos, `payload-codigo.json`, `prompt.txt` e os eventos Cursor
 também ficam fora do Git, pois incorporam o código integral. Manifestos, hashes,

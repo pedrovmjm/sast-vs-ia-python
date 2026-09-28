@@ -43,11 +43,22 @@ O engine Semgrep CE é LGPL-2.1-or-later, mas as regras mantidas no repositório
 Consequências para o TCC:
 
 - `docker/regras-semgrep/` será gerado localmente e ignorado pelo Git;
-- origem, commit, lista de arquivos e SHA-256 do bundle serão publicados;
+- origem, commit, lista dos 732 arquivos, tamanho e SHA-256 individual são
+  publicados em `evidencias/publicacao/inventario-regras-semgrep-v1.json`;
+- `scripts/adquirir-regras-semgrep.ps1` automatiza o checkout esparso e recusa
+  qualquer árvore que divirja do inventário ou do hash `python/` congelado;
 - durante a análise, Semgrep usará somente essa cópia local, com `--metrics=off` e `--network none`;
 - se os termos não forem aceitáveis para o uso acadêmico concreto, C2 ficará bloqueada até esclarecimento do mantenedor; não será trocada por regras escolhidas depois de observar resultados.
 
 Na T02, o commit foi adquirido com hooks, submódulos, conversão de fim de linha e protocolo local desativados. Antes do checkout esparso de `python/`, a árvore foi inspecionada e continha apenas blobs regulares. O hash canônico usa, em ordem de caminho UTF-8, `caminho relativo POSIX`, tamanho e SHA-256 de cada arquivo; assim, independe de mtime e ordem de criação. A cópia permanece em `docker/regras-semgrep/`, ignorada pelo Git.
+
+Há dois hashes diferentes que não devem ser confundidos. O hash semântico de
+`python/`, efetivamente conferido pelo executor C2 e gravado em `versoes.json`, é
+`29eb41850a07fee98955446524423ddd9e9f5040cbf7e301788b791386ee8309` para 717
+arquivos. Já `e552ad9297bb2bbf2d9e0221382e8e91e477c9e46ed9106dbfe64b2f84f92ad1`,
+preservado na configuração histórica da coleta, incluiu metadados locais do
+checkout `.git` e não é uma identidade portável das regras. O inventário novo
+registra essa limitação e usa o primeiro hash para reconstrução.
 
 Na conclusão da T02, o lock de fontes tinha SHA-256 `b1323d8f999698fa23554864985b0a346e530d02ef4ff592040806ba681c5173`. A T03 acrescentou a resolução transitiva e produziu a revisão atual `8d7329b3ea3325fd31d2b472c9c3391e4d89cc8b24738b735698f97c73212310`. A aceitação de risco permaneceu inalterada: `host-risk-waiver.json` = `38e22933c7d7d4a0699ebb7c084a6451f9e586f2f151a350ab790526763a9cf7`.
 
