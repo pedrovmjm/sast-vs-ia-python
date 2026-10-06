@@ -1,0 +1,31 @@
+\begin{tikzpicture}[
+  font=\small, node distance=6mm and 6mm,
+  etapa/.style={draw, rounded corners, align=center, text width=10.5cm,
+    minimum height=9mm, fill=black!3},
+  ramo/.style={etapa, text width=4.5cm},
+  seta/.style={-{Stealth[length=2mm]}, thick}
+]
+\node[etapa] (fonte) {RealVuln v1.0: aquisição das 26 revisões fixadas};
+\node[etapa, below=of fonte] (entrada) {Sanitização, identificadores opacos e inventários de integridade};
+\node[etapa, below=of entrada] (config) {Configurações, instrução e fila congeladas};
+\node[ramo, below=6mm of config, xshift=-2.55cm] (sast) {C1: Bandit / C2: Semgrep\\uma execução por alvo};
+\node[ramo, below=6mm of config, xshift=2.55cm] (ia) {C3: Cursor / C4: Codex\\código sem alertas SAST\\três sessões por alvo};
+\node[ramo, below=of sast] (alertas) {Normalização e deduplicação\\dos alertas de C1 e C2};
+\node[ramo, below=of ia] (hibrido) {C5: Cursor / C6: Codex\\código + alertas SAST\\três sessões por alvo};
+\node[etapa, below=8mm of hibrido, xshift=-2.55cm] (validacao) {Preservação das saídas e validação de cada tentativa\\falha: preservar registro e iniciar nova sessão};
+\node[etapa, below=of validacao] (fechamento) {Fechamento da coleta e seleção determinística\\364 unidades válidas; 433 tentativas preservadas};
+\node[etapa, below=of fechamento] (avaliacao) {Abertura do \textit{ground truth} segregado e avaliador oficial};
+\node[etapa, below=of avaliacao] (resultados) {Métricas, intervalos e gráficos; amostra cega e pontuação dos relatórios pela rubrica};
+\draw[seta] (fonte) -- (entrada);
+\draw[seta] (entrada) -- (config);
+\draw[seta] (config.south) -- ++(0,-3mm) -| (sast.north);
+\draw[seta] (config.south) -- ++(0,-3mm) -| (ia.north);
+\draw[seta] (sast) -- (alertas);
+\draw[seta] (alertas) -- (hibrido);
+\draw[seta] (ia.east) -- ++(4mm,0) |- (validacao.east);
+\draw[seta] (hibrido) -- (validacao);
+\draw[seta] (alertas.south) -- ++(0,-4mm) -| (validacao.north);
+\draw[seta] (validacao) -- (fechamento);
+\draw[seta] (fechamento) -- (avaliacao);
+\draw[seta] (avaliacao) -- (resultados);
+\end{tikzpicture}

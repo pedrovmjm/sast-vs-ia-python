@@ -45,6 +45,11 @@
 \usepackage{tabularx} 					% Para poder ter tabelas com colunas de largura auto-ajustável
 \usepackage{afterpage} 					% Para executar um comando depois do fim da página corrente
 \usepackage{url} 						% Para formatar URLs (endereços da Web)
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{statistics}
 % ---------------------
 
 % ---------------------
@@ -193,8 +198,8 @@
 \include{capitulos/fundamentacao}
 \include{capitulos/estadodaarte}
 \include{capitulos/metodologia}
-%\include{capitulos/desenvolvimento}
-%\include{capitulos/resultados}
+\include{capitulos/desenvolvimento}
+\include{capitulos/resultados}
 
 % PARTE
 %\part{Desenvolvimento}
@@ -203,7 +208,7 @@
 % PARTE
 %\part{Parte Final}
 %\include{capitulos/resultados}
-%\include{capitulos/conclusao}
+\include{capitulos/conclusao}
 
 % ----------------------------------------------------------
 % ELEMENTOS PÓS-TEXTUAIS (Referências, Glossário, Apêndices)

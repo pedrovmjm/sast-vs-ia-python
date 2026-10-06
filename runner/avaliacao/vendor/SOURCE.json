@@ -1,0 +1,12 @@
+{
+  "projeto": "RealVuln Benchmark",
+  "tag": "v1.0",
+  "commit": "d98e9fc91273702c9547663b6906d1fc494d4fcc",
+  "arquivos": {
+    "parsers/base.py": "c58a7d194dd6c09c0ea20cb985831cba115913c0",
+    "scorer/matcher.py": "e834771fc03bc17110f937a3a0d2a7b6e05f0cfd",
+    "scorer/metrics.py": "f23ac2e3a2270f66c25b28e4693745057aab0057",
+    "config/cwe-families.json": "4a15bb432d9aa355475acd96140e1bdfa834fef9"
+  },
+  "nota": "Os quatro arquivos listados foram copiados sem alteração do commit fixado; __init__.py e este manifesto são locais."
+}

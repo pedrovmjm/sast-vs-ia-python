@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "tipo": "manifesto-avaliacao",
+  "gerado_em_utc": "2026-09-28T22:04:01.937545Z",
+  "realvuln": {
+    "tag": "v1.0",
+    "commit": "d98e9fc91273702c9547663b6906d1fc494d4fcc",
+    "scorer_oficial": {
+      "projeto": "RealVuln Benchmark",
+      "tag": "v1.0",
+      "commit": "d98e9fc91273702c9547663b6906d1fc494d4fcc",
+      "arquivos": {
+        "parsers/base.py": "c58a7d194dd6c09c0ea20cb985831cba115913c0",
+        "scorer/matcher.py": "e834771fc03bc17110f937a3a0d2a7b6e05f0cfd",
+        "scorer/metrics.py": "f23ac2e3a2270f66c25b28e4693745057aab0057",
+        "config/cwe-families.json": "4a15bb432d9aa355475acd96140e1bdfa834fef9"
+      },
+      "nota": "Os quatro arquivos listados foram copiados sem alteração do commit fixado; __init__.py e este manifesto são locais."
+    },
+    "ground_truth_conjunto_sha256": "98d9bb6aa6856b693b88545955c4dda36a4b5f735b5b011465db12bc64ae81a6"
+  },
+  "selecao": {
+    "unidades": 364,
+    "regra": "maior tentativa concluida, estruturalmente valida e com hash conferido",
+    "oracle_usado_na_selecao": false
+  },
+  "protocolo": {
+    "nivel": "repositorio",
+    "pareado": true,
+    "metodo_ic": "percentil",
+    "confianca": 0.95,
+    "iteracoes": 10000,
+    "semente": 20260928
+  },
+  "artefatos_sha256": {
+    "amostra-qualitativa-cega.csv": "a75e771cca724e01af5812e068a7f5d8b02be769ba7ab6aba085d7e08ad8301d",
+    "amostra-segundo-avaliador.csv": "53db9282241a6055264e71d3f380bdcbb6d1b0346416553cc2206562b5fe11e7",
+    "chave-amostra-qualitativa.csv": "a9c58e819cf772609ba3a17918b7c472fdbdf60556dbba884cd5d38ede4c54f9",
+    "comparacoes-pareadas.csv": "c38fa6437f51d89487c6b2929a8134ca06998dc6b710b77353e79655be88ef1d",
+    "correspondencias-achados.csv": "a857fec042a35988fd06b821babc44d2c2d13419e5f6eb2424475447a2229c02",
+    "estabilidade-entradas.csv": "17e8339a43094d3e7b342908c844be6bbb0eafc3977e95705b171edab4e82a0b",
+    "estabilidade-resumo.csv": "1512ef3ffc6858581063e4c3250b105af5751e45c0682338e35196b14803eec9",
+    "metricas-condicoes.csv": "6fceeaea4f9ebdc0af22f3b823b7d48e4be869740f1671e0452a9ca87c156963",
+    "metricas-por-cwe.csv": "45685c38e0b120a11f48af2bb77fa7a5dec7decee87b01ba985a0060e230351a",
+    "metricas-por-repeticao.csv": "8188276fc2fc0f730e9fbeee48b6d26c23116a34544cc191affa1170a16d289f",
+    "metricas-por-repositorio.csv": "8dcaacb5d8c87057033f83e9a78386ba9a9a4be8994d2112396c3be2019dd2e5",
+    "metricas-por-severidade.csv": "7b2e7ec6e9bda4aba633d1e117204d417beb4a34c24d46ea6ac4d0bf5791474a",
+    "operacional.csv": "17af5741fecb66e77c418a96c0fb277d6fd414d42c110a3ee812ff1234cb771a",
+    "priorizacao.csv": "34f61265e32d24eb00b54d824206319c6ae346d9b45d15471d2729c87279b6a9",
+    "resumo.json": "28d2df525d0dfec1118e548a85176e25ddcfce31f7e80752e1b84d163fc378ea",
+    "tabela-metricas.tex": "e7bbb7fa66269f1df0d0805bbaae259189a23175f27dafcbc0c7368274f9c948"
+  }
+}

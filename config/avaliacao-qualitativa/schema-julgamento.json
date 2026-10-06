@@ -1,0 +1,484 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Julgamento estruturado de relato vulnerabilidade v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "relatorio_id",
+    "criterios",
+    "score_total",
+    "abstencoes",
+    "limites",
+    "material_consultado"
+  ],
+  "properties": {
+    "relatorio_id": {
+      "type": "string",
+      "pattern": "^REL-[0-9]{4}$"
+    },
+    "criterios": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correcao_tecnica",
+        "localizacao",
+        "acionabilidade",
+        "clareza_problema",
+        "clareza_risco",
+        "clareza_contexto",
+        "clareza_concretude",
+        "clareza_concisao"
+      ],
+      "properties": {
+        "correcao_tecnica": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1,
+              "maximum": 5
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        },
+        "localizacao": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1,
+              "maximum": 5
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        },
+        "acionabilidade": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1,
+              "maximum": 5
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        },
+        "clareza_problema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        },
+        "clareza_risco": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        },
+        "clareza_contexto": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        },
+        "clareza_concretude": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        },
+        "clareza_concisao": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nota",
+            "status",
+            "evidencias",
+            "justificativa"
+          ],
+          "properties": {
+            "nota": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "avaliado",
+                "abstencao"
+              ]
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fonte",
+                  "trecho"
+                ],
+                "properties": {
+                  "fonte": {
+                    "type": "string"
+                  },
+                  "trecho": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "justificativa": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "score_total": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "abstencoes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "correcao_tecnica",
+          "localizacao",
+          "acionabilidade",
+          "clareza_problema",
+          "clareza_risco",
+          "clareza_contexto",
+          "clareza_concretude",
+          "clareza_concisao"
+        ]
+      }
+    },
+    "limites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "material_consultado": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "caminho",
+          "sha256",
+          "escopo"
+        ],
+        "properties": {
+          "caminho": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "escopo": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

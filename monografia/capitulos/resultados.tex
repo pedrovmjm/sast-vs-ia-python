@@ -1,90 +1,553 @@
 \chapter{Avaliação dos Resultados}\label{cap:avaliacao}
-\addcontentsline{toc}{chapter}{Avaliação dos Resultados}
 
-Este capítulo apresenta e discute os resultados obtidos com a execução do protocolo descrito no Capítulo~\ref{cap:metodologia} e relatado no Capítulo~\ref{cap:desenvolvimento}, organizados de acordo com as quatro questões de pesquisa formuladas na Seção~\ref{sec:questoes-pesquisa-metodologia}.
+Este capítulo apresenta os resultados obtidos com a execução do protocolo descrito no
+Capítulo~\ref{cap:metodologia} e implementado no Capítulo~\ref{cap:desenvolvimento}.
+A avaliação quantitativa foi concluída para as seis condições do bloco principal. A
+avaliação qualitativa utiliza uma amostra cega de 300 relatórios e a rubrica
+descrita neste capítulo; seus resultados foram agregados somente depois do
+congelamento dos 300 registros de pontuação.
 
-A Seção~\ref{sec:visao-geral-coleta} caracteriza a coleta efetivamente realizada. A Seção~\ref{sec:desempenho-quantitativo} responde à QP1, apresentando o desempenho de detecção por condição, categoria CWE e severidade. A Seção~\ref{sec:qualidade-relatorios} responde à QP2, com os resultados da rubrica qualitativa. A Seção~\ref{sec:efeito-hibrido} responde à QP3, comparando as condições híbridas às condições de IA isolada e SAST isolado. A Seção~\ref{sec:estabilidade-execucoes} e a Seção~\ref{sec:priorizacao-resultados} respondem à QP4, tratando, respectivamente, de estabilidade entre execuções e de priorização por severidade. A Seção~\ref{sec:tempo-tokens-resultados} apresenta a caracterização operacional complementar do tempo de execução e do consumo de tokens, sem vinculá-la a uma questão de pesquisa autônoma. Por fim, a Seção~\ref{sec:discussao-integrada} integra os achados e a Seção~\ref{sec:ameacas-validade-observadas} revisita as ameaças à validade descritas na Seção~\ref{sec:validade-limitacoes} à luz do que foi efetivamente observado.
+\section{Visão Geral da Coleta e do Conjunto Analisado}\label{sec:visao-geral-coleta}
 
-\begin{quote}
-\textbf{Nota de redação:} assim como no Capítulo~\ref{cap:desenvolvimento}, os trechos entre colchetes marcam pontos que dependem dos dados coletados no experimento e serão substituídos por resultados, tabelas e figuras reais. Nenhum valor numérico foi antecipado nesta versão.
-\end{quote}
+Foram analisados os 26 repositórios do RealVuln v1.0, totalizando 817 entradas de
+\textit{ground truth}: 697 vulnerabilidades e 120 armadilhas de falso positivo. A
+grade experimental contém 364 unidades de execução: uma repetição por repositório
+para C1 e C2 e três repetições para C3--C6. Além disso, foram preservados 433
+artefatos de tentativas de coleta; quando houve repetição operacional, selecionou-se
+antes da abertura do oráculo a tentativa válida concluída com maior número.
 
-\section{Visão Geral da Coleta e do Conjunto de Dados Analisado}\label{sec:visao-geral-coleta}
+O Cursor utilizou GPT-5.6 Luna com perfil Medium e seleção explícita em C3 e C5.
+O Codex foi configurado para solicitar GPT-5.6 Luna em C4 e C6; sua CLI não
+expôs o modelo servido nos registros JSONL. O modo Auto do Cursor não foi usado.
+O bloco complementar previsto no planejamento não foi executado e não integra
+as comparações deste capítulo.
 
-[A PREENCHER APÓS A COLETA: número de repositórios, execuções e entradas efetivamente analisadas em cada condição; configuração de modelo usada em cada bloco; confirmação da execução ou não do bloco complementar; e eventuais exclusões ou falhas de execução tratadas pelo modo estrito, conforme a Seção~\ref{sec:universo-amostra}.]
+Todos os achados foram pontuados pelo algoritmo oficial fixado do RealVuln, com
+caminho normalizado exato, CWE aceitável, tolerância de localização de dez linhas
+e consumo único de cada entrada. Adotou-se microcontagem estrita, inclusive nas
+falhas completas. Os intervalos de confiança de 95\% foram obtidos por 10.000
+reamostragens no nível do repositório, com semente 20260928.
 
 \section{Desempenho Quantitativo de Detecção (QP1)}\label{sec:desempenho-quantitativo}
 
 \subsection{Resultados por condição experimental}\label{subsec:resultados-por-condicao}
 
-[A PREENCHER APÓS A COLETA: precisão, \textit{recall}, F1, F2, F3 e taxa de falsos positivos para C1--C6 no bloco principal com GPT-5.6 Luna, com intervalos de confiança de 95\% obtidos por reamostragem no nível do repositório, conforme a Seção~\ref{subsec:metricas-quantitativas-metodologia}. Se o bloco complementar for executado, apresentar Cursor Auto e Codex com GPT-5.6 Terra em tabela separada, sem combinar essas observações com a linha de base Luna.]
+A Tabela~\ref{tab:resultados-deteccao-condicao} resume as métricas agregadas. Para
+as condições de IA, cada ponto é a média das métricas calculadas separadamente nas
+três repetições, e não o resultado de uma união ou de voto majoritário.
+
+As Figuras~\ref{fig:precisao-recall} e~\ref{fig:fscores} mostram as estimativas e
+seus intervalos de confiança. Em todos os gráficos, C1 e C2 correspondem a Bandit
+e Semgrep; C3 e C4, a Cursor e Codex sem alertas; e C5 e C6, aos mesmos produtos
+com contexto SAST. As condições de IA usam a configuração Luna descrita acima.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:precisao-recall}Precisão e recall por condição, com IC95\%}
+\input{figs/avaliacao/deteccao-precisao-recall-ic95.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026).}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:fscores}F1, F2 e F3 por condição, com IC95\%}
+\input{figs/avaliacao/deteccao-fscores-ic95.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026).}
+\end{figure}
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
-\caption{\label{tab:resultados-deteccao-condicao}Desempenho de detecção por condição experimental (a preencher)}
+\caption{\label{tab:resultados-deteccao-condicao}Desempenho de detecção por condição experimental}
 \centering
-\begin{tabularx}{\textwidth}{|l|X|X|X|X|X|X|}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
 \hline
-\textbf{Condição} & \textbf{Precisão} & \textbf{Recall} & \textbf{F1} & \textbf{F2} & \textbf{F3} & \textbf{Taxa de FP} \\
+\textbf{Condição} & \textbf{Precisão} & \textbf{Recall} & \textbf{F1} &
+\textbf{F2} & \textbf{F3} & \textbf{IC95\% F3} & \textbf{Taxa de FP} \\
 \hline
-C1 & & & & & & \\
+C1 & 18,6\% & 18,7\% & 18,6\% & 18,6\% & 18,6\% & [14,8\%; 22,4\%] & 82,8\% \\
+C2 & 25,0\% & 25,7\% & 25,3\% & 25,5\% & 25,6\% & [21,1\%; 29,6\%] & 82,6\% \\
+C3 & 80,9\% & 27,5\% & 41,0\% & 31,6\% & 29,4\% & [23,2\%; 36,8\%] & 27,4\% \\
+C4 & 84,7\% & 28,6\% & 42,7\% & 33,0\% & 30,6\% & [25,0\%; 37,4\%] & 23,0\% \\
+C5 & 84,1\% & 28,7\% & 42,8\% & 33,0\% & 30,7\% & [25,0\%; 36,9\%] & 24,3\% \\
+C6 & 85,1\% & 28,5\% & 42,7\% & 32,9\% & 30,5\% & [25,1\%; 36,6\%] & 22,6\% \\
 \hline
-C2 & & & & & & \\
-\hline
-C3 & & & & & & \\
-\hline
-C4 & & & & & & \\
-\hline
-C5 & & & & & & \\
-\hline
-C6 & & & & & & \\
-\hline
-\end{tabularx}
-\legend{Fonte: Elaborado pelo autor (2026). Valores a preencher após a coleta.}
+\end{tabular}}
+\legend{Fonte: Elaborado pelo autor (2026). IC95\% obtido por bootstrap em nível de repositório.}
 \end{table}
+
+As condições baseadas em IA apresentaram precisão substancialmente maior e taxa de
+falsos positivos menor que as linhas de base SAST. C4 obteve a maior precisão entre
+as condições isoladas (84,7\%), enquanto C6 atingiu a maior precisão geral (85,1\%)
+e a menor taxa de falsos positivos (22,6\%). Em contrapartida, o \textit{recall}
+ médio permaneceu abaixo de 29\% em todas as condições. C5 obteve o maior valor médio de
+\textit{recall} (28,7\%) e F3 (30,7\%), porém com diferenças pequenas em relação
+a C3, C4 e C6. Assim, o principal contraste observado não é uma cobertura ampla,
+mas uma troca entre o elevado número de alertas incorretos do SAST e a seleção mais
+conservadora das condições de IA.
+
+A Figura~\ref{fig:taxa-fp} apresenta a taxa de falsos positivos calculada pelo
+avaliador oficial. Essa taxa não equivale a $1-\text{precisão}$: o benchmark
+contabiliza como FP também os alertas sem correspondência, enquanto TN se
+restringe às armadilhas seguras corretamente ignoradas. Assim, o denominador
+$FP+TN$ não representa todas as regiões seguras do código, e a medida deve ser
+interpretada segundo essa convenção do RealVuln.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:taxa-fp}Taxa de falsos positivos segundo a convenção do RealVuln, com IC95\%}
+\input{figs/avaliacao/taxa-falsos-positivos-ic95.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026).}
+\end{figure}
 
 \subsection{Resultados por categoria CWE}\label{subsec:resultados-por-cwe}
 
-[A PREENCHER APÓS A COLETA: desempenho de cada condição por categoria CWE presente no RealVuln, incluindo casos em que a quantidade de entradas permite apenas interpretação descritiva, conforme previsto na Seção~\ref{subsec:metricas-quantitativas-metodologia}.]
+A desagregação por famílias CWE mostrou forte dependência do tipo de vulnerabilidade.
+Na categoria de injeção, o \textit{recall} variou de 35,5\% em C1 e 50,6\% em C2
+até 56,6\%--64,7\% nas condições de IA, com o maior valor em C5. Para autenticação,
+C1 e C2 alcançaram apenas 0,9\%, enquanto C3--C6 variaram de 22,0\% a 28,3\%.
+Na categoria de sessão e configuração, C1 não detectou entradas, C2 alcançou 34,0\%
+e as condições de IA permaneceram entre 6,4\% e 10,3\%. Os resultados completos
+por CWE e repetição foram preservados nos artefatos de avaliação; categorias com
+poucas entradas devem ser interpretadas descritivamente.
 
 \subsection{Resultados por severidade}\label{subsec:resultados-por-severidade}
 
-[A PREENCHER APÓS A COLETA: desempenho de cada condição por categoria de severidade (baixa, média, alta, crítica) do \textit{ground truth} do RealVuln.]
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:recall-severidade}Recall por severidade de referência}
+\centering
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Condição} & \textbf{Baixa} & \textbf{Média} & \textbf{Alta} & \textbf{Crítica} \\
+\hline
+C1 & 14,7\% & 10,8\% & 19,7\% & 44,2\% \\
+C2 & 5,9\% & 22,6\% & 22,0\% & 62,8\% \\
+C3 & 3,4\% & 15,1\% & 33,6\% & 67,8\% \\
+C4 & 3,9\% & 17,7\% & 32,6\% & 71,3\% \\
+C5 & 3,9\% & 14,6\% & 34,1\% & 77,5\% \\
+C6 & 3,9\% & 15,3\% & 33,7\% & 74,8\% \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelo autor (2026). Nas condições C3--C6, valores médios das três repetições.}
+\end{table}
+
+O \textit{recall} cresceu com a severidade de referência. C5 detectou, em média,
+77,5\% das vulnerabilidades críticas, mas somente 3,9\% das de severidade baixa.
+Esse padrão favorece a descoberta das falhas de maior impacto, embora também mostre
+que a cobertura global reduzida não se distribui uniformemente pelo corpus.
+
+A Figura~\ref{fig:recall-severidade} permite comparar esse padrão entre condições.
+As categorias são as severidades de referência do benchmark, e não as etiquetas
+atribuídas pelas ferramentas.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:recall-severidade}Recall por severidade de referência}
+\input{figs/avaliacao/recall-severidade.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). C3--C6: médias das três repetições.}
+\end{figure}
 
 \section{Qualidade dos Relatórios Verdadeiros-Positivos (QP2)}\label{sec:qualidade-relatorios}
 
-\subsection{Correção técnica, localização e acionabilidade}\label{subsec:resultados-rubrica}
+\subsection{Amostra e estado da avaliação}\label{subsec:resultados-rubrica}
 
-[A PREENCHER APÓS A COLETA: escores médios e distribuição por condição nas três dimensões ordinais da rubrica definida na Tabela~\ref{tab:dimensoes-rubrica}, para o recorte comum e para o recorte estratificado descritos na Seção~\ref{subsec:metricas-qualitativas-metodologia}. Se houver bloco complementar, apresentar sua amostra e seus resultados separadamente do bloco Luna.]
+Foi preparada uma amostra cega conforme o protocolo. Foram
+identificadas 35 entradas detectadas por todas as condições na primeira repetição;
+20 foram sorteadas para o recorte comum. Em seguida, cada condição foi completada
+até 50 relatórios por amostragem estratificada por CWE e severidade, totalizando
+300 avaliações.
 
-\subsection{Clareza e legibilidade}\label{subsec:resultados-clareza}
+Os relatórios usam identificadores opacos, sem indicação da condição. A chave
+de cegamento é mantida separada durante a pontuação. O recorte comum permite
+comparar relatos das mesmas 20 vulnerabilidades; a amostra completa descreve
+a utilidade dos verdadeiros positivos de cada condição, com composição própria.
+Por se restringir aos achados associados à referência, esta avaliação não mede
+a qualidade dos falsos positivos nem representa todos os relatórios emitidos.
 
-[A PREENCHER APÓS A COLETA: resultados do checklist estrutural de clareza (Tabela~\ref{tab:checklist-clareza}) e do Índice de Legibilidade de Flesch adaptado ao português, por condição.]
+A pontuação foi aplicada por um avaliador LLM de família distinta da usada nas
+condições C3--C6, conforme a Seção~\ref{subsec:metricas-qualitativas-metodologia}.
+O avaliador, o registro e a validação das pontuações estão descritos na
+Seção~\ref{subsec:registro-pontuacao-qualitativa}.
 
-\subsection{Concordância entre avaliadores}\label{subsec:resultados-concordancia}
+\subsection{Procedimento de pontuação estruturada}\label{subsec:procedimento-pontuacao-qualitativa}
 
-[A PREENCHER APÓS A COLETA: Kappa ponderado de Cohen para as dimensões ordinais e percentual de concordância e Kappa não ponderado para os itens binários de clareza, conforme a Seção~\ref{subsec:metricas-qualitativas-metodologia}, com discussão de eventuais divergências registradas entre avaliadores.]
+Após a análise quantitativa, os 300 relatórios foram pontuados por rubrica
+explícita, aplicada por um modelo de linguagem como avaliador para tornar viável
+a pontuação de toda a amostra. Essa etapa constitui uma extensão exploratória do
+protocolo. Os escores são interpretados como julgamentos sobre o material
+fornecido; não constituem confirmação por exploração dinâmica nem verdade de
+referência sobre a qualidade dos relatos.
+
+Cada relatório é examinado com sua descrição, recomendação, referência
+específica do benchmark e trecho numerado do código sanitizado. A associação
+quantitativa a um verdadeiro positivo não concede automaticamente a nota máxima
+de correção ou localização. Afirmações sobre o mecanismo precisam ser
+sustentadas pelo código ou pela referência; a posição reportada precisa apontar
+o trecho causal. Quando o suporte é insuficiente, a dimensão recebe valor
+ausente, acompanhado de justificativa.
+
+\begin{table}[htbp]
+\ABNTEXfontereduzida
+\caption{\label{tab:rubrica-pontuacao-estruturada}Âncoras da pontuação estruturada dos relatórios}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|X|X|}
+\hline
+\textbf{Dimensão} & \textbf{Nota 1} & \textbf{Nota 3} & \textbf{Nota 5} \\
+\hline
+Correção técnica & Mecanismo falso ou contradito pelo material & Classe e risco plausíveis, com explicação genérica ou ressalva relevante & Fonte, operação, pré-condição e consequência coerentes com o material \\
+\hline
+Localização & Arquivo ou operação contraditos & Região ou função correta, com ambiguidade & Instrução causal precisamente indicada \\
+\hline
+Acionabilidade & Orientação ausente ou solução insegura & Direção aplicável, com escolhas essenciais ausentes & Controle e mudança concretos, com condições suficientes de aplicação \\
+\hline
+\end{tabularx}
+\legend{Fonte: Elaborado pelo autor (2026). Notas 2 e 4 representam posições intermediárias.}
+\end{table}
+
+A clareza compreende cinco itens binários: identificação do problema, risco
+explícito, contexto técnico, concretude e concisão. Cada item recebe um ou zero,
+com justificativa ligada ao texto. A pontuação considera o sentido do texto e
+sua relação com o material de suporte.
+
+O esquema \path{config/avaliacao-qualitativa/schema-julgamento.json} exige
+identificador do relatório, notas, decisões dos
+cinco itens, justificativas e referências ao material de suporte. Dimensões não
+avaliáveis devem conter valor nulo e motivo de abstenção; registros incompletos
+ou fora das escalas são rejeitados. A chave das condições somente é utilizada
+para agregação depois do congelamento dos julgamentos.
+
+Para sintetizar a rubrica, definiu-se um score de zero a cem com peso igual
+de 25 pontos para cada dimensão. Sejam $T$, $L$ e $A$ as notas ordinais de
+correção técnica, localização e acionabilidade, e $c_j$ os cinco itens de
+clareza. O score é:
+\begin{equation}
+S = 25\left(\frac{T-1}{4}+\frac{L-1}{4}+\frac{A-1}{4}
+      +\frac{\sum_{j=1}^{5}c_j}{5}\right).
+\label{eq:score-qualitativo}
+\end{equation}
+
+Na ausência de qualquer dimensão, o score total permanece nulo, sem imputação
+ou redistribuição dos pesos. A cobertura de pontuação é reportada junto aos
+resultados. Os pesos foram fixados nesta etapa exploratória, antes dos
+julgamentos qualitativos, mas após a análise quantitativa; não representam uma
+escala com validade psicométrica demonstrada. A apresentação conserva também
+as dimensões separadas, evitando reduzir a qualidade a uma única nota.
+
+\subsection{Escores por condição}\label{subsec:resultados-escores-qualitativos}
+
+\IfFileExists{figs/avaliacao/qualitativa-condicoes.tex}{%
+A Tabela~\ref{tab:qualitativa-condicoes} apresenta, para os 50 relatos de cada
+condição, a média de cada dimensão e do score entre os valores válidos. A
+coluna de scores válidos indica quantos relatos tiveram as oito decisões
+avaliáveis; as abstenções reduzem o número de valores de cada dimensão e não
+são imputadas. Como a amostra é restrita a verdadeiros positivos e composta por
+estratificação própria de cada condição, as médias descrevem os relatos
+selecionados e não a qualidade de todos os alertas emitidos.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:qualitativa-condicoes}Pontuação média dos relatos verdadeiros-positivos por condição}
+\centering
+\resizebox{\textwidth}{!}{\input{figs/avaliacao/qualitativa-condicoes.tex}}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). Correção, localização e acionabilidade: escala de 1 a 5; clareza: contagem de 0 a 5; score: 0 a 100.}
+\end{table}
+
+A Tabela~\ref{tab:qualitativa-deltas} restringe a comparação aos 20 grupos de
+referência comuns às seis condições. Cada diferença é calculada dentro do mesmo
+grupo, entre a condição híbrida e a respectiva condição isolada, e só entra na
+média quando as duas pontuações são válidas. Com apenas 20 grupos, as
+diferenças permanecem descritivas e não sustentam inferência sobre o efeito
+dos alertas SAST na qualidade.
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:qualitativa-deltas}Diferença média de pontuação no recorte comum}
+\centering
+\resizebox{\textwidth}{!}{\input{figs/avaliacao/qualitativa-deltas.tex}}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). Diferenças entre pares do mesmo grupo de referência.}
+\end{table}
+
+A Figura~\ref{fig:qualidade-score} resume o score médio por condição, na amostra
+completa e no recorte comum, e a Figura~\ref{fig:qualidade-dimensoes} separa as
+dimensões no recorte comum. Em ambas, a ordenação dos grupos de condições é a
+mesma da Tabela~\ref{tab:qualitativa-condicoes}.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:qualidade-score}Score médio dos relatos verdadeiros-positivos por condição}
+\input{figs/avaliacao/qualidade-score.tex}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). Amostra completa: 50 relatos por condição; recorte comum: 20 grupos de referência.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:qualidade-dimensoes}Pontuação média por dimensão no recorte comum}
+\input{figs/avaliacao/qualidade-dimensoes.tex}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). A clareza é a contagem de 0 a 5 itens atendidos; as demais dimensões usam a escala de 1 a 5.}
+\end{figure}
+
+Os escores médios foram menores nas condições SAST isoladas e maiores nas
+condições com agentes de IA. Na amostra completa, o score médio foi de 53,4
+para C1 e 75,2 para C2, contra 90,6 para C3, 87,9 para C4, 93,5 para C5 e 94,1
+para C6; no recorte comum, os valores foram 51,8, 74,6, 92,2, 89,1, 95,9 e 96,9.
+A diferença entre as famílias concentra-se na acionabilidade (1,30 em C1 e 3,28
+em C2, contra 4,56 a 4,68 nas condições de IA), na correção técnica (3,20 e 3,64,
+contra 4,76 a 4,84) e na clareza (3,00 e 4,22, contra 5,00). Uma explicação possível, não testada aqui, é que os alertas SAST trazem
+mensagens curtas e, frequentemente, sem recomendação própria.
+
+A localização apresentou o padrão inverso entre as condições isoladas: C1 e C2
+tiveram médias de 4,64 e 4,74, enquanto C3 e C4 tiveram 4,14 e 3,62. Uma explicação possível, não testada aqui, é que as regras SAST apontam
+diretamente a instrução sinalizada, ao passo que os agentes sem alertas por
+vezes indicam a região ou a função correta sem a linha causal. As condições híbridas recuperaram essa
+dimensão (4,56 em C5 e 4,60 em C6).
+
+No recorte comum, a Tabela~\ref{tab:qualitativa-deltas} mostra que a diferença
+de score entre a condição híbrida e a respectiva condição isolada foi de 3,75
+pontos para C5$-$C3 e de 7,81 pontos para C6$-$C4. Essas diferenças vieram
+sobretudo da localização (0,75 e 1,10 pontos na escala de 1 a 5), com variações
+pequenas em correção técnica (0,05 e 0,20) e ligeiramente negativas em
+acionabilidade ($-$0,20 e $-$0,05); a clareza não variou. Com 20 grupos e sem
+intervalos inferenciais, esses valores são descritivos e não permitem afirmar
+efeito dos alertas SAST na qualidade das explicações.
+
+A clareza atingiu o valor máximo (cinco itens atendidos) em todos os relatos de
+C3 a C6, o que indica efeito de teto: nessa dimensão, a rubrica não distingue as
+condições de IA entre si. Os demais resultados também estão sujeitos aos limites
+da etapa: a amostra contém apenas verdadeiros positivos, a composição difere
+entre as condições, o cegamento é parcial pelo estilo dos textos, e as
+pontuações provêm de um único avaliador LLM, sem calibração contra avaliadores
+humanos. Os escores devem ser lidos como evidência exploratória sobre a
+utilidade dos achados corretos, e não como medida da qualidade global das
+ferramentas.
+}{%
+Os 300 julgamentos ainda não foram concluídos e congelados; por isso, esta
+seção não apresenta médias, diferenças nem comparações entre condições. A
+tabela por condição e a tabela do recorte comum são geradas por
+\path{scripts/gerar-tabela-qualitativa.py} a partir do resumo congelado e
+aparecem aqui quando esse arquivo existe. Nenhuma conclusão sobre a QP2 deve
+ser derivada de tentativas parciais, nem da leitura de relatos isolados.
+}
 
 \section{Efeito da Combinação SAST + IA (QP3)}\label{sec:efeito-hibrido}
 
-[A PREENCHER APÓS A COLETA: comparação pareada entre C3/C4 (IA isolada) e C5/C6 (híbrido correspondente), com intervalos de confiança pareados, discutindo se o fornecimento dos alertas de Bandit e Semgrep aumentou ou reduziu a detecção e a qualidade dos relatórios, à luz do alerta metodológico de \cite{Croft2021RuleLearningSAST} citado na Seção~\ref{subsubsec:sast-vantagens-limitacoes}. Realizar as comparações dentro de cada bloco de modelos, sem parear Luna com Auto ou Terra.]
+A comparação pareada entre C5 e C3 indicou diferenças médias de 1,24 ponto
+percentual em \textit{recall} (IC95\%: $-3,26$ a 5,43), 1,33 ponto em F3
+(IC95\%: $-3,36$ a 5,70), 3,19 pontos em precisão (IC95\%: $-1,62$ a 9,26)
+e $-3,09$ pontos na taxa de falsos positivos (IC95\%: $-7,23$ a 2,38).
+
+Entre C6 e C4, as diferenças foram $-0,10$ ponto em \textit{recall}
+(IC95\%: $-3,01$ a 2,61), $-0,09$ ponto em F3
+(IC95\%: $-3,12$ a 2,75), 0,42 ponto em precisão
+(IC95\%: $-4,47$ a 5,64) e $-0,35$ ponto na taxa de falsos positivos
+(IC95\%: $-5,57$ a 5,03).
+
+Nenhum desses intervalos excluiu zero. Sob este corpus e estas configurações,
+fornecer os alertas normalizados de Bandit e Semgrep não produziu evidência
+quantitativa conclusiva de melhora ou degradação na detecção. O pequeno ganho
+pontual observado para C5 deve ser tratado como descritivo, e não como confirmação
+de vantagem do arranjo híbrido. Quanto à qualidade das explicações, a pontuação qualitativa
+descreve diferenças de localização no recorte comum, discutidas na
+Seção~\ref{subsec:resultados-escores-qualitativos}, sem inferência estatística.
+
+A Figura~\ref{fig:comparacoes-pareadas} representa as diferenças de precisão,
+\textit{recall} e F3. A linha em zero indica ausência de diferença; a inclusão
+desse valor nos intervalos impede concluir uma vantagem a partir das estimativas
+pontuais. Isso também não demonstra equivalência entre as condições.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:comparacoes-pareadas}Diferenças pareadas entre condições híbridas e isoladas, com IC95\%}
+\input{figs/avaliacao/comparacoes-pareadas.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Diferença: híbrida menos isolada.}
+\end{figure}
 
 \section{Estabilidade entre Execuções (QP4)}\label{sec:estabilidade-execucoes}
 
-[A PREENCHER APÓS A COLETA: média, amplitude e desvio das métricas entre as três repetições de C3--C6, e frequência de detecção (zero, uma, duas ou três execuções) por entrada vulnerável, conforme a Seção~\ref{subsec:testes-ensaios}. Calcular a estabilidade separadamente para o bloco Luna e para o bloco complementar, caso realizado.]
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:estabilidade-resultados}Frequência de detecção das 697 vulnerabilidades nas três repetições}
+\centering
+\begin{tabular}{lrrrrrr}
+\hline
+\textbf{Condição} & \textbf{0 de 3} & \textbf{1 de 3} & \textbf{2 de 3} &
+\textbf{3 de 3} & \textbf{DP F3} & \textbf{Amplitude F3} \\
+\hline
+C3 & 446 & 65 & 49 & 137 & 0,0027 & 0,0054 \\
+C4 & 433 & 60 & 74 & 130 & 0,0308 & 0,0601 \\
+C5 & 437 & 64 & 52 & 144 & 0,0095 & 0,0170 \\
+C6 & 433 & 74 & 48 & 142 & 0,0017 & 0,0029 \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelo autor (2026). DP: desvio-padrão entre as métricas das três repetições.}
+\end{table}
+
+A maior parte das vulnerabilidades permaneceu sem detecção nas três execuções.
+Entre as detectadas, C5 obteve o maior número de ocorrências consistentes
+(144 entradas em três de três), seguido de C6 (142). C6 apresentou a menor
+variação agregada de F3, enquanto C4 apresentou a maior. A análise por entrada
+evidencia que métricas agregadas próximas podem ocultar variação na identidade
+dos casos encontrados.
+
+A Figura~\ref{fig:estabilidade-ia} mostra que a faixa de ausência de detecção
+predomina em todas as condições. A estabilidade de uma métrica agregada deve,
+portanto, ser distinguida da repetibilidade da identificação de cada falha.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:estabilidade-ia}Frequência de detecção das 697 vulnerabilidades nas três repetições}
+\input{figs/avaliacao/estabilidade-ia.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Cada barra representa todo o conjunto vulnerável.}
+\end{figure}
 
 \section{Priorização e Indicação de Severidade (QP4)}\label{sec:priorizacao-resultados}
 
-[A PREENCHER APÓS A COLETA: cobertura de priorização, concordância exata, concordância com tolerância de uma categoria e Kappa ponderado entre a severidade indicada por cada condição e a categoria de referência do RealVuln, conforme a Seção~\ref{subsec:priorizacao-metodologia}.]
+Todas as condições produziram severidade para 100\% dos verdadeiros positivos
+associados. A concordância exata com a referência foi de 10,0\% em C1, 43,0\%
+em C2 e variou entre 56,3\% e 60,1\% em C3--C6. Com tolerância de uma categoria,
+os valores foram 54,6\% em C1, 85,5\% em C2 e 98,5\%--99,3\% nas condições
+de IA. O Kappa ponderado foi 0,101 em C1, 0,252 em C2, 0,607 em C3,
+0,600 em C4, 0,585 em C5 e 0,576 em C6. Assim, as condições de IA priorizaram
+melhor os achados que efetivamente localizaram, mas o fornecimento dos alertas
+SAST não aumentou a concordância de severidade.
+
+A Figura~\ref{fig:priorizacao} compara a concordância exata e a tolerância de
+uma categoria. Os percentuais se referem somente aos verdadeiros positivos
+associados; não descrevem a priorização das vulnerabilidades não detectadas.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:priorizacao}Concordância da severidade dos verdadeiros positivos com a referência}
+\input{figs/avaliacao/priorizacao.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). C3--C6: médias das três repetições.}
+\end{figure}
 
 \section{Tempo de Execução e Consumo de Tokens}\label{sec:tempo-tokens-resultados}
 
-[A PREENCHER APÓS A COLETA: mediana, intervalo interquartil e valores mínimos e máximos do tempo por condição e por bloco de modelos. Para C3--C6, apresentar também tokens de entrada, de saída e totais por execução e por repositório, além de categorias adicionais informadas pelos produtos. Indicar explicitamente a proporção de execuções com contadores disponíveis e evitar comparações diretas quando as definições ou os tokenizadores não forem equivalentes, conforme a Seção~\ref{subsec:tempo-tokens-metodologia}.]
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:operacional-resultados}Mediana operacional por condição}
+\centering
+\begin{tabular}{lrrr}
+\hline
+\textbf{Condição} & \textbf{Mediana (s)} &
+\textbf{IIQ (s)} & \textbf{Mínimo--máximo (s)} \\
+\hline
+C1 & 1,23 & [1,06; 1,58] & [0,73; 5,00] \\
+C2 & 32,85 & [30,46; 35,74] & [27,91; 56,89] \\
+C3 & 38,96 & [26,29; 46,26] & [11,15; 61,90] \\
+C4 & 80,60 & [53,45; 96,23] & [11,05; 155,78] \\
+C5 & 40,26 & [26,93; 48,28] & [13,92; 57,47] \\
+C6 & 74,48 & [46,12; 96,18] & [15,51; 132,89] \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelo autor (2026). IIQ: intervalo interquartil.}
+\end{table}
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:tokens-resultados}Consumo de tokens informado nas condições de IA}
+\centering
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Condição} & \textbf{Entrada mediana} & \textbf{Saída mediana} &
+\textbf{Total mediano} & \textbf{IIQ do total} \\
+\hline
+C3 & 17.440,0 & 3.848,0 & 21.006,5 & [16.816,5; 26.340,3] \\
+C4 & 19.955,0 & 3.980,5 & 23.433,5 & [19.814,0; 29.467,3] \\
+C5 & 20.866,5 & 4.080,0 & 24.866,0 & [19.206,8; 30.328,3] \\
+C6 & 23.259,5 & 4.000,5 & 27.436,5 & [21.839,3; 32.982,0] \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelo autor (2026). Cada condição possui 78 execuções com contadores disponíveis.}
+\end{table}
+
+C1 foi a condição mais rápida. Entre os agentes, as execuções Cursor (C3 e C5)
+apresentaram menor mediana de tempo que as execuções Codex correspondentes
+(C4 e C6). O contexto SAST aumentou a mediana de tokens em ambos os agentes,
+mas não elevou de forma equivalente o tempo mediano. Como a contabilização de
+tokens depende do produto, esses dados têm caráter operacional e descritivo.
+
+As Figuras~\ref{fig:tempo-execucao} e~\ref{fig:tokens-ia} mostram mediana,
+quartis e amplitude observada. As hastes vão do mínimo ao máximo, sem a regra de
+1,5 intervalo interquartil utilizada em outros tipos de diagrama de caixa.
+Os tempos e tokens referem-se às tentativas selecionadas, e não à soma de todas
+as retentativas. Em C5 e C6, o tempo representa a chamada ao agente com os alertas
+já disponíveis; não é a duração acumulada de C1, C2 e IA. Os dados não permitem
+estimar custo monetário nem sustentar uma comparação de custo total entre produtos.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:tempo-execucao}Distribuição do tempo das tentativas selecionadas}
+\input{figs/avaliacao/tempo-execucao.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Caixa: Q1--Q3; linha: mediana; hastes: mínimo--máximo.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:tokens-ia}Distribuição dos tokens totais informados nas condições de IA}
+\input{figs/avaliacao/tokens-ia.tex}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Caixa: Q1--Q3; linha: mediana; hastes: mínimo--máximo.}
+\end{figure}
 
 \section{Discussão Integrada}\label{sec:discussao-integrada}
 
-[A PREENCHER APÓS A COLETA: leitura conjunta dos resultados de detecção, qualidade, estabilidade e priorização, acompanhada da caracterização de tempo e consumo de tokens, evitando reduzir a comparação a uma única métrica, conforme a advertência de validade de construto da Seção~\ref{sec:validade-limitacoes}. Discussão explícita de como os achados dialogam com os estudos do Capítulo~\ref{cap:estadoarte}.]
+Os resultados respondem à QP1 mostrando que os agentes, isolados ou híbridos,
+trocaram cobertura por seletividade: produziram precisão entre 80,9\% e 85,1\%
+e taxa de falsos positivos entre 22,6\% e 27,4\%, mas não ultrapassaram 28,7\%
+de \textit{recall}. As linhas de base SAST alcançaram precisão de até 25,0\%
+e taxa de falsos positivos de pelo menos 82,6\%. A leitura por severidade, entretanto,
+mostrou cobertura bem maior para vulnerabilidades críticas.
+
+Quanto à QP3, as diferenças pareadas não sustentam uma vantagem geral da combinação
+SAST + IA para detecção. O arranjo híbrido pode alterar quais entradas são
+encontradas e aumentar o consumo de tokens, mas seus ganhos pontuais ficaram
+dentro dos intervalos compatíveis com zero. Para a QP4, a estabilidade foi
+heterogênea: C6 variou pouco em F3 agregado, embora nenhuma condição tenha
+detectado consistentemente a maioria das vulnerabilidades. A priorização de
+severidade foi mais próxima da referência nas condições de IA que no SAST.
+Para a QP2, os relatos verdadeiros-positivos das condições de IA receberam
+escores médios entre 87,9 e 94,1, contra 53,4 em C1 e 75,2 em C2, sobretudo por
+acionabilidade, correção técnica e clareza; a localização, ao contrário, foi
+menor em C3 e C4 que nas condições SAST. Na parte qualitativa da QP3, os
+alertas SAST recuperaram a localização nas condições híbridas. Essas respostas
+baseiam-se na pontuação cega da rubrica por um único avaliador LLM e, por isso,
+são exploratórias.
 
 \section{Ameaças à Validade Observadas na Coleta}\label{sec:ameacas-validade-observadas}
 
-[A PREENCHER APÓS A COLETA: revisão da Tabela~\ref{tab:ameacas-validade}, indicando quais ameaças se manifestaram de fato durante a coleta, como foram tratadas e quais limitações adicionais só puderam ser identificadas após a execução do experimento.]
+O uso do avaliador oficial e a preservação de seus arquivos por hash reduziram
+o risco de divergência de pontuação. Ainda assim, o resultado depende das regras
+de equivalência de CWE e da tolerância de localização do benchmark. A alta
+densidade de vulnerabilidades do RealVuln impede extrapolar diretamente precisão
+e prevalência para projetos de produção.
+
+As tentativas operacionais repetidas foram tratadas por uma regra determinística
+aplicada antes da consulta ao oráculo. Em C4, algumas respostas exigiram novas
+tentativas por problemas de execução; o manifesto preserva esse histórico.
+O identificador detalhado do modelo não estava presente em todos os registros
+JSONL do produto, limitando a verificação independente além da configuração
+declarada durante a coleta.
+
+O não determinismo permaneceu visível mesmo com sessões independentes e
+configurações controladas. Os intervalos de confiança preservam o agrupamento
+por repositório, mas 26 projetos ainda representam um número limitado de
+unidades independentes. O bloco complementar não executado restringe as
+conclusões ao GPT-5.6 Luna e às versões e configurações registradas.
+
+Por fim, a documentação de referência do RealVuln apresenta formulações
+divergentes sobre F2 e F3 como métrica principal. Para evitar uma escolha
+posterior aos resultados, esta avaliação manteve ambas as métricas implementadas
+no avaliador oficial e adotou F3 como preestabelecido na metodologia. A etapa
+qualitativa depende de julgamentos orientados pela rubrica. O cegamento e os
+descritores explícitos reduzem, mas não eliminam, a subjetividade.
+
+O estilo dos textos pode revelar sua origem, o que torna o cegamento parcial. A
+verificação automática dos registros garante o formato, a coerência do score e a
+presença de evidências e do material citado, mas não demonstra que a nota é
+correta. O uso de um avaliador LLM de família distinta reduz o risco de
+autopreferência \cite{Panickssery2024SelfPreference}, mas não elimina vieses
+próprios desse tipo de avaliador, como a preferência por textos mais longos ou
+mais detalhados \cite{Zheng2023LLMJudge}. Esse efeito pode favorecer os relatos
+das condições de IA, mais extensos que as mensagens SAST, e a concordância das
+notas com avaliadores humanos não foi medida neste trabalho.

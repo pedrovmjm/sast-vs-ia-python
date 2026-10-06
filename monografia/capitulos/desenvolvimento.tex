@@ -1,7 +1,6 @@
 \chapter{Desenvolvimento}\label{cap:desenvolvimento}
-\addcontentsline{toc}{chapter}{Desenvolvimento}
 
-Este capítulo descreve a implementação efetivamente utilizada para executar o protocolo definido no Capítulo~\ref{cap:metodologia}. O artefato resultante é um repositório controlador que adquire e verifica o corpus, prepara entradas sanitizadas, executa as seis condições experimentais, valida as respostas, preserva todas as tentativas e produz evidências auditáveis. Diferentemente de uma especificação anterior à coleta, o texto a seguir registra as versões, os controles, os formatos e os desvios observados durante a execução.
+Este capítulo descreve a implementação utilizada para executar o protocolo definido no Capítulo~\ref{cap:metodologia}. O repositório controlador adquire e verifica o corpus, prepara entradas sanitizadas, executa as seis condições experimentais, valida as respostas e preserva as tentativas. A descrição concentra-se nas decisões que afetam a comparabilidade das entradas, o isolamento das ferramentas e a rastreabilidade dos resultados.
 
 A coleta das seis condições foi concluída sobre os 26 repositórios do RealVuln v1.0. Foram selecionadas 364 unidades válidas: 52 execuções SAST, correspondentes a uma execução de C1 e C2 por alvo, e 312 execuções de IA, correspondentes a três repetições de C3--C6 por alvo. As retentativas não foram sobrescritas; somadas às unidades selecionadas, produziram 433 manifestos ou tentativas preservadas. Esses números caracterizam a completude operacional do artefato. As medidas de detecção e a comparação com o \textit{ground truth} pertencem ao Capítulo~\ref{cap:avaliacao}.
 
@@ -12,6 +11,15 @@ O controlador foi implementado predominantemente em Python e PowerShell. Python 
 O fluxo foi dividido em três domínios. O domínio de entrada contém as árvores sanitizadas e os \textit{payloads} de código entregues às ferramentas. O domínio de controle contém configurações congeladas, filas, \textit{prompts}, esquemas, adaptadores e áreas de trabalho. O domínio de avaliação contém o \textit{ground truth} e o validador oficial do RealVuln. Durante a coleta, os executores de C1--C6 não consultaram o domínio de avaliação; as auditorias das condições de IA registraram explicitamente \texttt{oracle\_consultado=false}. Essa separação materializa o cegamento descrito na Seção~\ref{sec:repositorio-experimental}.
 
 A cadeia implementada pode ser resumida em: aquisição das revisões fixadas; sanitização e inventário; congelamento das configurações; execução serial e preservação das tentativas; validação sintática e estrutural; auditoria de fechamento; e, em etapa separada, pontuação contra o \textit{oracle}. A separação entre coleta e pontuação impede que rótulos do benchmark influenciem a geração ou a normalização dos achados.
+
+A Figura~\ref{fig:fluxo-desenvolvimento} apresenta as dependências entre essas etapas. C3 e C4 recebem somente o código; C5 e C6 recebem também os alertas normalizados de C1 e C2. As ramificações representam dependências de dados, e não execução simultânea. A comparação com o \textit{ground truth} ocorre após o fechamento da coleta.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:fluxo-desenvolvimento}Fluxo de preparação, coleta e avaliação do experimento}
+\input{figs/fluxo-desenvolvimento.tex}
+\legend{Fonte: Elaborado pelo autor (2026).}
+\end{figure}
 
 \section{Organização do Repositório Controlador}\label{sec:organizacao-repositorio-desenvolvimento}
 
@@ -56,7 +64,7 @@ A publicação do artefato considerou também as licenças e o conteúdo sensív
 
 \subsection{Fixação do RealVuln e verificação de integridade}\label{subsec:fixacao-realvuln}
 
-O RealVuln foi fixado na tag \texttt{v1.0}, cujo objeto anotado é identificado pelo prefixo \texttt{aa9f7321c8c5} e cujo \textit{commit} resolvido possui o prefixo \texttt{d98e9fc91273}. O arquivo \texttt{config/corpus-realvuln-v1.lock.json} registra a URL e o \textit{commit} completo dos 26 projetos. Três URLs de origem estavam indisponíveis durante a aquisição; nesses casos foram usados espelhos previamente autorizados apenas como transporte, com aceitação condicionada à presença do mesmo objeto Git fixado no manifesto.
+O RealVuln foi fixado na versão \texttt{v1.0}, e cada projeto foi adquirido na revisão indicada pelo manifesto oficial. As URLs e os identificadores completos dessas revisões constam no arquivo \texttt{config/corpus-realvuln-v1.lock.json}. Três URLs de origem estavam indisponíveis durante a aquisição; nesses casos foram usados espelhos como transporte, com aceitação condicionada à presença da mesma revisão fixada no manifesto.
 
 O script de aquisição obteve cada revisão sem executar \textit{hooks}, submódulos, testes ou arquivos do alvo. Antes da promoção das áreas temporárias, foram conferidos o manifesto, os \textit{commits}, os arquivos regulares permitidos e os hashes da árvore produzida. O validador oficial \texttt{validate\_gt.py} terminou com código zero sobre os 26 arquivos de \textit{ground truth}, totalizando 817 entradas: 697 vulnerabilidades e 120 armadilhas de falso positivo. O artefato preserva tanto essa saída literal quanto uma auditoria por repositório.
 
@@ -155,7 +163,7 @@ Os códigos zero e um foram aceitos, pois o Bandit usa o código um para indicar
 
 \subsection{Adaptador do Semgrep Community Edition}\label{subsec:execucao-semgrep}
 
-O Semgrep Community Edition 1.172.0 utilizou apenas o diretório \texttt{python/} do repositório de regras fixado no \textit{commit} de prefixo \texttt{40b8c63f75dc}. O pacote foi adquirido antes da coleta, teve seu inventário conferido e não consultou o registro remoto durante as análises. O comando efetivo foi:
+O Semgrep Community Edition 1.172.0 utilizou apenas o diretório \texttt{python/} do pacote público de regras, na revisão registrada no manifesto de configuração. O pacote foi adquirido antes da coleta, teve seu inventário conferido e não consultou o registro remoto durante as análises. O comando efetivo foi:
 
 \begin{verbatim}
 semgrep scan --config /opt/regras-semgrep/python --json \
@@ -175,13 +183,13 @@ O Cursor foi executado nativamente no Windows pela versão \texttt{2026.09.26-dd
 
 O Codex foi executado pela \texttt{codex-cli 0.154.0}, solicitando \texttt{gpt-5.6-luna}. O comando aplicou sandbox somente leitura e sessão efêmera, ignorou configurações e regras externas e fixou a política de aprovação como \texttt{never}. Os eventos JSONL dessa versão não expuseram o modelo efetivamente servido. Por isso, \texttt{modelo\_exibido} permaneceu nulo e \texttt{modelo\_verificacao} recebeu \path{nao_exposto_jsonl_codex}; o valor solicitado não foi copiado para o campo observado.
 
-O bloco executado foi o principal, com GPT-5.6 Luna nas quatro condições de IA. O bloco complementar previsto como opcional na metodologia, com Cursor Auto e GPT-5.6 Terra no Codex, não integra o conjunto coletado e não foi combinado com a linha de base.
+Em C3 e C5, o Cursor utilizou GPT-5.6 Luna com perfil Medium, selecionado explicitamente. Em C4 e C6, o Codex foi configurado para solicitar GPT-5.6 Luna, com a limitação de observabilidade descrita acima. O modo Auto do Cursor não foi utilizado em nenhuma das execuções avaliadas. A alternativa de um bloco complementar permaneceu apenas no planejamento e não produziu resultados para este estudo.
 
 \subsection{Instrução e contrato de saída}\label{subsec:padronizacao-prompts}
 
-O arquivo \texttt{prompt-relatorio-ia-v1.txt} foi compartilhado por C3--C6 e congelado com SHA-256 de prefixo \texttt{1d3e269aa36d}. A instrução solicitou a inspeção do código fornecido, exigiu uma cadeia de exploração plausível e orientou o agente a considerar validações e controles antes de reportar. Também proibiu executar código, testes, \textit{shell}, rede, busca, MCP, Bandit, Semgrep ou qualquer outro analisador, além de proibir consulta ou reconstrução do \textit{ground truth}.
+O arquivo \texttt{prompt-relatorio-ia-v1.txt} foi compartilhado por C3--C6 e preservado sem alterações durante a coleta. A instrução solicitou a inspeção do código fornecido, exigiu uma cadeia de exploração plausível e orientou o agente a considerar validações e controles antes de reportar. Também proibiu executar código, testes, \textit{shell}, rede, busca, MCP, Bandit, Semgrep ou qualquer outro analisador, além de proibir consulta ou reconstrução do \textit{ground truth}.
 
-O contrato de saída, congelado com SHA-256 de prefixo \texttt{6e0b2f29d5f3}, exigiu exclusivamente o \textit{array} JSON descrito na Seção~\ref{subsec:esquema-comum-achados}. O controlador validou localmente a sintaxe, as propriedades, os caminhos, as linhas, os hashes, os metadados de modelo e a ausência de eventos proibidos. O argumento \texttt{--output-schema} não foi aplicado ao Codex, pois essa interface exigia um objeto na raiz e criaria tratamento diferente do Cursor. Em ambos os produtos, a saída bruta foi fechada antes da validação comum.
+O contrato de saída exigiu exclusivamente o \textit{array} JSON descrito na Seção~\ref{subsec:esquema-comum-achados}. O controlador validou localmente a sintaxe, as propriedades, os caminhos, as linhas, os hashes, os metadados de modelo e a ausência de eventos proibidos. O argumento \texttt{--output-schema} não foi aplicado ao Codex, pois essa interface exigia um objeto na raiz e criaria tratamento diferente do Cursor. Em ambos os produtos, a saída bruta foi fechada antes da validação comum.
 
 \section{Construção das Condições Híbridas (C5 e C6)}\label{sec:condicao-hibrida-desenvolvimento}
 
@@ -226,6 +234,93 @@ As auditorias foram calculadas a partir dos registros primários e mantiveram se
 
 O \textit{oracle} somente pode ser introduzido depois do fechamento da coleta. Os achados normalizados e as respostas validadas constituem as entradas da etapa de correspondência com caminho, CWE e tolerância de linha do RealVuln. Não foram usadas correções manuais para completar localização, CWE ou severidade durante a coleta. TP, FP, FN, TN e as métricas derivadas não aparecem nas auditorias operacionais, evitando que uma síntese sem adjudicação seja confundida com resultado experimental.
 
+\subsection{Pontuação qualitativa dos relatórios}\label{subsec:registro-pontuacao-qualitativa}
+
+A análise dos relatórios utiliza um esquema próprio, separado do contrato de
+saída das ferramentas. O arquivo \path{config/avaliacao-qualitativa/schema-julgamento.json}
+define os campos de identificação, as três notas ordinais, os cinco itens de
+clareza e as justificativas da pontuação. Os registros associam cada decisão ao
+relatório cego e ao material consultado, preservando a distinção entre a saída
+original da ferramenta e sua avaliação.
+
+O esquema restringe notas ordinais a valores inteiros entre um e cinco e itens
+de clareza a zero ou um. A ausência de suporte deve ser registrada por dimensão,
+com justificativa; nesse caso, o score total permanece ausente. Depois do
+congelamento, os escores e resumos são preservados em
+\path{evidencias/avaliacao-qualitativa/}, sem alterar as correspondências e
+métricas de detecção. A rubrica e a fórmula de composição são apresentadas na
+Seção~\ref{subsec:procedimento-pontuacao-qualitativa}.
+
+\subsubsection{Entradas cegas}
+
+Para cada um dos 300 relatos, o controlador gera uma entrada autocontida com o
+texto do relato (arquivo, linha, CWE, severidade, descrição e recomendação), a
+entrada específica do \textit{ground truth} e o código sanitizado com linhas
+numeradas. O arquivo completo é fornecido; quando excede 80~kB, são fornecidas
+janelas de 30 linhas em torno da linha reportada e da localização de referência.
+Caminhos e SHA-256 acompanham cada material. As entradas omitem a condição
+experimental e a chave de abertura, e permanecem em diretório privado, fora do
+versionamento. Como o estilo do texto pode revelar a origem, o cegamento é
+parcial.
+
+\subsubsection{Avaliador LLM}
+
+A rubrica foi aplicada pelo modelo Composer 2.5 Fast, por meio da interface de
+linha de comando do Cursor Agent (cliente \texttt{2026.10.01-e373342}), com o
+identificador \texttt{composer-2.5-fast} solicitado explicitamente. O modelo
+pertence a uma família distinta do GPT-5.6 Luna usado em C3--C6, e o nome
+exibido nos eventos de cada sessão foi conferido contra o modelo solicitado;
+uma divergência invalidaria a tentativa. A instrução de pontuação,
+\path{config/avaliacao-qualitativa/prompt-rubrica-v1.md}, e o esquema foram
+fixados por SHA-256 antes da primeira chamada e mantidos durante toda a etapa.
+
+Cada chamada utilizou uma sessão nova, em pasta exclusiva, no modo de consulta
+e com uma política local que negava leitura, escrita e \textit{shell}. A
+entrada cega, a rubrica e o esquema seguiram integralmente no \textit{prompt},
+pela entrada padrão. Desse modo, o avaliador não acessou o repositório, a chave
+de condições nem as notas de outros relatos.
+
+\subsubsection{Registro, validação e congelamento}
+
+Cada relato é pontuado de forma independente, sem reaproveitar o contexto nem as
+notas de outro relato. A pontuação parte somente da rubrica, do esquema e da
+entrada cega, sem consulta a ferramentas de execução, à rede ou a arquivos
+externos; correção técnica, portanto, não equivale a confirmação por exploração
+dinâmica. O resultado de cada relato é um objeto JSON que segue o esquema, com as
+oito decisões, suas justificativas e evidências, o score e as limitações
+declaradas.
+
+O contrato é verificado integralmente por um validador em PowerShell, que
+interpreta o esquema JSON e confere o identificador, as escalas, as
+justificativas e evidências não vazias, a consistência entre abstenções e
+critérios, a presença do material citado entre os arquivos efetivamente
+fornecidos, com os respectivos \textit{hashes}. A única evidência vazia admitida
+é a da recomendação ausente, desde que acompanhada de trecho literal da
+descrição. O registro é aceito ou rejeitado; nenhuma nota é corrigida, completada
+ou inferida, e um registro rejeitado permanece pendente. O score total, por ser
+função determinística das notas e não um julgamento, é recalculado pela fórmula
+do instrumento; se o valor informado divergir do recalculado, ambos são
+registrados no manifesto da tentativa e a resposta original é preservada sem
+alteração.
+
+Cada tentativa preserva a instrução efetiva, a resposta bruta, a resposta
+validada e um manifesto com \textit{hashes}, duração e contadores de uso. Uma
+tentativa nunca é sobrescrita. A seleção usa a maior tentativa válida de cada
+relato, sem considerar as notas. Somente com os 300 registros válidos as
+respostas são copiadas, congeladas com \textit{hashes} e agregadas; a chave de
+condições é aberta nesse último passo. Os resumos alimentam as tabelas do
+Capítulo~\ref{cap:avaliacao} por um \textit{script} próprio, sem edição manual
+de valores.
+
+Ao final, os 300 relatos possuíam um registro válido, sem abstenções. Foram
+preservados 348 manifestos de tentativa: 300 concluídos e 48 rejeitados, dos
+quais 43 por falha na validação do registro, três por evento proibido na sessão
+e dois por código de saída do cliente. As tentativas selecionadas tiveram
+mediana de 19,3 segundos (13,4 a 36,1) e de 18.532 tokens por relato. Os 300
+registros foram congelados antes da abertura da chave, e o registro de
+congelamento e o de abertura preservam os \textit{hashes} das respostas, das
+saídas e da chave.
+
 \section{Verificação do Artefato}\label{sec:verificacao-artefato-desenvolvimento}
 
 Os adaptadores foram exercitados com \textit{fixtures} artificiais externas ao corpus: saída vazia, achado completo, duplicata, JSON inválido, número não finito, erro parcial, CWE ausente e diferentes formatos de caminho e linha. Os testes do controlador também cobriram políticas de aquisição, links e junções, hashes canônicos, preparação, fila, atomicidade, retomada, timeout, códigos de saída e invariantes dos manifestos.
@@ -234,9 +329,11 @@ O \textit{gate} de construção reconstruiu a imagem e executou testes unitário
 
 As interfaces de IA possuem testes próprios que simulam eventos e respostas sem realizar chamadas externas. Antes de cada coleta completa, os quatro cenários também passaram por piloto em \texttt{ALVO-0001}. O planejamento em modo seco validou todas as entradas, configurações e hashes sem consumir API. No fechamento, a repetição desse planejamento informou zero chamadas pendentes em C3--C6.
 
+O validador da pontuação qualitativa foi verificado de forma análoga. Os testes usam relatos e registros sintéticos, externos ao corpus, e cobrem a aceitação de um registro coerente e a rejeição de nota fora da escala, nota não inteira, campo extra, identificador divergente, evidência ausente ou vazia, abstenção não declarada, material ou \textit{hash} não fornecidos e resposta fora do formato, além do recálculo e do registro de um score divergente e da recusa de sobrescrever uma tentativa existente. O planejamento em modo seco sobre as 300 entradas não consumiu chamadas externas.
+
 \section{Configuração Efetivamente Observada}\label{sec:registro-configuracao-desenvolvimento}
 
-A Tabela~\ref{tab:registro-configuracao-efetiva} consolida a configuração observada. Os identificadores de \textit{commit} e SHA-256 aparecem abreviados para leitura; os valores completos estão nos \textit{locks}, manifestos e inventários do artefato.
+A Tabela~\ref{tab:registro-configuracao-efetiva} consolida a configuração utilizada. Os identificadores técnicos completos das revisões, instruções e esquemas permanecem nos manifestos do artefato, reservando-se o texto à descrição das ferramentas e dos controles experimentais.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
@@ -245,23 +342,25 @@ A Tabela~\ref{tab:registro-configuracao-efetiva} consolida a configuração obse
 \centering
 \begin{tabularx}{\textwidth}{|X|X|X|}
 \hline
-\textbf{Componente} & \textbf{Valor observado} & \textbf{Fonte de evidência} \\
+\textbf{Componente} & \textbf{Configuração ou valor} & \textbf{Registro de verificação} \\
 \hline
-RealVuln & v1.0; \textit{commit} \texttt{d98e9fc91273}; 26 alvos & \texttt{fontes.lock.json} e resumo do corpus \\
+RealVuln & v1.0; 26 alvos em revisões fixadas & Manifesto de fontes e resumo do corpus \\
 \hline
 Corpus rotulado & 817 entradas; 697 vulnerabilidades; 120 armadilhas & Saída do validador oficial e auditoria do \textit{ground truth} \\
 \hline
 Ambiente SAST & Python 3.12.13; Bandit 1.9.4; Semgrep CE 1.172.0 & \texttt{requirements.lock}, imagem e \texttt{versoes.json} \\
 \hline
-Regras Semgrep & \textit{commit} \texttt{40b8c63f75dc}; pacote Python verificado & \texttt{fontes.lock.json} e inventário das regras \\
+Regras Semgrep & Pacote Python em revisão fixada, com inventário verificado & Manifesto de fontes e inventário das regras \\
 \hline
-Cursor & cliente \texttt{2026.09.26-dd393fe}; \texttt{gpt-5.6-luna-medium}; modelo exibido \texttt{GPT-5.6 Luna 272K Medium} & Eventos e manifestos de C3/C5 \\
+Cursor & GPT-5.6 Luna, perfil Medium, seleção explícita; cliente de 26/09/2026 & Modelo exibido nos eventos e manifestos de C3/C5 \\
 \hline
 Codex & \texttt{codex-cli 0.154.0}; \texttt{gpt-5.6-luna}; modelo servido não exposto no JSONL & Eventos e manifestos de C4/C6 \\
 \hline
-Instrução de IA & \textit{prompt} \texttt{1d3e269aa36d}; esquema \texttt{6e0b2f29d5f3} & Configurações dos agentes e manifestos \\
+Instrução de IA & Instrução-base comum e esquema JSON fixados antes da coleta & Configurações dos agentes e manifestos \\
 \hline
 Alertas híbridos & 1.410 alertas por repetição; seis duplicatas removidas & \textit{Lock} de alertas e auditorias C5/C6 \\
+\hline
+Avaliador qualitativo & Composer 2.5 Fast via Cursor Agent; uma sessão por relato; rubrica e esquema fixados & Seleção das respostas, manifestos e registro de congelamento \\
 \hline
 \end{tabularx}
 \legend{Fonte: Elaborado pelo autor (2026).}

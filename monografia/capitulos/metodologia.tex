@@ -206,7 +206,7 @@ Os descritores-âncora da escala são apresentados na Tabela~\ref{tab:ancoras-ru
 
 \subsubsection{Operacionalização da clareza}\label{subsubsec:operacionalizacao-clareza}
 
-A clareza será medida pelo checklist da Tabela~\ref{tab:checklist-clareza}. Embora as respostas sejam binárias, os critérios ainda envolvem julgamento humano; por isso, o escore de zero a cinco será tratado como contagem estruturada, e não como medida inteiramente objetiva.
+A clareza será medida pelo checklist da Tabela~\ref{tab:checklist-clareza}. Embora as respostas sejam binárias, os critérios ainda envolvem julgamento interpretativo; por isso, o escore de zero a cinco será tratado como contagem estruturada, e não como medida inteiramente objetiva.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
@@ -232,7 +232,9 @@ C5 --- Concisão & O texto comunica problema, risco e contexto sem omissões imp
 
 Como medida secundária, será calculado o Índice de Legibilidade de Flesch adaptado ao português brasileiro \cite{Martins1996ReadabilityPortuguese}. O idioma das respostas será fixado pelo \textit{prompt}; trechos de código, caminhos e identificadores serão removidos do cálculo de legibilidade. O índice será interpretado apenas como facilidade sintática de leitura e não como substituto da avaliação técnica ou do checklist.
 
-Os relatórios serão apresentados aos avaliadores sem identificação direta da ferramenta e em ordem aleatorizada, sempre que a remoção da origem não eliminar conteúdo necessário à avaliação. O autor avaliará a totalidade do recorte qualitativo, e um segundo avaliador examinará independentemente pelo menos 20\% dos relatórios, em amostra estratificada por condição e CWE. Para as dimensões ordinais será reportado o Kappa ponderado de Cohen; para os itens binários de clareza, percentual de concordância e Kappa não ponderado \cite{Landis1977ObserverAgreement}. Divergências não serão resolvidas alterando retroativamente os descritores, mas serão registradas e discutidas.
+Para acelerar a aplicação da rubrica sobre toda a amostra, a pontuação será conduzida por um modelo de linguagem empregado como avaliador (\textit{LLM-as-a-judge}), abordagem que tem sido usada para avaliar respostas textuais em escala quando orientada por critérios explícitos \cite{Zheng2023LLMJudge}. O avaliador receberá somente a rubrica, o esquema de registro e o material de cada relato, e deverá justificar cada nota com evidências do texto ou do código. Como avaliadores desse tipo tendem a favorecer textos gerados por eles próprios \cite{Panickssery2024SelfPreference}, o modelo avaliador será escolhido fora da família empregada nas condições C3--C6 e permanecerá fixo durante toda a pontuação. Cada relato será avaliado em uma sessão nova, sem memória dos demais.
+
+Os relatórios serão apresentados ao avaliador sem identificação direta da ferramenta e em ordem definida por identificadores opacos, sempre que a remoção da origem não eliminar conteúdo necessário à avaliação. A chave entre identificadores e condições permanecerá fechada até que todas as notas estejam registradas e congeladas por \textit{hash}. Registros fora das escalas ou sem justificativa serão rejeitados e a pontuação será repetida em nova sessão, sem correção manual das notas. Os critérios não serão alterados retroativamente após a observação das notas.
 
 \subsection{Avaliação de severidade e priorização}\label{subsec:priorizacao-metodologia}
 
@@ -258,7 +260,7 @@ O protocolo será executado na seguinte ordem:
 \item Se aprovado no estudo-piloto, repetir C3--C6 em bloco complementar completo, usando Cursor Auto e GPT-5.6 Terra no Codex, sem alterar as demais instruções ou permissões.
 \item Converter as seis condições para o esquema comum e executar o avaliador oficial do RealVuln no modo estrito.
 \item Calcular métricas de detecção, estabilidade, tempo, consumo de tokens, intervalos de confiança e comparações pareadas.
-\item Sortear a amostra qualitativa da primeira execução, aplicar a rubrica e calcular a concordância entre avaliadores.
+\item Sortear a amostra qualitativa da primeira execução, aplicar a rubrica com o avaliador LLM, congelar as notas e somente então abrir a chave das condições.
 \item Reportar resultados por condição, repositório, CWE e severidade, preservando tanto os dados agregados quanto as falhas de execução.
 \end{enumerate}
 
@@ -268,7 +270,7 @@ Prompts, configurações, imagem Docker, regras do Semgrep, versão do Bandit, s
 
 A adoção integral de uma versão publicada do RealVuln elimina a construção manual do corpus e do \textit{ground truth}. Os manifestos permitem baixar os projetos uma vez, verificar sua integridade e retomar execuções interrompidas sem reconstruir cada alvo. A conteinerização reduz o esforço de reinstalação e a variação do ambiente SAST. A viabilidade das condições de IA depende de licenças, cotas e limites de uso existentes no período da coleta; por serem características mutáveis dos produtos, elas serão verificadas e registradas no estudo-piloto, sem pressupor disponibilidade ilimitada. O bloco Luna constitui o núcleo obrigatório; a expansão para Cursor Auto e Codex com GPT-5.6 Terra somente será incorporada se o limite de tokens reservado comportar sua execução integral.
 
-Os principais fatores de esforço passam a ser a integração dos formatos de saída, as três repetições das condições de IA e a avaliação qualitativa. O corpus quantitativo permanecerá completo; para controlar o esforço humano, somente a avaliação qualitativa utilizará a amostra estratificada definida na Seção~\ref{subsec:metricas-qualitativas-metodologia}.
+Os principais fatores de esforço passam a ser a integração dos formatos de saída, as três repetições das condições de IA e a avaliação qualitativa. O corpus quantitativo permanecerá completo; para controlar o esforço de avaliação, somente a avaliação qualitativa utilizará a amostra estratificada definida na Seção~\ref{subsec:metricas-qualitativas-metodologia}, pontuada pelo avaliador LLM descrito na mesma seção.
 
 \section{Validade e Limitações}\label{sec:validade-limitacoes}
 
@@ -300,7 +302,7 @@ Rótulos ruidosos ou incompletos & Versão e \textit{hash} fixados, validador of
 \hline
 Memorização do benchmark por modelos & Código opaco no ambiente de execução e reconhecimento explícito de que o isolamento não elimina possível exposição durante o treinamento \\
 \hline
-Viés na adjudicação e na rubrica & Cegamento da ferramenta, descritores prévios, segundo avaliador e reporte da concordância \\
+Viés na adjudicação e na rubrica & Cegamento da ferramenta, descritores prévios, avaliador LLM de família distinta das condições avaliadas, justificativas obrigatórias e congelamento das notas antes da abertura da chave \\
 \hline
 Granularidades diferentes de alerta & Adaptadores para o esquema comum e reutilização do algoritmo de correspondência do RealVuln \\
 \hline

@@ -71,8 +71,15 @@ Thumbs.db
 *.out
 *.run.xml
 *.synctex.gz
+*.synctex(busy)
 *.toc
 *.pdf
+/monografia/*.brf
+/monografia/*.idx
+/monografia/*.ilg
+/monografia/*.ind
+/monografia/*.lof
+/monografia/*.lot
 
 # Snapshots redistribuíveis do corpus; estas exceções devem permanecer por último
 !/alvos/corpus-v1/ALVO-0002/
