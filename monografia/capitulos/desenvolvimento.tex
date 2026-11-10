@@ -2,6 +2,8 @@
 
 Este capítulo descreve a implementação utilizada para executar o protocolo definido no Capítulo~\ref{cap:metodologia}. O repositório controlador adquire e verifica o corpus, prepara entradas sanitizadas, executa as seis condições experimentais, valida as respostas e preserva as tentativas. A descrição concentra-se nas decisões que afetam a comparabilidade das entradas, o isolamento das ferramentas e a rastreabilidade dos resultados.
 
+O código desenvolvido e os artefatos de reprodução estão disponíveis no repositório \textit{sast-vs-ia-python} \cite{Motta2026Repositorio}\footnote{\url{https://github.com/pedrovmjm/sast-vs-ia-python}}. Esse é o repositório controlador deste trabalho; o RealVuln é a fonte do corpus e dos rótulos usados na avaliação. As seções seguintes relacionam os scripts às etapas experimentais e apresentam trechos que materializam as principais decisões do protocolo.
+
 A coleta das seis condições foi concluída sobre os 26 repositórios do RealVuln v1.0. Foram selecionadas 364 unidades válidas: 52 execuções SAST, correspondentes a uma execução de C1 e C2 por alvo, e 312 execuções de IA, correspondentes a três repetições de C3--C6 por alvo. As retentativas não foram sobrescritas; somadas às unidades selecionadas, produziram 433 manifestos ou tentativas preservadas. Esses números caracterizam a completude operacional do artefato. As medidas de detecção e a comparação com o \textit{ground truth} pertencem ao Capítulo~\ref{cap:avaliacao}.
 
 \section{Visão Geral da Implementação}\label{sec:visao-geral-desenvolvimento}
@@ -179,11 +181,20 @@ O adaptador preservou identificador da regra, mensagem, caminho, intervalo, CWE,
 
 Cursor e Codex foram integrados por adaptadores diferentes, mas receberam o mesmo código, a mesma instrução-base e o mesmo contrato de saída. Cada chamada correspondeu a uma sessão nova e efêmera. O código Python foi serializado em \texttt{payload-codigo.json}, delimitado como dado não confiável e enviado no \textit{prompt} pela entrada padrão. A pasta de trabalho continha somente o esquema e os arquivos mínimos de configuração do cliente; não continha \texttt{oracle/}, identidade original do projeto, respostas anteriores ou resultados de outras condições.
 
-O Cursor foi executado nativamente no Windows pela versão \texttt{2026.09.26-dd393fe}, com o identificador \texttt{gpt-5.6-luna-medium}. O evento de sistema exibiu \texttt{GPT-5.6 Luna 272K Medium}. Como o cliente informava que o isolamento nativo estava disponível apenas em macOS e Linux, a coleta usou \texttt{--sandbox disabled}, \texttt{--mode=ask} e uma política local que permitia \texttt{Read(**)} e negava \texttt{Write(**)} e \texttt{Shell(*)}. O processo foi iniciado na pasta exclusiva da tentativa, e o código seguiu no \textit{prompt}, não como uma árvore navegável no \textit{workspace}. A auditoria dos eventos de C3 e C5, incluindo os pilotos, encontrou zero chamadas de ferramenta; essa constatação reduz, mas não elimina, a limitação do sandbox nativo indisponível no host.
+O Cursor foi executado no Windows, com o cliente de 26 de setembro de 2026 e seleção explícita do GPT-5.6 Luna no perfil Medium. Cada tentativa utilizou uma pasta e uma sessão novas. O controlador enviou o código Python no próprio \textit{prompt}, e o cliente operou em modo de consulta, com escrita de arquivos e execução de comandos bloqueadas pela política local. A análise consistiu, portanto, na leitura do código fornecido e na produção da resposta. A auditoria dos eventos de C3 e C5, incluindo os pilotos, não registrou chamadas de ferramenta. A versão completa do cliente e os parâmetros de execução permanecem nos manifestos do repositório.
 
-O Codex foi executado pela \texttt{codex-cli 0.154.0}, solicitando \texttt{gpt-5.6-luna}. O comando aplicou sandbox somente leitura e sessão efêmera, ignorou configurações e regras externas e fixou a política de aprovação como \texttt{never}. Os eventos JSONL dessa versão não expuseram o modelo efetivamente servido. Por isso, \texttt{modelo\_exibido} permaneceu nulo e \texttt{modelo\_verificacao} recebeu \path{nao_exposto_jsonl_codex}; o valor solicitado não foi copiado para o campo observado.
+O Codex foi executado pela \texttt{codex-cli 0.154.0}, solicitando \texttt{gpt-5.6-luna}. O comando aplicou sandbox somente leitura e sessão efêmera, ignorou configurações e regras externas e fixou a política de aprovação como \texttt{never}.
 
-Em C3 e C5, o Cursor utilizou GPT-5.6 Luna com perfil Medium, selecionado explicitamente. Em C4 e C6, o Codex foi configurado para solicitar GPT-5.6 Luna, com a limitação de observabilidade descrita acima. O modo Auto do Cursor não foi utilizado em nenhuma das execuções avaliadas. A alternativa de um bloco complementar permaneceu apenas no planejamento e não produziu resultados para este estudo.
+A Figura~\ref{fig:isolamento} distingue os controles aplicados aos scanners, aos clientes de IA e ao avaliador qualitativo. Durante a coleta de detecção, o \textit{ground truth} permaneceu fora das entradas e das áreas de trabalho dos executores. Na etapa qualitativa, o avaliador recebeu a referência da vulnerabilidade para julgar o relato, mas não recebeu a chave que identifica as condições. São, portanto, dois momentos de cegamento com informações disponíveis diferentes.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:isolamento}Controles de acesso e separação entre coleta e avaliação}
+\input{figs/controles-isolamento.tex}
+\legend{Fonte: Elaborado pelo autor a partir das configurações e auditorias da coleta (2026).}
+\end{figure}
+
+Em C3 e C5, o Cursor utilizou GPT-5.6 Luna com perfil Medium, selecionado explicitamente. Em C4 e C6, o Codex foi configurado para solicitar GPT-5.6 Luna. O modo Auto do Cursor não foi utilizado em nenhuma das execuções avaliadas. A alternativa de um bloco complementar permaneceu apenas no planejamento e não produziu resultados para este estudo.
 
 \subsection{Instrução e contrato de saída}\label{subsec:padronizacao-prompts}
 
@@ -193,7 +204,34 @@ O contrato de saída exigiu exclusivamente o \textit{array} JSON descrito na Se�
 
 \section{Construção das Condições Híbridas (C5 e C6)}\label{sec:condicao-hibrida-desenvolvimento}
 
-Após C1 e C2, o script \texttt{gerar-alertas-sast.ps1} selecionou a tentativa concluída autoritativa de cada ferramenta e uniu seus achados sem consultar o \textit{ground truth}. A deduplicação considerou caminho, localização, CWE e, quando necessário, identificação da regra e mensagem. Foram observados 1.416 registros antes da deduplicação e 1.410 alertas por repetição depois da remoção de seis duplicatas.
+Após C1 e C2, o script \path{scripts/gerar-alertas-sast.ps1} selecionou a tentativa concluída de maior número de cada ferramenta e uniu seus achados sem consultar o \textit{ground truth}. A deduplicação exigiu igualdade de arquivo, linha inicial, linha final, CWE, severidade e descrição. A identificação da regra e da ferramenta foi preservada como origem do alerta, sem integrar a chave de deduplicação. Foram observados 1.416 registros antes da deduplicação e 1.410 alertas por repetição depois da remoção de seis duplicatas.
+
+O primeiro trecho abaixo mostra a escolha da tentativa e a leitura de sua saída normalizada. A lista de candidatas contém somente tentativas concluídas da coleta para a condição e o alvo em questão. A ordenação seguida de \texttt{[-1]} seleciona a de maior número; não há escolha baseada em acerto contra o benchmark.
+
+\begingroup\footnotesize
+\begin{verbatim}
+$selecionada = @($candidatas | Sort-Object tentativa)[-1]
+$normalizado = Read-Json $selecionada.normalizado_path
+$lista = @($normalizado)
+\end{verbatim}
+\endgroup
+
+O segundo trecho define a chave usada para agrupar os achados. Dois registros com CWE igual, mas linhas ou descrições diferentes, continuam como alertas distintos. O separador \texttt{0x1f} delimita os campos da chave, e cada grupo mantém a lista de origens dos registros reunidos.
+
+\begingroup\footnotesize
+\begin{verbatim}
+$chave = @(
+    [string]$a.arquivo,
+    [string]$a.linha_inicial,
+    [string]$a.linha_final,
+    [string]$a.cwe,
+    [string]$a.severidade,
+    [string]$a.descricao
+) -join [string][char]0x1f
+\end{verbatim}
+\endgroup
+
+Essas operações definem a entrada adicional das condições híbridas: alertas já produzidos pelo SAST, com duplicatas exatas removidas e origem preservada. O script não decide quais alertas são verdadeiros positivos; essa decisão pertence à avaliação posterior. Assim, o contexto recebido pela IA contém também alertas potencialmente incorretos, que precisam ser examinados à luz do código.
 
 Os 26 arquivos \texttt{ALVO-NNNN-alertas-sast.json} foram congelados em um \textit{lock} que registra SHA-256, quantidade antes e depois da deduplicação e tentativas C1/C2 de origem. Planejamento e execução de C5 e C6 recusam um arquivo que divirja desse \textit{lock}. Dessa forma, Cursor e Codex receberam exatamente os mesmos bytes de alerta para um mesmo alvo.
 
@@ -202,6 +240,17 @@ O \textit{prompt} comum descreveu os alertas como pistas não adjudicadas. O age
 \section{Preservação, Auditoria e Preparação das Métricas}\label{sec:adjudicacao-desenvolvimento}
 
 Em C1 e C2, cada tentativa preservou manifestos de estado, os fluxos de saída e erro em formato binário, saída nativa, versões, dados do processo, avisos e saída normalizada. Em C3--C6, foram preservados \textit{prompt} efetivo, \textit{payload}, alertas quando aplicável, fluxo de eventos, \textit{stderr}, resposta bruta, resposta validada e manifesto. O manifesto terminal referencia todos esses arquivos por SHA-256.
+
+A Figura~\ref{fig:custodia} mostra essa cadeia de custódia em uma unidade real de C3. A primeira tentativa foi rejeitada porque a resposta indicava uma linha além do fim do arquivo; a pasta foi preservada e a unidade foi concluída na tentativa seguinte. Os artefatos da tentativa válida são ligados ao manifesto por \textit{hash}, e o manifesto alimenta a seleção, a auditoria de fechamento e, somente depois, a pontuação com o \textit{oracle}.
+
+\begin{landscape}
+\begin{figure}[p]
+\centering
+\caption{\label{fig:custodia}Cadeia de custódia de uma unidade de execução}
+\includegraphics[width=0.92\linewidth]{figs/excalidraw/desenvolvimento-custodia-legivel.png}
+\legend{Fonte: Elaborado pelo autor a partir de \path{resultados/ia/coleta/C3-ALVO-0007-R02/} (2026).}
+\end{figure}
+\end{landscape}
 
 A Tabela~\ref{tab:fechamento-operacional-coleta} apresenta o fechamento operacional. ``Tentativas preservadas'' inclui falhas, retentativas e, em C4, tentativas legadas substituídas na seleção. A tabela não representa acurácia e não emprega o \textit{ground truth}.
 
@@ -256,8 +305,7 @@ Seção~\ref{subsec:procedimento-pontuacao-qualitativa}.
 Para cada um dos 300 relatos, o controlador gera uma entrada autocontida com o
 texto do relato (arquivo, linha, CWE, severidade, descrição e recomendação), a
 entrada específica do \textit{ground truth} e o código sanitizado com linhas
-numeradas. O arquivo completo é fornecido; quando excede 80~kB, são fornecidas
-janelas de 30 linhas em torno da linha reportada e da localização de referência.
+numeradas.
 Caminhos e SHA-256 acompanham cada material. As entradas omitem a condição
 experimental e a chave de abertura, e permanecem em diretório privado, fora do
 versionamento. Como o estilo do texto pode revelar a origem, o cegamento é
@@ -312,15 +360,6 @@ condições é aberta nesse último passo. Os resumos alimentam as tabelas do
 Capítulo~\ref{cap:avaliacao} por um \textit{script} próprio, sem edição manual
 de valores.
 
-Ao final, os 300 relatos possuíam um registro válido, sem abstenções. Foram
-preservados 348 manifestos de tentativa: 300 concluídos e 48 rejeitados, dos
-quais 43 por falha na validação do registro, três por evento proibido na sessão
-e dois por código de saída do cliente. As tentativas selecionadas tiveram
-mediana de 19,3 segundos (13,4 a 36,1) e de 18.532 tokens por relato. Os 300
-registros foram congelados antes da abertura da chave, e o registro de
-congelamento e o de abertura preservam os \textit{hashes} das respostas, das
-saídas e da chave.
-
 \section{Verificação do Artefato}\label{sec:verificacao-artefato-desenvolvimento}
 
 Os adaptadores foram exercitados com \textit{fixtures} artificiais externas ao corpus: saída vazia, achado completo, duplicata, JSON inválido, número não finito, erro parcial, CWE ausente e diferentes formatos de caminho e linha. Os testes do controlador também cobriram políticas de aquisição, links e junções, hashes canônicos, preparação, fila, atomicidade, retomada, timeout, códigos de saída e invariantes dos manifestos.
@@ -354,7 +393,7 @@ Regras Semgrep & Pacote Python em revisão fixada, com inventário verificado & 
 \hline
 Cursor & GPT-5.6 Luna, perfil Medium, seleção explícita; cliente de 26/09/2026 & Modelo exibido nos eventos e manifestos de C3/C5 \\
 \hline
-Codex & \texttt{codex-cli 0.154.0}; \texttt{gpt-5.6-luna}; modelo servido não exposto no JSONL & Eventos e manifestos de C4/C6 \\
+Codex & \texttt{codex-cli 0.154.0}; solicitação de \texttt{gpt-5.6-luna} & Eventos e manifestos de C4/C6 \\
 \hline
 Instrução de IA & Instrução-base comum e esquema JSON fixados antes da coleta & Configurações dos agentes e manifestos \\
 \hline
@@ -370,20 +409,29 @@ O host observado na coleta SAST utilizava Git for Windows 2.46.2, WSL 2.0.14, Do
 
 \section{Desvios e Limitações Observados}\label{sec:desvios-protocolo}
 
-A execução revelou desvios e limitações que não seriam visíveis em uma descrição puramente prospectiva:
+Durante a coleta, os modelos produziram respostas que não atendiam à estrutura exigida para a avaliação automática. O retorno de texto pelo cliente não garantia uma lista JSON válida: a resposta precisava ter uma lista na raiz, objetos com os campos previstos e valores nos tipos e escalas aceitos. Quando essas exigências não eram atendidas, a tentativa era rejeitada e a chamada era repetida em uma sessão nova. Essas respostas não foram convertidas em listas vazias, pois isso confundiria falha de formato com ausência de vulnerabilidades.
 
-\begin{itemize}
-\item Nove tarefas C1 falharam inicialmente por incompatibilidade de formato no adaptador do Bandit. A correção foi aplicada em uma imagem identificada separadamente, as tarefas foram reabertas de forma explícita e concluídas na tentativa 3. Saídas antigas, transições da fila e ambos os identificadores de imagem foram preservados.
+Também ocorreram problemas de localização, como indicação de arquivos inexistentes, linhas além do fim do arquivo e intervalos invertidos. O validador em \path{scripts/ia/comum.ps1} confere a existência do arquivo e seus limites antes de aceitar o relato. O trecho abaixo mostra a rejeição de uma linha superior ao número de linhas do arquivo; os nomes e valores são obtidos do relato e do código sanitizado, sem consulta ao \textit{ground truth}.
 
-\item C4 foi a primeira condição de IA concluída. Setenta unidades selecionadas provinham de uma versão anterior do executor, sem o campo \texttt{modelo\_verificacao} e sem a validação atual de caminho e linha. Oito unidades foram reprocessadas; seis manifestos legados antes marcados como concluídos foram substituídos na seleção, mas não apagados nem reescritos. A auditoria registra 90 tentativas e os dois hashes de configuração históricos.
+\begingroup\footnotesize
+\begin{verbatim}
+if ($null -ne $valor -and [int]$valor -gt $quantidadeLinhas) {
+    return [pscustomobject]@{
+        valido = $false
+        erro = "$campoLinha excede o arquivo ${arquivo}: " +
+               "$valor > $quantidadeLinhas"
+        documento = $null
+    }
+}
+\end{verbatim}
+\endgroup
 
-\item A validação estrita rejeitou respostas de IA que mencionavam arquivo inexistente ou linha fora do arquivo. Foram preservadas 19 falhas de formato em C3, seis em C4, 13 em C5 e 14 em C6. Novas sessões produziram as tentativas seguintes até completar as 78 unidades válidas de cada condição. Uma falha de formato nunca foi convertida em lista vazia ou ausência de achados.
+O trecho foi disposto em duas linhas na mensagem de erro para facilitar a leitura. A verificação garante que a posição informada existe, mas não que ela corresponde à instrução vulnerável. Essa segunda questão é examinada pela correspondência com a referência e pela rubrica de localização.
 
-\item No Cursor nativo para Windows, o sandbox de sistema permaneceu desativado. A mitigação combinou área exclusiva, negação de escrita e \textit{shell}, entrada de código por \textit{stdin}, rejeição de eventos proibidos e auditoria posterior. A permissão \texttt{Read(**)} representa capacidade relativa ao \textit{workspace}, não prova de leitura; embora nenhum \texttt{tool\_call} tenha sido observado, essa diferença em relação ao sandbox somente leitura do Codex permanece uma ameaça à validade.
+As falhas de validação preservadas somaram 19 em C3, seis em C4, 13 em C5 e 14 em C6. Esses totais reúnem problemas de formato e de localização, sem discriminar sua frequência por tipo. As métricas do Capítulo~\ref{cap:avaliacao} descrevem as respostas selecionadas após a validação, e não a taxa de sucesso da primeira chamada.
 
-\item A CLI do Codex não expôs no JSONL o modelo efetivamente servido. A implementação preservou essa ausência em vez de inferir que o modelo solicitado foi necessariamente o observado. Em parte do histórico de C4, nem mesmo o campo explicativo atual estava disponível; essa limitação foi mantida nos manifestos legados.
+C4 foi concluída antes da consolidação do validador de caminhos e linhas. Das 78 unidades selecionadas, 70 vieram do executor anterior e oito foram reprocessadas com a versão posterior. A configuração experimental de C4 permaneceu a mesma, mas os controles de validação não foram uniformes em todo o lote. Os registros anteriores foram preservados; essa diferença exige cautela ao comparar a estabilidade de C4 com a das demais condições.
 
-\item Dez alvos e o pacote local de regras Semgrep não puderam ser redistribuídos integralmente. Essa restrição não alterou as entradas da coleta local; afetou apenas a forma de publicação. URLs, revisões, inventários e scripts de reconstrução foram mantidos para permitir auditoria.
-\end{itemize}
+Três elementos do planejamento não foram executados. A fila de C3--C6 seguiu uma ordem fixa, por repetição e identificador opaco do alvo, e não a ordem aleatorizada prevista. O bloco complementar com Cursor Auto e GPT-5.6 Terra não foi realizado. O Índice de Legibilidade de Flesch, previsto como medida secundária de clareza, não foi calculado nos resultados publicados. Esses desvios não alteram as unidades avaliadas nem os critérios de pontuação, mas restringem as conclusões ao bloco Luna e impedem separar efeitos do momento da coleta da ordem dos alvos.
 
-Ao final, todas as unidades previstas do bloco principal possuíam uma tentativa selecionada e válida, sem tarefas pendentes. A preservação dos desvios, em vez da sua remoção retrospectiva, mantém a rastreabilidade entre configuração, chamada externa, resposta bruta, validação e conjunto escolhido para a avaliação.
+A auditoria posterior das 312 respostas selecionadas não encontrou listas brutas fora do contrato nem arquivos inexistentes ou linhas informadas além de seus limites. Houve, entretanto, 56 achados com linhas ausentes, situação permitida pelo esquema: 13 em C3, 30 em C4, oito em C5 e cinco em C6. Essa ausência deve ser distinguida de uma linha incorreta e limita a precisão da localização, mesmo quando o achado pode ser associado à referência.
