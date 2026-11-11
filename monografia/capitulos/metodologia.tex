@@ -309,17 +309,17 @@ A adoção integral de uma versão publicada do RealVuln elimina a construção 
 
 Os principais fatores de esforço foram a integração dos formatos de saída, as três repetições das condições de IA e a avaliação qualitativa. O corpus quantitativo permaneceu completo; para controlar o esforço de avaliação, somente a avaliação qualitativa utilizará a amostra estratificada definida na Seção~\ref{subsec:metricas-qualitativas-metodologia}, pontuada pelo avaliador LLM descrito na mesma seção.
 
-\section{Validade e Limitações}\label{sec:validade-limitacoes}
+\section{Controles Preventivos do Desenho Experimental}\label{sec:validade-limitacoes}
 
-A Tabela~\ref{tab:ameacas-validade} sintetiza as principais ameaças e os controles adotados.
+Esta seção reúne os controles definidos para prevenir contaminação entre condições, mudanças de configuração e escolhas orientadas pelos resultados. A Tabela~\ref{tab:ameacas-validade} relaciona cada risco de desenho à medida prevista no protocolo. Os desvios de execução são registrados na Seção~\ref{sec:desvios-protocolo}; suas consequências para a interpretação dos resultados são examinadas na Seção~\ref{sec:ameacas-validade-observadas}.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
-\caption{\label{tab:ameacas-validade}Ameaças à validade e estratégias de mitigação}
+\caption{\label{tab:ameacas-validade}Riscos do desenho experimental e controles preventivos}
 \centering
 \begin{tabularx}{\textwidth}{|X|X|}
 \hline
-\textbf{Ameaça} & \textbf{Mitigação} \\
+\textbf{Risco de desenho} & \textbf{Controle previsto} \\
 \hline
 Variação do ambiente SAST & Imagem Docker imutável, regras locais, código somente leitura e registro de comandos e \textit{hashes} \\
 \hline
@@ -335,20 +335,20 @@ Uso inadvertido de SAST pelo braço IA & Restrições explícitas de ferramentas
 \hline
 Não determinismo & Três sessões independentes e reporte da frequência de detecção por entrada \\
 \hline
-Rótulos ruidosos ou incompletos & Versão e \textit{hash} fixados, validador oficial e uso dos rótulos sem alteração \\
+Alteração dos rótulos durante o estudo & Versão e \textit{hash} fixados, validador oficial e uso dos rótulos sem alteração \\
 \hline
-Memorização do benchmark por modelos & Código opaco no ambiente de execução e reconhecimento explícito de que o isolamento não elimina possível exposição durante o treinamento \\
+Identificação do projeto durante a coleta & Remoção de metadados e nomes originais dos alvos, com identificadores opacos nas áreas de trabalho \\
 \hline
 Viés na adjudicação e na rubrica & Cegamento da ferramenta, descritores prévios, avaliador LLM de família distinta das condições avaliadas, justificativas obrigatórias e congelamento das notas antes da abertura da chave \\
 \hline
 Granularidades diferentes de alerta & Adaptadores para o esquema comum e reutilização do algoritmo de correspondência do RealVuln \\
 \hline
-Alta densidade de vulnerabilidades & Resultados interpretados como desempenho no benchmark, sem inferir a prevalência ou a precisão esperada em projetos de produção \\
+Diferenças de composição do corpus entre condições & Aplicação de todas as condições aos mesmos 26 repositórios nas revisões fixadas \\
 \hline
-Generalização limitada & Conclusões restritas a Python, ao RealVuln v1.0, às versões, regras, prompts e ferramentas efetivamente avaliados \\
+Escolha retrospectiva da métrica principal & Definição de F3 antes da coleta e preservação de F1 e F2 entre as medidas reportadas \\
 \hline
 \end{tabularx}
 \legend{Fonte: Elaborado pelo autor (2026).}
 \end{table}
 
-A validade interna é fortalecida pelo uso dos mesmos repositórios e do mesmo avaliador em todas as condições, pelo controle do ambiente SAST, pelo modelo comum no bloco principal e pela preservação das saídas brutas. A validade de construto depende de não reduzir ``qualidade'' a uma única métrica: por isso, detecção, estabilidade, explicação e priorização são avaliadas separadamente, enquanto tempo e consumo de tokens caracterizam operacionalmente as execuções. A validade da medida de tokens depende dos contadores expostos pelos produtos e de suas definições, que podem não ser diretamente equivalentes. A validade externa é limitada pelo fato de o RealVuln v1.0 ser composto por aplicações educacionais e CTF deliberadamente vulneráveis, com densidade superior à de projetos de produção, além da rápida evolução dos produtos comerciais. Consequentemente, o estudo sustenta conclusões sobre o benchmark e as configurações observadas durante a coleta, e não sobre uma capacidade permanente ou universal de Cursor, Codex, Bandit, Semgrep ou de todas as abordagens híbridas.
+O desenho separa detecção, estabilidade, explicação e priorização em medidas próprias, enquanto tempo e consumo de tokens caracterizam operacionalmente as execuções. Essa separação evita que um único indicador seja usado para representar todas as dimensões de desempenho. O uso do mesmo corpus e do mesmo avaliador de detecção em todas as condições, a solicitação do mesmo modelo no bloco principal e a preservação das saídas brutas estabelecem uma base comum de comparação e permitem conferir posteriormente o cumprimento do protocolo.

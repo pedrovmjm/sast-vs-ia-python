@@ -4,7 +4,7 @@
 Lê evidencias/avaliacao-qualitativa/resumo-qualitativa.json, produzido por
 finalizar-rubrica.py --agregar depois do congelamento dos 300 julgamentos e da
 abertura da chave, e escreve dois fragmentos `tabular` em
-monografia/figs/avaliacao/. Usa somente a biblioteca padrão.
+monografia/tabelas/. Usa somente a biblioteca padrão.
 """
 
 import argparse
@@ -82,7 +82,7 @@ def main():
     parser.add_argument("--resumo", type=Path,
                         default=REPO / "evidencias" / "avaliacao-qualitativa" / "resumo-qualitativa.json")
     parser.add_argument("--saida", type=Path,
-                        default=REPO / "monografia" / "figs" / "avaliacao")
+                        default=REPO / "monografia" / "tabelas")
     args = parser.parse_args()
     resumo = json.loads(args.resumo.read_text(encoding="utf-8"))
     if resumo.get("n_relatorios") != 300:

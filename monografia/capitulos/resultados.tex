@@ -7,6 +7,12 @@ avaliação qualitativa utiliza uma amostra cega de 300 relatórios e a rubrica
 descrita neste capítulo; seus resultados foram agregados somente depois do
 congelamento dos 300 registros de pontuação.
 
+As condições são C1 (Bandit), C2 (Semgrep), C3 (Cursor com código), C4 (Codex
+com código), C5 (Cursor com código e alertas SAST) e C6 (Codex com código e
+alertas SAST). A análise distingue capacidade de detecção, qualidade dos relatos
+corretos, efeito do contexto SAST e estabilidade entre repetições, seguindo as
+quatro questões de pesquisa.
+
 \section{Visão Geral da Coleta e do Conjunto Analisado}\label{sec:visao-geral-coleta}
 
 Foram analisados os 26 repositórios do RealVuln v1.0, totalizando 817 entradas de
@@ -17,16 +23,25 @@ artefatos de tentativas de coleta; quando houve repetição operacional, selecio
 antes da abertura do oráculo a tentativa válida concluída com maior número.
 
 O Cursor utilizou GPT-5.6 Luna com perfil Medium e seleção explícita em C3 e C5.
-O Codex foi configurado para solicitar GPT-5.6 Luna em C4 e C6; sua CLI não
-expôs o modelo servido nos registros JSONL. O modo Auto do Cursor não foi usado.
+O Codex foi configurado para solicitar GPT-5.6 Luna em C4 e C6. O modo Auto do Cursor não foi usado.
 O bloco complementar previsto no planejamento não foi executado e não integra
 as comparações deste capítulo.
 
 Todos os achados foram pontuados pelo algoritmo oficial fixado do RealVuln, com
 caminho normalizado exato, CWE aceitável, tolerância de localização de dez linhas
-e consumo único de cada entrada. Adotou-se microcontagem estrita, inclusive nas
-falhas completas. Os intervalos de confiança de 95\% foram obtidos por 10.000
-reamostragens no nível do repositório, com semente 20260928.
+e consumo único de cada entrada. Adotou-se microcontagem: as quantidades de
+verdadeiros positivos, falsos positivos, falsos negativos e verdadeiros negativos
+foram somadas entre os repositórios antes do cálculo das métricas. Portanto, o
+resultado agregado não é uma média dos percentuais de cada projeto. Nenhuma
+unidade prevista foi excluída por apresentar poucos achados ou desempenho baixo.
+
+Os intervalos de confiança de 95\% (IC95\%) seguem o procedimento de
+\textit{bootstrap} por repositório explicado na
+Seção~\ref{subsubsec:ic95-metodologia}. Nos gráficos, os marcadores mostram
+as estimativas e as hastes, seus limites de incerteza. As tabelas e figuras
+quantitativas derivam dos arquivos em \path{evidencias/avaliacao/}; as
+pontuações dos relatos, de \path{evidencias/avaliacao-qualitativa/}, ambos
+disponíveis no repositório do trabalho \cite{Motta2026Repositorio}.
 
 \section{Desempenho Quantitativo de Detecção (QP1)}\label{sec:desempenho-quantitativo}
 
@@ -36,22 +51,28 @@ A Tabela~\ref{tab:resultados-deteccao-condicao} resume as métricas agregadas. P
 as condições de IA, cada ponto é a média das métricas calculadas separadamente nas
 três repetições, e não o resultado de uma união ou de voto majoritário.
 
-As Figuras~\ref{fig:precisao-recall} e~\ref{fig:fscores} mostram as estimativas e
-seus intervalos de confiança. Em todos os gráficos, C1 e C2 correspondem a Bandit
-e Semgrep; C3 e C4, a Cursor e Codex sem alertas; e C5 e C6, aos mesmos produtos
-com contexto SAST. As condições de IA usam a configuração Luna descrita acima.
+As colunas de precisão, \textit{recall} e F1--F3 devem ser lidas com valores
+maiores como favoráveis, enquanto valores menores da taxa de FP são
+favoráveis. O IC95\% de F3 expressa a incerteza dessa métrica e não uma
+segunda medida de acerto. A tabela foi obtida de
+\path{evidencias/avaliacao/metricas-condicoes.csv}.
+
+A Figura~\ref{fig:precisao-recall} posiciona cada condição pelo \textit{recall}
+e pela precisão, com os respectivos intervalos de confiança; as curvas tracejadas
+indicam combinações com o mesmo F3. Nos gráficos comparativos, a cor identifica a
+abordagem (âmbar para SAST, azul para IA isolada e verde para híbrida) e a
+hachura distingue a segunda ferramenta de cada par: Semgrep em relação ao Bandit
+e Codex em relação ao Cursor. Um ponto mais à direita indica maior cobertura
+das vulnerabilidades, e mais acima, maior proporção de alertas corretos.
+As hastes horizontais são os IC95\% do \textit{recall}; as verticais, os da
+precisão. As curvas de F3 constante ajudam a ler conjuntamente as duas
+medidas: curvas com F3 maior representam combinações mais favoráveis segundo
+a ponderação definida para essa métrica.
 
 \begin{figure}[htbp]
 \centering
-\caption{\label{fig:precisao-recall}Precisão e recall por condição, com IC95\%}
-\input{figs/avaliacao/deteccao-precisao-recall-ic95.tex}
-\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026).}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\caption{\label{fig:fscores}F1, F2 e F3 por condição, com IC95\%}
-\input{figs/avaliacao/deteccao-fscores-ic95.tex}
+\caption{\label{fig:precisao-recall}Precisão e recall por condição, com IC95\% e curvas de F3 constante}
+\includegraphics[width=\textwidth]{figs/graficos/deteccao-precisao-recall.pdf}
 \legend{Fonte: Elaborado pelo autor a partir da avaliação (2026).}
 \end{figure}
 
@@ -80,11 +101,22 @@ As condições baseadas em IA apresentaram precisão substancialmente maior e ta
 falsos positivos menor que as linhas de base SAST. C4 obteve a maior precisão entre
 as condições isoladas (84,7\%), enquanto C6 atingiu a maior precisão geral (85,1\%)
 e a menor taxa de falsos positivos (22,6\%). Em contrapartida, o \textit{recall}
- médio permaneceu abaixo de 29\% em todas as condições. C5 obteve o maior valor médio de
+médio permaneceu abaixo de 29\% em todas as condições. C5 obteve o maior valor médio de
 \textit{recall} (28,7\%) e F3 (30,7\%), porém com diferenças pequenas em relação
 a C3, C4 e C6. Assim, o principal contraste observado não é uma cobertura ampla,
 mas uma troca entre o elevado número de alertas incorretos do SAST e a seleção mais
 conservadora das condições de IA.
+
+A Figura~\ref{fig:precisao-recall} torna visível uma característica que a tabela
+não evidencia: as seis condições formam dois agrupamentos separados quase
+exclusivamente na direção vertical. Os intervalos de precisão do SAST (10,5\% a
+34,8\%) e os das condições de IA (69,5\% a 90,9\%) não se sobrepõem, enquanto os
+intervalos de \textit{recall} se sobrepõem amplamente, inclusive entre o Semgrep
+(20,5\% a 30,5\%) e as condições de IA (21,6\% a 35,1\%). Além disso, o grupo de IA
+fica próximo da curva de F3 igual a 0,3, pouco acima do Semgrep: como o F3
+pondera fortemente o \textit{recall}, o grande ganho de precisão se traduz em
+ganho pequeno nessa métrica. Dentro do grupo de IA, os quatro marcadores quase se
+sobrepõem, e nenhuma condição se destaca das demais.
 
 A Figura~\ref{fig:taxa-fp} apresenta a taxa de falsos positivos calculada pelo
 avaliador oficial. Essa taxa não equivale a $1-\text{precisão}$: o benchmark
@@ -92,11 +124,23 @@ contabiliza como FP também os alertas sem correspondência, enquanto TN se
 restringe às armadilhas seguras corretamente ignoradas. Assim, o denominador
 $FP+TN$ não representa todas as regiões seguras do código, e a medida deve ser
 interpretada segundo essa convenção do RealVuln.
+Na figura, valores menores são favoráveis, e as hastes indicam os IC95\%.
+A taxa de 22,6\% de C6, por exemplo, não significa que 22,6\% de seus
+alertas sejam incorretos; essa proporção entre alertas corresponde ao
+complemento da precisão, aproximadamente 14,9\%.
+
+Na figura, as barras se dividem em dois patamares. As duas ferramentas SAST
+ficam acima de 80\%, com intervalos entre 66,3\% e 90,0\%; as quatro condições de
+IA ficam entre 22,6\% e 27,4\%, com intervalos entre 14,5\% e 38,1\%. Os
+intervalos dos dois patamares não se sobrepõem, de modo que a diferença entre
+abordagens não depende da composição particular dos projetos. Entre as
+condições de IA, por outro lado, os intervalos se sobrepõem quase inteiramente;
+a menor taxa de C6 não a distingue de C4 ou C5.
 
 \begin{figure}[htbp]
 \centering
 \caption{\label{fig:taxa-fp}Taxa de falsos positivos segundo a convenção do RealVuln, com IC95\%}
-\input{figs/avaliacao/taxa-falsos-positivos-ic95.tex}
+\includegraphics[width=\textwidth]{figs/graficos/deteccao-falsos-positivos.pdf}
 \legend{Fonte: Elaborado pelo autor a partir da avaliação (2026).}
 \end{figure}
 
@@ -107,11 +151,81 @@ Na categoria de injeção, o \textit{recall} variou de 35,5\% em C1 e 50,6\% em 
 até 56,6\%--64,7\% nas condições de IA, com o maior valor em C5. Para autenticação,
 C1 e C2 alcançaram apenas 0,9\%, enquanto C3--C6 variaram de 22,0\% a 28,3\%.
 Na categoria de sessão e configuração, C1 não detectou entradas, C2 alcançou 34,0\%
-e as condições de IA permaneceram entre 6,4\% e 10,3\%. Os resultados completos
+e as condições de IA permaneceram entre 6,4\% e 10,3\%. O mesmo ocorreu em XSS
+(41,5\% em C2, contra 9,8\%--19,1\% na IA) e em exposição de dados, em que C1
+alcançou 31,9\% e as condições de IA, 15,2\%--17,3\%. Os resultados completos
 por CWE e repetição foram preservados nos artefatos de avaliação; categorias com
 poucas entradas devem ser interpretadas descritivamente.
 
+A Tabela~\ref{tab:recall-cwe} detalha as 21 CWEs com pelo menos dez entradas
+de referência. A coluna IA reúne C3--C6 pela média das doze execuções, pois as
+diferenças entre as quatro condições de IA foram pequenas diante das diferenças
+entre CWEs. Três padrões aparecem. Primeiro, nas injeções clássicas
+(CWE-89, CWE-78, CWE-502), todas as abordagens tiveram \textit{recall} elevado,
+e o Semgrep ficou acima da média da IA. Segundo, a IA encontrou falhas que
+dependem da lógica da aplicação e para as quais as regras quase não tiveram
+detecções: acesso a objeto por identificador controlado (CWE-639, 52,1\% contra
+0\%), travessia de caminho (CWE-22, 55,4\% contra até 11,5\%), SSRF (CWE-918,
+42,7\% contra até 8,3\%) e autorização ausente (CWE-862, 28,6\% contra 0\%).
+Terceiro, o SAST superou a IA em padrões sintáticos bem definidos, como hash
+fraco (CWE-328), credenciais embutidas (CWE-798), CSRF (CWE-352) e XSS (CWE-79).
+Algumas classes ficaram praticamente sem detecção em todas as abordagens, como
+limite de tentativas de autenticação (CWE-307), armazenamento em texto claro
+(CWE-312), configuração (CWE-16) e exposição de informação (CWE-200 e CWE-209).
+
+\begin{table}[htb]
+\ABNTEXfontereduzida
+\caption{\label{tab:recall-cwe}Recall por CWE com pelo menos dez entradas de referência}
+\centering
+\begin{tabular}{llrrrr}
+\hline
+\textbf{CWE} & \textbf{Descrição resumida} & \textbf{N} & \textbf{C1} & \textbf{C2} & \textbf{IA (C3--C6)} \\
+\hline
+CWE-502 & Desserialização insegura & 19 & 68,4\% & 94,7\% & 80,3\% \\
+CWE-89 & Injeção de SQL & 46 & 76,1\% & 82,6\% & 69,7\% \\
+CWE-94 & Injeção de código & 14 & 0,0\% & 71,4\% & 66,7\% \\
+CWE-78 & Injeção de comandos & 17 & 64,7\% & 70,6\% & 61,8\% \\
+CWE-22 & Travessia de caminho & 26 & 7,7\% & 11,5\% & 55,4\% \\
+CWE-639 & Objeto acessado por chave controlada & 24 & 0,0\% & 0,0\% & 52,1\% \\
+CWE-918 & SSRF & 24 & 0,0\% & 8,3\% & 42,7\% \\
+CWE-862 & Autorização ausente & 16 & 0,0\% & 0,0\% & 28,6\% \\
+CWE-798 & Credenciais embutidas & 60 & 65,0\% & 0,0\% & 25,8\% \\
+CWE-215 & Informação em modo de depuração & 12 & 0,0\% & 58,3\% & 22,9\% \\
+CWE-328 & Hash fraco & 13 & 84,6\% & 76,9\% & 17,9\% \\
+CWE-256 & Senha em texto claro & 10 & 0,0\% & 0,0\% & 16,7\% \\
+CWE-79 & XSS & 82 & 1,2\% & 41,5\% & 15,8\% \\
+CWE-306 & Autenticação ausente & 24 & 0,0\% & 0,0\% & 15,3\% \\
+CWE-352 & CSRF & 42 & 0,0\% & 57,1\% & 11,3\% \\
+CWE-400 & Consumo descontrolado de recursos & 19 & 0,0\% & 0,0\% & 10,5\% \\
+CWE-209 & Informação em mensagens de erro & 21 & 0,0\% & 0,0\% & 7,1\% \\
+CWE-200 & Exposição de informação & 34 & 0,0\% & 0,0\% & 6,4\% \\
+CWE-16 & Configuração & 16 & 0,0\% & 6,2\% & 3,1\% \\
+CWE-312 & Armazenamento em texto claro & 11 & 0,0\% & 0,0\% & 0,8\% \\
+CWE-307 & Tentativas de autenticação sem limite & 21 & 0,0\% & 0,0\% & 0,4\% \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelo autor a partir de \path{evidencias/avaliacao/metricas-por-cwe.csv} (2026). N: vulnerabilidades de referência; IA: média das doze execuções de C3--C6. Ordenada pelo recall da IA.}
+\end{table}
+
 \subsection{Resultados por severidade}\label{subsec:resultados-por-severidade}
+
+A Tabela~\ref{tab:recall-severidade} foi construída a partir do arquivo
+\texttt{metricas-por-severidade.csv}, em \path{evidencias/avaliacao/}, gerado pela
+correspondência entre os achados e o \textit{ground truth}. As 697
+vulnerabilidades foram agrupadas pela severidade da referência: 68 baixas,
+279 médias, 264 altas e 86 críticas. As 120 armadilhas seguras não integram
+esses denominadores. Em cada grupo, o \textit{recall} é a quantidade de
+vulnerabilidades detectadas dividida pela quantidade de vulnerabilidades de
+referência daquela severidade. C1 e C2 têm uma execução; C3--C6 mostram a
+média dos percentuais das três repetições.
+
+Como exemplo da origem dos valores, C1 encontrou 38 das 86 vulnerabilidades
+críticas: $38/86\times100=44,2\%$. Em C5, foram encontradas 64, 65 e 71
+críticas nas três repetições; a média de
+$64/86$, $65/86$ e $71/86$ resulta em 77,5\%. Valores maiores indicam maior
+cobertura dentro da categoria. Esses números avaliam a detecção por
+severidade de referência; a correção da severidade atribuída pela ferramenta
+é examinada separadamente na Seção~\ref{sec:priorizacao-resultados}.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
@@ -119,7 +233,7 @@ poucas entradas devem ser interpretadas descritivamente.
 \centering
 \begin{tabular}{lrrrr}
 \hline
-\textbf{Condição} & \textbf{Baixa} & \textbf{Média} & \textbf{Alta} & \textbf{Crítica} \\
+\textbf{Condição} & \textbf{Baixa (68)} & \textbf{Média (279)} & \textbf{Alta (264)} & \textbf{Crítica (86)} \\
 \hline
 C1 & 14,7\% & 10,8\% & 19,7\% & 44,2\% \\
 C2 & 5,9\% & 22,6\% & 22,0\% & 62,8\% \\
@@ -129,28 +243,48 @@ C5 & 3,9\% & 14,6\% & 34,1\% & 77,5\% \\
 C6 & 3,9\% & 15,3\% & 33,7\% & 74,8\% \\
 \hline
 \end{tabular}
-\legend{Fonte: Elaborado pelo autor (2026). Nas condições C3--C6, valores médios das três repetições.}
+\legend{Fonte: Elaborado pelo autor a partir de \path{evidencias/avaliacao/metricas-por-severidade.csv} (2026). Entre parênteses: quantidade de vulnerabilidades de referência; C3--C6: médias das três repetições. Maior recall indica maior cobertura.}
 \end{table}
 
-O \textit{recall} cresceu com a severidade de referência. C5 detectou, em média,
+As vulnerabilidades críticas tiveram o maior \textit{recall} em todas as condições.
+C5 detectou, em média,
 77,5\% das vulnerabilidades críticas, mas somente 3,9\% das de severidade baixa.
 Esse padrão favorece a descoberta das falhas de maior impacto, embora também mostre
 que a cobertura global reduzida não se distribui uniformemente pelo corpus.
+Nas condições de IA, o \textit{recall} cresceu com a severidade, de 3,4\%--3,9\%
+nas baixas a 67,8\%--77,5\% nas críticas. Nas baixas, o Bandit (14,7\%) superou
+todas as condições de IA. As vulnerabilidades baixas concentram-se em exposição
+de informação e configuração, como mensagens de erro detalhadas (CWE-209),
+exposição de informação (CWE-200), configuração (CWE-16) e atributos de
+\textit{cookie} (CWE-614), classes com baixa detecção na Tabela~\ref{tab:recall-cwe}.
 
 A Figura~\ref{fig:recall-severidade} permite comparar esse padrão entre condições.
 As categorias são as severidades de referência do benchmark, e não as etiquetas
 atribuídas pelas ferramentas.
+Cada linha reúne uma categoria; quanto mais à direita estiver o marcador,
+maior a fração de vulnerabilidades dessa severidade encontrada pela condição.
+O segmento cinza liga o menor ao maior valor observado entre condições;
+não representa intervalo de confiança.
+
+A figura mostra que a posição relativa das abordagens muda com a severidade.
+Nas críticas e altas, os marcadores de IA ficam à direita dos de SAST, e a
+amplitude entre condições é a maior do gráfico: nas críticas, vai de 44,2\% no
+Bandit a 77,5\% em C5. Nas médias, o Semgrep fica à direita de todas as
+condições de IA. Nas baixas, a ordem se inverte em relação às críticas: o
+Bandit é o marcador mais à direita, e as quatro condições de IA se acumulam
+próximas de zero. Portanto, a vantagem da IA em \textit{recall} concentra-se
+nas falhas mais graves, e não se estende a todo o corpus.
 
 \begin{figure}[htbp]
 \centering
 \caption{\label{fig:recall-severidade}Recall por severidade de referência}
-\input{figs/avaliacao/recall-severidade.tex}
+\includegraphics[width=\textwidth]{figs/graficos/deteccao-recall-severidade.pdf}
 \legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). C3--C6: médias das três repetições.}
 \end{figure}
 
 \section{Qualidade dos Relatórios Verdadeiros-Positivos (QP2)}\label{sec:qualidade-relatorios}
 
-\subsection{Amostra e estado da avaliação}\label{subsec:resultados-rubrica}
+\subsection{Composição da amostra}\label{subsec:resultados-rubrica}
 
 Foi preparada uma amostra cega conforme o protocolo. Foram
 identificadas 35 entradas detectadas por todas as condições na primeira repetição;
@@ -167,6 +301,9 @@ a qualidade dos falsos positivos nem representa todos os relatórios emitidos.
 
 A pontuação foi aplicada por um avaliador LLM de família distinta da usada nas
 condições C3--C6, conforme a Seção~\ref{subsec:metricas-qualitativas-metodologia}.
+As notas têm finalidade exclusivamente exploratória e não foram validadas por
+especialistas humanos; não constituem \textit{ground truth} de qualidade nem
+sustentam conclusões definitivas de superioridade entre as condições.
 O avaliador, o registro e a validação das pontuações estão descritos na
 Seção~\ref{subsec:registro-pontuacao-qualitativa}.
 
@@ -177,9 +314,12 @@ explícita, aplicada por um modelo de linguagem como avaliador para tornar viáv
 a pontuação de toda a amostra. Essa etapa constitui uma extensão exploratória do
 protocolo. Os escores são interpretados como julgamentos sobre o material
 fornecido; não constituem confirmação por exploração dinâmica nem verdade de
-referência sobre a qualidade dos relatos.
+referência sobre a qualidade dos relatos. O uso do LLM tornou viável a pontuação
+integral da amostra diante do tempo e dos custos de uma revisão por especialistas.
+A avaliação humana permanece necessária para validar as notas e as diferenças
+observadas, como discutido na metodologia; essa concordância não foi medida.
 
-Cada relatório é examinado com sua descrição, recomendação, referência
+Cada relatório foi examinado com sua descrição, recomendação, referência
 específica do benchmark e trecho numerado do código sanitizado. A associação
 quantitativa a um verdadeiro positivo não concede automaticamente a nota máxima
 de correção ou localização. Afirmações sobre o mecanismo precisam ser
@@ -234,9 +374,24 @@ julgamentos qualitativos, mas após a análise quantitativa; não representam um
 escala com validade psicométrica demonstrada. A apresentação conserva também
 as dimensões separadas, evitando reduzir a qualidade a uma única nota.
 
+A Figura~\ref{fig:exemplo-relatos} ilustra a aplicação da rubrica a dois relatos da
+mesma vulnerabilidade do recorte comum. O alerta do Bandit identifica o trecho
+exato, mas descreve o problema em uma frase genérica e não traz recomendação; o
+relato do Cursor explica a origem do dado, a operação vulnerável e o impacto, e
+propõe uma correção específica. A diferença de score decorre sobretudo da
+acionabilidade, padrão que se repete nos agregados apresentados a seguir.
+
+\begin{landscape}
+\begin{figure}[p]
+\centering
+\caption{\label{fig:exemplo-relatos}Exemplo de pontuação de dois relatos da mesma vulnerabilidade}
+\includegraphics[width=0.90\linewidth]{figs/excalidraw/avaliacao-exemplo-relatos-legivel.png}
+\legend{Fonte: Elaborado pelo autor a partir da amostra cega e da pontuação qualitativa (2026).}
+\end{figure}
+\end{landscape}
+
 \subsection{Escores por condição}\label{subsec:resultados-escores-qualitativos}
 
-\IfFileExists{figs/avaliacao/qualitativa-condicoes.tex}{%
 A Tabela~\ref{tab:qualitativa-condicoes} apresenta, para os 50 relatos de cada
 condição, a média de cada dimensão e do score entre os valores válidos. A
 coluna de scores válidos indica quantos relatos tiveram as oito decisões
@@ -244,47 +399,74 @@ avaliáveis; as abstenções reduzem o número de valores de cada dimensão e n�
 são imputadas. Como a amostra é restrita a verdadeiros positivos e composta por
 estratificação própria de cada condição, as médias descrevem os relatos
 selecionados e não a qualidade de todos os alertas emitidos.
+Nas quatro dimensões e no score, valores maiores representam melhor
+pontuação segundo a rubrica. Um score de 90 não é uma taxa de detecção de
+90\%: trata-se de uma nota de qualidade dos relatos corretos selecionados.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
 \caption{\label{tab:qualitativa-condicoes}Pontuação média dos relatos verdadeiros-positivos por condição}
 \centering
-\resizebox{\textwidth}{!}{\input{figs/avaliacao/qualitativa-condicoes.tex}}
+\resizebox{\textwidth}{!}{\input{tabelas/qualitativa-condicoes.tex}}
 \legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). Correção, localização e acionabilidade: escala de 1 a 5; clareza: contagem de 0 a 5; score: 0 a 100.}
 \end{table}
 
-A Tabela~\ref{tab:qualitativa-deltas} restringe a comparação aos 20 grupos de
-referência comuns às seis condições. Cada diferença é calculada dentro do mesmo
-grupo, entre a condição híbrida e a respectiva condição isolada, e só entra na
-média quando as duas pontuações são válidas. Com apenas 20 grupos, as
-diferenças permanecem descritivas e não sustentam inferência sobre o efeito
-dos alertas SAST na qualidade.
+A Tabela~\ref{tab:qualitativa-deltas} deriva das pontuações dos relatos das
+mesmas 20 vulnerabilidades sorteadas entre as 35 detectadas por todas as
+condições na primeira repetição. Para cada vulnerabilidade, subtrai-se a
+nota do relato isolado da nota do relato híbrido, separadamente para cada
+dimensão: C5 menos C3 para Cursor e C6 menos C4 para Codex. A tabela mostra a
+média dessas 20 diferenças, e só inclui um par quando ambas as notas são
+válidas. Os registros por par estão em
+\path{evidencias/avaliacao-qualitativa/deltas-comuns.csv}; as médias estão em
+\path{evidencias/avaliacao-qualitativa/resumo-deltas-comuns.csv}. O script
+\path{scripts/gerar-tabela-qualitativa.py} gera a tabela a partir do resumo
+congelado.
+
+Em qualquer coluna, um valor positivo indica pontuação maior no relato
+híbrido, um valor negativo indica pontuação maior no isolado e zero indica
+ausência de diferença média. Por exemplo, 0,75 em localização para C5$-$C3
+significa que o relato do Cursor com alertas recebeu, em média, 0,75 ponto
+a mais na escala de 1 a 5 para as mesmas vulnerabilidades. O valor
+$-0,20$ em acionabilidade indica uma pequena redução nessa dimensão. Os
+3,75 pontos de score estão na escala de 0 a 100 e não em pontos percentuais
+de detecção. Esses contrastes não são calculados subtraindo as médias dos
+50 relatos da Tabela~\ref{tab:qualitativa-condicoes}, pois aquela amostra
+inclui outras vulnerabilidades e tem composição diferente por condição.
+Com 20 pares e sem intervalos inferenciais, as diferenças descrevem esse
+recorte e não estabelecem um ganho geral de qualidade.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
 \caption{\label{tab:qualitativa-deltas}Diferença média de pontuação no recorte comum}
 \centering
-\resizebox{\textwidth}{!}{\input{figs/avaliacao/qualitativa-deltas.tex}}
-\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). Diferenças entre pares do mesmo grupo de referência.}
+\resizebox{\textwidth}{!}{\input{tabelas/qualitativa-deltas.tex}}
+\legend{Fonte: Elaborado pelo autor a partir de \path{evidencias/avaliacao-qualitativa/resumo-deltas-comuns.csv} (2026). Diferença: híbrida menos isolada, para as mesmas 20 vulnerabilidades. Positivo favorece a híbrida; negativo favorece a isolada.}
 \end{table}
 
-A Figura~\ref{fig:qualidade-score} resume o score médio por condição, na amostra
-completa e no recorte comum, e a Figura~\ref{fig:qualidade-dimensoes} separa as
-dimensões no recorte comum. Em ambas, a ordenação dos grupos de condições é a
-mesma da Tabela~\ref{tab:qualitativa-condicoes}.
+A Figura~\ref{fig:qualidade-score-distribuicao} mostra o score de cada relato: as
+condições SAST têm distribuições mais largas e mais baixas, enquanto as condições de
+IA se concentram próximo ao topo da escala. A Figura~\ref{fig:qualidade-mapa-calor}
+decompõe essas diferenças nas quatro dimensões da rubrica; a intensidade da cor é
+proporcional à posição de cada média na escala da respectiva dimensão.
+No mapa de calor, cores mais intensas indicam pontuações mais próximas do
+máximo, conforme a escala de cores; os números das células permitem a leitura
+exata. No gráfico de distribuição, posições mais altas indicam relatos mais
+bem pontuados, e caixas de menor altura indicam menor dispersão da metade
+central das notas. As hastes mostram o mínimo e o máximo, sem representar IC95\%.
 
 \begin{figure}[htbp]
 \centering
-\caption{\label{fig:qualidade-score}Score médio dos relatos verdadeiros-positivos por condição}
-\input{figs/avaliacao/qualidade-score.tex}
-\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). Amostra completa: 50 relatos por condição; recorte comum: 20 grupos de referência.}
+\caption{\label{fig:qualidade-mapa-calor}Média de cada dimensão da rubrica por condição, na amostra completa}
+\includegraphics[width=\textwidth]{figs/graficos/qualidade-dimensoes.pdf}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). 50 relatos por condição; correção, localização e acionabilidade de 1 a 5; clareza de 0 a 5.}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\caption{\label{fig:qualidade-dimensoes}Pontuação média por dimensão no recorte comum}
-\input{figs/avaliacao/qualidade-dimensoes.tex}
-\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). A clareza é a contagem de 0 a 5 itens atendidos; as demais dimensões usam a escala de 1 a 5.}
+\caption{\label{fig:qualidade-score-distribuicao}Distribuição do score qualitativo por condição}
+\includegraphics[width=\textwidth]{figs/graficos/qualidade-distribuicao-score.pdf}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). Caixa: Q1--Q3; linha: mediana; hastes: mínimo--máximo; 50 relatos por condição.}
 \end{figure}
 
 Os escores médios foram menores nas condições SAST isoladas e maiores nas
@@ -302,6 +484,18 @@ diretamente a instrução sinalizada, ao passo que os agentes sem alertas por
 vezes indicam a região ou a função correta sem a linha causal. As condições híbridas recuperaram essa
 dimensão (4,56 em C5 e 4,60 em C6).
 
+As duas figuras mostram esses padrões de formas complementares. No mapa de
+calor, as linhas de IA são escuras em quase todas as colunas; as exceções são as
+células de localização de C3 e C4, mais claras que as de C1 e C2, e a célula de
+acionabilidade de C1, a mais clara do gráfico. No gráfico de distribuição, as
+medianas passam de 53,1 em C1 e 76,2 em C2 para 87,5 a 93,8 nas condições de
+IA. C1 tem a maior dispersão e inclui relatos abaixo de 30 pontos, enquanto
+as caixas de C5 e C6 ficam comprimidas junto ao máximo da escala. Essa
+compressão indica que a rubrica perde capacidade de separar os relatos mais bem
+pontuados, um efeito de teto semelhante ao observado na clareza. A distribuição
+de C4 estende-se a valores mais baixos que a de C3, o que acompanha sua menor
+média de localização.
+
 No recorte comum, a Tabela~\ref{tab:qualitativa-deltas} mostra que a diferença
 de score entre a condição híbrida e a respectiva condição isolada foi de 3,75
 pontos para C5$-$C3 e de 7,81 pontos para C6$-$C4. Essas diferenças vieram
@@ -309,25 +503,55 @@ sobretudo da localização (0,75 e 1,10 pontos na escala de 1 a 5), com variaç�
 pequenas em correção técnica (0,05 e 0,20) e ligeiramente negativas em
 acionabilidade ($-$0,20 e $-$0,05); a clareza não variou. Com 20 grupos e sem
 intervalos inferenciais, esses valores são descritivos e não permitem afirmar
-efeito dos alertas SAST na qualidade das explicações.
+efeito dos alertas SAST na qualidade das explicações. A
+Figura~\ref{fig:qualidade-deltas-dimensoes} apresenta essas diferenças por dimensão.
+Barras acima do zero indicam pontuação média maior na condição híbrida;
+abaixo, pontuação média menor. Os pontos mostram a diferença de nota de
+cada uma das 20 vulnerabilidades, permitindo observar a variação entre
+relatos mesmo quando a média é positiva. Não há intervalos de confiança.
+
+Os pontos individuais da figura qualificam as médias. Em localização, nenhuma
+diferença foi negativa: o relato híbrido foi melhor em 11 das 20
+vulnerabilidades para o Cursor e em 15 para o Codex, com ganhos de um a três
+pontos, e igual nas demais. Em acionabilidade, a pequena média negativa de
+C5$-$C3 resulta de sete reduções e três aumentos, com dez empates; em C6$-$C4,
+de três reduções e dois aumentos. Em correção técnica, quase todos os pontos
+estão sobre o zero, e em clareza todos estão. Assim, o efeito descritivo dos
+alertas na qualidade aparece de forma consistente apenas na localização,
+coerente com o fato de os alertas SAST indicarem a linha sinalizada.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:qualidade-deltas-dimensoes}Diferença média entre condição híbrida e isolada no recorte comum, por dimensão}
+\includegraphics[width=\textwidth]{figs/graficos/hibrido-qualidade-dimensoes.pdf}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). 20 grupos de referência; diferenças em pontos da escala de cada dimensão.}
+\end{figure}
 
 A clareza atingiu o valor máximo (cinco itens atendidos) em todos os relatos de
 C3 a C6, o que indica efeito de teto: nessa dimensão, a rubrica não distingue as
-condições de IA entre si. Os demais resultados também estão sujeitos aos limites
+condições de IA entre si. A Figura~\ref{fig:qualidade-clareza-itens} decompõe a
+clareza nos cinco itens do checklist. Nas condições SAST, o risco explícito
+aparece em 4\% dos relatos de C1 e em 52\% dos de C2, e o contexto técnico, em
+50\% e 74\%; a concretude é menor apenas em C1 (60\%). Nas condições de IA, todos
+os itens foram atendidos em todos os relatos.
+Na figura, percentuais maiores indicam que mais relatos atenderam ao item
+do checklist. Cada percentual usa os 50 relatos da respectiva condição
+como denominador; ele não representa a proporção de vulnerabilidades detectadas.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:qualidade-clareza-itens}Proporção de relatos que atendem a cada item de clareza}
+\includegraphics[width=\textwidth]{figs/graficos/qualidade-clareza.pdf}
+\legend{Fonte: Elaborado pelo autor a partir da pontuação qualitativa (2026). 50 relatos por condição.}
+\end{figure}
+
+Os demais resultados também estão sujeitos aos limites
 da etapa: a amostra contém apenas verdadeiros positivos, a composição difere
 entre as condições, o cegamento é parcial pelo estilo dos textos, e as
 pontuações provêm de um único avaliador LLM, sem calibração contra avaliadores
 humanos. Os escores devem ser lidos como evidência exploratória sobre a
 utilidade dos achados corretos, e não como medida da qualidade global das
 ferramentas.
-}{%
-Os 300 julgamentos ainda não foram concluídos e congelados; por isso, esta
-seção não apresenta médias, diferenças nem comparações entre condições. A
-tabela por condição e a tabela do recorte comum são geradas por
-\path{scripts/gerar-tabela-qualitativa.py} a partir do resumo congelado e
-aparecem aqui quando esse arquivo existe. Nenhuma conclusão sobre a QP2 deve
-ser derivada de tentativas parciais, nem da leitura de relatos isolados.
-}
 
 \section{Efeito da Combinação SAST + IA (QP3)}\label{sec:efeito-hibrido}
 
@@ -335,6 +559,11 @@ A comparação pareada entre C5 e C3 indicou diferenças médias de 1,24 ponto
 percentual em \textit{recall} (IC95\%: $-3,26$ a 5,43), 1,33 ponto em F3
 (IC95\%: $-3,36$ a 5,70), 3,19 pontos em precisão (IC95\%: $-1,62$ a 9,26)
 e $-3,09$ pontos na taxa de falsos positivos (IC95\%: $-7,23$ a 2,38).
+
+As diferenças são calculadas como condição híbrida menos isolada e expressas
+em pontos percentuais. Para precisão, \textit{recall} e F3, valores positivos
+favorecem a híbrida; para a taxa de falsos positivos, valores negativos indicam
+redução dos alertas incorretos segundo a convenção do benchmark.
 
 Entre C6 e C4, as diferenças foram $-0,10$ ponto em \textit{recall}
 (IC95\%: $-3,01$ a 2,61), $-0,09$ ponto em F3
@@ -355,14 +584,32 @@ A Figura~\ref{fig:comparacoes-pareadas} representa as diferenças de precisão,
 desse valor nos intervalos impede concluir uma vantagem a partir das estimativas
 pontuais. Isso também não demonstra equivalência entre as condições.
 
+A figura distingue os dois produtos. No bloco do Cursor, as três estimativas
+ficam do lado favorável à condição híbrida, mas todas as hastes cruzam a linha
+do zero. No bloco do Codex, as estimativas de \textit{recall} e F3 estão
+praticamente sobre o zero, com intervalos mais estreitos, de cerca de três
+pontos para cada lado. Em ambos os produtos, a precisão tem os intervalos mais
+largos. Com os dados disponíveis, portanto, não se pode excluir um efeito
+moderado dos alertas no Cursor, mas no Codex os resultados são compatíveis
+apenas com efeitos pequenos na cobertura, em qualquer direção.
+
 \begin{figure}[htbp]
 \centering
 \caption{\label{fig:comparacoes-pareadas}Diferenças pareadas entre condições híbridas e isoladas, com IC95\%}
-\input{figs/avaliacao/comparacoes-pareadas.tex}
+\includegraphics[width=\textwidth]{figs/graficos/hibrido-comparacoes-pareadas.pdf}
 \legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Diferença: híbrida menos isolada.}
 \end{figure}
 
 \section{Estabilidade entre Execuções (QP4)}\label{sec:estabilidade-execucoes}
+
+A Tabela~\ref{tab:estabilidade-resultados} e a Figura~\ref{fig:estabilidade-ia}
+acompanham cada uma das 697 vulnerabilidades nas três repetições de cada
+condição de IA. A identificação usa o mesmo rótulo de referência: uma
+vulnerabilidade recebe frequência zero se nunca foi encontrada, um se foi
+encontrada em uma execução, dois se foi encontrada em duas e três se foi
+encontrada em todas. Os dados individuais constam de
+\path{evidencias/avaliacao/estabilidade-entradas.csv}, e as contagens das
+quatro faixas, de \path{evidencias/avaliacao/estabilidade-resumo.csv}.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
@@ -379,7 +626,7 @@ C5 & 437 & 64 & 52 & 144 & 0,0095 & 0,0170 \\
 C6 & 433 & 74 & 48 & 142 & 0,0017 & 0,0029 \\
 \hline
 \end{tabular}
-\legend{Fonte: Elaborado pelo autor (2026). DP: desvio-padrão entre as métricas das três repetições.}
+\legend{Fonte: Elaborado pelo autor (2026). DP: desvio-padrão entre as métricas das três repetições. DP e amplitude de F3 estão na escala de 0 a 1; por exemplo, 0,0308 corresponde a 3,08 pontos percentuais.}
 \end{table}
 
 A maior parte das vulnerabilidades permaneceu sem detecção nas três execuções.
@@ -389,15 +636,36 @@ variação agregada de F3, enquanto C4 apresentou a maior. A análise por entrad
 evidencia que métricas agregadas próximas podem ocultar variação na identidade
 dos casos encontrados.
 
-A Figura~\ref{fig:estabilidade-ia} mostra que a faixa de ausência de detecção
-predomina em todas as condições. A estabilidade de uma métrica agregada deve,
-portanto, ser distinguida da repetibilidade da identificação de cada falha.
+A Figura~\ref{fig:estabilidade-ia} converte essas contagens em percentuais
+das 697 vulnerabilidades. Cada barra soma 100\% e representa uma condição,
+dividida entre ``0 de 3'', ``1 de 3'', ``2 de 3'' e ``3 de 3''. A faixa cinza
+(``0 de 3'') mostra as falhas nunca detectadas; a azul mais escura
+(``3 de 3''), as encontradas em todas as execuções. Uma faixa ``3 de 3''
+maior e uma faixa ``0 de 3'' menor são favoráveis à detecção consistente.
+As faixas intermediárias revelam casos cuja detecção variou entre sessões.
+
+Por exemplo, em C5, 437 de 697 vulnerabilidades (62,7\%) nunca foram
+encontradas, 64 (9,2\%) apareceram em uma execução, 52 (7,5\%) em duas e
+144 (20,7\%) em todas. Esses percentuais podem somar 100,1\% após o
+arredondamento. Os 20,7\% encontrados em todas as repetições medem cobertura
+consistente; diferem do \textit{recall} médio de 28,7\%, que também inclui
+as detecções ocasionais. A faixa de ausência de detecção predomina em todas
+as condições. Portanto, repetir uma ferramenta não garantiu encontrar a
+maior parte das falhas, e uma métrica agregada estável não implica encontrar
+sempre as mesmas vulnerabilidades.
+
+A consistência também acompanhou a severidade. Em C5, 59 das 86
+vulnerabilidades críticas foram encontradas nas três execuções e apenas 12
+nunca foram encontradas; entre as 68 baixas, 64 nunca foram encontradas e uma
+foi encontrada nas três. As demais condições de IA seguiram o mesmo padrão:
+entre 47 e 57 críticas em três de três e entre 63 e 65 baixas em zero de três.
+Os valores por entrada estão em \path{evidencias/avaliacao/estabilidade-entradas.csv}.
 
 \begin{figure}[htbp]
 \centering
 \caption{\label{fig:estabilidade-ia}Frequência de detecção das 697 vulnerabilidades nas três repetições}
-\input{figs/avaliacao/estabilidade-ia.tex}
-\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Cada barra representa todo o conjunto vulnerável.}
+\includegraphics[width=\textwidth]{figs/graficos/estabilidade-repeticoes.pdf}
+\legend{Fonte: Elaborado pelo autor a partir de \path{evidencias/avaliacao/estabilidade-resumo.csv} (2026). Cada barra corresponde às 697 vulnerabilidades; ``n de 3'' indica detecção em n execuções. Maior faixa ``3 de 3'' indica maior cobertura consistente.}
 \end{figure}
 
 \section{Priorização e Indicação de Severidade (QP4)}\label{sec:priorizacao-resultados}
@@ -407,18 +675,48 @@ associados. A concordância exata com a referência foi de 10,0\% em C1, 43,0\%
 em C2 e variou entre 56,3\% e 60,1\% em C3--C6. Com tolerância de uma categoria,
 os valores foram 54,6\% em C1, 85,5\% em C2 e 98,5\%--99,3\% nas condições
 de IA. O Kappa ponderado foi 0,101 em C1, 0,252 em C2, 0,607 em C3,
-0,600 em C4, 0,585 em C5 e 0,576 em C6. Assim, as condições de IA priorizaram
-melhor os achados que efetivamente localizaram, mas o fornecimento dos alertas
-SAST não aumentou a concordância de severidade.
+0,600 em C4, 0,585 em C5 e 0,576 em C6. O Kappa ponderado compara a
+concordância observada com a esperada pelas distribuições dos rótulos e penaliza
+mais os desacordos entre categorias distantes. Trata-se da concordância de
+severidade com o benchmark, não da concordância entre avaliadores qualitativos.
+As condições de IA apresentaram maior concordância nos achados que localizaram;
+as condições híbridas não tiveram valores de Kappa maiores que as respectivas
+condições isoladas. Esse recorte não demonstra a eficácia de uma fila de triagem
+em uso real.
 
-A Figura~\ref{fig:priorizacao} compara a concordância exata e a tolerância de
-uma categoria. Os percentuais se referem somente aos verdadeiros positivos
+A severidade atribuída aos falsos positivos seguiu direção oposta entre as
+abordagens. No Bandit, 418 dos 570 falsos positivos foram rotulados como de
+severidade baixa. Nas condições de IA, 315 dos 462 falsos positivos somados nas
+doze execuções (68,2\%) foram rotulados como altos ou críticos; em C3, 105 de
+137. Assim, um alerta incorreto da IA tende a ser apresentado como urgente.
+Como o RealVuln classifica como falso positivo todo alerta sem correspondência,
+parte desses alertas pode corresponder a problemas reais ausentes da referência,
+o que não foi verificado neste trabalho.
+
+A Figura~\ref{fig:priorizacao} compara o Kappa ponderado e a concordância exata
+de cada condição. Os percentuais se referem somente aos verdadeiros positivos
 associados; não descrevem a priorização das vulnerabilidades não detectadas.
+Nos dois painéis, valores maiores indicam maior concordância com a referência.
+A concordância exata é a proporção de categorias iguais; o Kappa ponderado
+desconta a concordância esperada pelas distribuições dos rótulos. Um Kappa
+igual a um indica concordância perfeita, zero indica o nível esperado por
+essas distribuições e valores negativos indicariam concordância inferior a
+esse nível. Por isso, 0,607 de Kappa não deve ser lido como 60,7\% de acertos.
+
+Os dois painéis da figura apresentam a mesma ordenação: o Bandit tem as barras
+mais curtas, o Semgrep ocupa posição intermediária e as quatro condições de IA
+formam um bloco de comprimento quase igual. A distância entre o Semgrep e esse
+bloco é maior no Kappa do que na concordância exata, pois o Kappa penaliza os
+desacordos entre categorias distantes, mais frequentes nas ferramentas SAST,
+como mostra a concordância com tolerância de uma categoria. No Kappa, as barras
+híbridas são ligeiramente mais curtas que as isoladas nos dois produtos; na
+concordância exata, isso ocorre apenas no Cursor. Receber os alertas, portanto,
+não aproximou a priorização da referência.
 
 \begin{figure}[htbp]
 \centering
 \caption{\label{fig:priorizacao}Concordância da severidade dos verdadeiros positivos com a referência}
-\input{figs/avaliacao/priorizacao.tex}
+\includegraphics[width=\textwidth]{figs/graficos/priorizacao-severidade.pdf}
 \legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). C3--C6: médias das três repetições.}
 \end{figure}
 
@@ -426,7 +724,7 @@ associados; não descrevem a priorização das vulnerabilidades não detectadas.
 
 \begin{table}[htb]
 \ABNTEXfontereduzida
-\caption{\label{tab:operacional-resultados}Mediana operacional por condição}
+\caption{\label{tab:operacional-resultados}Distribuição do tempo de execução por condição}
 \centering
 \begin{tabular}{lrrr}
 \hline
@@ -441,7 +739,7 @@ C5 & 40,26 & [26,93; 48,28] & [13,92; 57,47] \\
 C6 & 74,48 & [46,12; 96,18] & [15,51; 132,89] \\
 \hline
 \end{tabular}
-\legend{Fonte: Elaborado pelo autor (2026). IIQ: intervalo interquartil.}
+\legend{Fonte: Elaborado pelo autor (2026). IIQ: intervalo do primeiro ao terceiro quartil, contendo os 50\% centrais dos tempos observados.}
 \end{table}
 
 \begin{table}[htb]
@@ -462,38 +760,50 @@ C6 & 23.259,5 & 4.000,5 & 27.436,5 & [21.839,3; 32.982,0] \\
 \legend{Fonte: Elaborado pelo autor (2026). Cada condição possui 78 execuções com contadores disponíveis.}
 \end{table}
 
+As medianas de entrada, saída e total foram calculadas separadamente; por isso,
+somar as duas primeiras não precisa reproduzir a mediana do total. O intervalo
+interquartil descreve a dispersão das execuções observadas e tem interpretação
+diferente do IC95\%, que expressa a incerteza de uma estimativa.
+
 C1 foi a condição mais rápida. Entre os agentes, as execuções Cursor (C3 e C5)
 apresentaram menor mediana de tempo que as execuções Codex correspondentes
 (C4 e C6). O contexto SAST aumentou a mediana de tokens em ambos os agentes,
 mas não elevou de forma equivalente o tempo mediano. Como a contabilização de
 tokens depende do produto, esses dados têm caráter operacional e descritivo.
 
-As Figuras~\ref{fig:tempo-execucao} e~\ref{fig:tokens-ia} mostram mediana,
-quartis e amplitude observada. As hastes vão do mínimo ao máximo, sem a regra de
+A Figura~\ref{fig:tempo-execucao} mostra mediana, quartis e amplitude observada
+do tempo e dos tokens, em escala logarítmica. As hastes vão do mínimo ao máximo, sem a regra de
 1,5 intervalo interquartil utilizada em outros tipos de diagrama de caixa.
 Os tempos e tokens referem-se às tentativas selecionadas, e não à soma de todas
 as retentativas. Em C5 e C6, o tempo representa a chamada ao agente com os alertas
 já disponíveis; não é a duração acumulada de C1, C2 e IA. Os dados não permitem
 estimar custo monetário nem sustentar uma comparação de custo total entre produtos.
+Valores menores de tempo indicam uma resposta mais rápida, e valores menores
+de tokens indicam menor consumo informado. Caixas de maior altura indicam maior
+dispersão dos 50\% centrais. A escala logarítmica representa razões: distâncias
+iguais correspondem ao mesmo fator de aumento, e não à mesma quantidade de
+segundos ou tokens. Rapidez e consumo, por si só, não indicam melhor detecção.
+
+No painel de tempo, o Bandit fica isolado mais de uma ordem de grandeza abaixo
+das demais condições. O Semgrep tem a caixa mais estreita, indicando tempos
+regulares, enquanto as caixas do Codex (C4 e C6) ficam acima e são mais altas
+que as do Cursor, combinando maior mediana e maior dispersão. No painel de
+tokens, as caixas das quatro condições se sobrepõem amplamente, e as hastes
+cobrem praticamente a mesma faixa. O acréscimo de tokens das condições híbridas,
+visível na Tabela~\ref{tab:tokens-resultados}, é pequeno diante da variação
+entre projetos, possivelmente associada ao tamanho do código enviado.
 
 \begin{figure}[htbp]
 \centering
-\caption{\label{fig:tempo-execucao}Distribuição do tempo das tentativas selecionadas}
-\input{figs/avaliacao/tempo-execucao.tex}
-\legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Caixa: Q1--Q3; linha: mediana; hastes: mínimo--máximo.}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\caption{\label{fig:tokens-ia}Distribuição dos tokens totais informados nas condições de IA}
-\input{figs/avaliacao/tokens-ia.tex}
+\caption{\label{fig:tempo-execucao}Distribuição do tempo e dos tokens das tentativas selecionadas}
+\includegraphics[width=\textwidth]{figs/graficos/operacional-tempo-tokens.pdf}
 \legend{Fonte: Elaborado pelo autor a partir da avaliação (2026). Caixa: Q1--Q3; linha: mediana; hastes: mínimo--máximo.}
 \end{figure}
 
 \section{Discussão Integrada}\label{sec:discussao-integrada}
 
-Os resultados respondem à QP1 mostrando que os agentes, isolados ou híbridos,
-trocaram cobertura por seletividade: produziram precisão entre 80,9\% e 85,1\%
+Os resultados respondem à QP1 mostrando que as condições de IA, isoladas ou híbridas,
+combinaram maior precisão com cobertura ainda limitada: produziram precisão entre 80,9\% e 85,1\%
 e taxa de falsos positivos entre 22,6\% e 27,4\%, mas não ultrapassaram 28,7\%
 de \textit{recall}. As linhas de base SAST alcançaram precisão de até 25,0\%
 e taxa de falsos positivos de pelo menos 82,6\%. A leitura por severidade, entretanto,
@@ -509,10 +819,95 @@ severidade foi mais próxima da referência nas condições de IA que no SAST.
 Para a QP2, os relatos verdadeiros-positivos das condições de IA receberam
 escores médios entre 87,9 e 94,1, contra 53,4 em C1 e 75,2 em C2, sobretudo por
 acionabilidade, correção técnica e clareza; a localização, ao contrário, foi
-menor em C3 e C4 que nas condições SAST. Na parte qualitativa da QP3, os
-alertas SAST recuperaram a localização nas condições híbridas. Essas respostas
+menor em C3 e C4 que nas condições SAST. Na parte qualitativa da QP3, as
+condições híbridas apresentaram maior pontuação de localização no recorte comum. Essas respostas
 baseiam-se na pontuação cega da rubrica por um único avaliador LLM e, por isso,
 são exploratórias.
+
+\subsection{Conferência dos resultados e complementaridade}\label{subsec:auditoria-resultados}
+
+Uma reavaliação dos registros primários reproduziu as contagens, as
+correspondências e os intervalos apresentados neste capítulo. Foram
+conferidos os hashes das respostas selecionadas e a integridade do avaliador
+oficial, além das fórmulas de detecção e dos escores dos 300 relatos.
+A conferência utiliza \path{scripts/auditar-resultados.py}; seu relatório
+está em \path{docs/AUDITORIA-RESULTADOS-2026-10-06.md}.
+
+A partir das correspondências, examinou-se também a complementaridade dos
+verdadeiros positivos, em um recorte exploratório posterior à avaliação
+principal. A união das vulnerabilidades encontradas por Bandit e Semgrep
+contém 243 entradas distintas. Comparando cada repetição da IA isolada com
+esse conjunto, Cursor encontrou 105, 102 e 92 vulnerabilidades adicionais;
+Codex encontrou 123, 96 e 97. Em sentido inverso, entre 144 e 157 entradas
+encontradas pelo SAST ficaram ausentes das execuções isoladas do Codex,
+e entre 146 e 156 ficaram ausentes das do Cursor. A IA contribuiu com
+detecções próprias, enquanto o SAST também preservou cobertura não obtida
+pelos agentes. Essas contagens são de vulnerabilidades distintas, não de
+alertas, e não reúnem as três repetições em um novo \textit{recall}.
+
+Nas condições híbridas, as 243 vulnerabilidades já encontradas pelo SAST
+estavam entre os alertas fornecidos ao agente. Mesmo assim, cada execução de
+C5 deixou de reportar entre 126 e 137 delas, e cada execução de C6, entre 126
+e 134, isto é, mais da metade. O agente não incorporou automaticamente os
+alertas corretos que recebeu, o que ajuda a explicar a ausência de ganho
+conclusivo de \textit{recall} em C5 e C6.
+
+Considerando as 14 execuções em conjunto (C1, C2 e as doze de IA), 440 das
+697 vulnerabilidades foram encontradas ao menos uma vez e 257 (36,9\%) nunca
+foram encontradas por nenhuma abordagem. A distribuição dessa cobertura
+máxima repete o padrão por severidade: 80 das 86 críticas e 190 das 264 altas
+foram encontradas por alguma execução, contra 154 das 279 médias e somente 16
+das 68 baixas. A dificuldade com as vulnerabilidades baixas, portanto, não foi
+exclusiva da IA. Essa contagem é retrospectiva e otimista, pois depende do
+oráculo para reconhecer os acertos e ignora os falsos positivos que um
+revisor precisaria examinar.
+
+Essa união retrospectiva de verdadeiros positivos não constitui uma condição
+experimental de triagem conjunta: ela depende da adjudicação com o
+\textit{ground truth} e não inclui o esforço para examinar os falsos
+positivos. Também difere de C5 e C6, nas quais o agente recebeu alertas
+e decidiu quais vulnerabilidades reportar. Portanto, a ausência de um ganho
+conclusivo nessas condições híbridas não demonstra ausência de
+complementaridade entre as ferramentas.
+
+Foram calculados ainda contrastes exploratórios pareados de IA isolada
+contra as linhas de base SAST, usando o mesmo \textit{bootstrap} por
+repositório. Frente ao Semgrep, a diferença de \textit{recall} foi de
+1,77 ponto percentual para Cursor (IC95\%: $-7,65$ a 12,14) e de 2,92
+para Codex (IC95\%: $-6,05$ a 12,82). Os dois intervalos incluem zero.
+Em precisão, os intervalos das diferenças foram inteiramente positivos:
+46,96 a 62,01 pontos para Cursor e 51,78 a 64,32 para Codex.
+Essas comparações adicionais não receberam ajuste por multiplicidade e
+devem ser lidas como exploração do corpus. Elas reforçam a distinção entre
+o contraste de precisão e a incerteza sobre uma vantagem de cobertura
+em relação ao Semgrep.
+
+A Figura~\ref{fig:sintese-precisao-qualidade} reúne a precisão de detecção e o
+score qualitativo médio. As condições de IA apresentam valores maiores nas
+duas dimensões, mas o tamanho dos marcadores evidencia o \textit{recall} baixo
+em todas as condições. A figura combina a avaliação quantitativa do corpus
+inteiro com a avaliação exploratória de uma amostra de verdadeiros positivos;
+não representa um índice único de desempenho.
+Um marcador mais à direita indica maior precisão, mais acima indica maior
+score de qualidade e com área maior indica maior \textit{recall}. Uma condição
+próxima do topo pode explicar bem os achados corretos e, ainda assim, deixar
+muitas vulnerabilidades sem detecção; essa é a razão para apresentar as três
+medidas juntas.
+
+Na figura, as quatro condições de IA formam um agrupamento compacto no canto
+superior direito, e as diferenças entre elas são menores que a distância para
+qualquer ferramenta SAST. O Semgrep ocupa posição intermediária no eixo de
+qualidade, mais próximo da IA do que do Bandit, mas permanece no extremo
+esquerdo do eixo de precisão. Os marcadores diferem pouco de tamanho, pois o \textit{recall} variou apenas de 18,7\% a 28,7\%: a figura
+mostra que as abordagens se distinguem pela precisão e pela qualidade dos
+relatos, e não pela cobertura.
+
+\begin{figure}[htbp]
+\centering
+\caption{\label{fig:sintese-precisao-qualidade}Precisão de detecção, qualidade dos relatos e \textit{recall} por condição}
+\includegraphics[width=\textwidth]{figs/graficos/sintese-precisao-qualidade.pdf}
+\legend{Fonte: Elaborado pelo autor a partir da avaliação quantitativa e da pontuação qualitativa (2026). O tamanho do marcador é proporcional ao \textit{recall} médio.}
+\end{figure}
 
 \section{Ameaças à Validade Observadas na Coleta}\label{sec:ameacas-validade-observadas}
 
@@ -522,18 +917,32 @@ de equivalência de CWE e da tolerância de localização do benchmark. A alta
 densidade de vulnerabilidades do RealVuln impede extrapolar diretamente precisão
 e prevalência para projetos de produção.
 
+O avaliador oficial também permite a correspondência quando a linha está
+ausente, desde que os demais critérios sejam atendidos. Nas respostas de IA,
+56 achados não tinham linha inicial; 50 foram classificados como verdadeiros
+positivos e seis como falsos positivos. Assim, uma detecção aceita pelo
+benchmark nem sempre comprova localização precisa da instrução causal.
+A rubrica de localização acrescenta essa avaliação dos relatos corretos,
+sem alterar as contagens oficiais.
+
 As tentativas operacionais repetidas foram tratadas por uma regra determinística
-aplicada antes da consulta ao oráculo. Em C4, algumas respostas exigiram novas
-tentativas por problemas de execução; o manifesto preserva esse histórico.
-O identificador detalhado do modelo não estava presente em todos os registros
-JSONL do produto, limitando a verificação independente além da configuração
-declarada durante a coleta.
+aplicada antes da consulta ao oráculo. Mesmo sem seleção pelo desempenho,
+retentar até obter uma resposta válida condiciona os resultados à conclusão
+do contrato de saída; as métricas não representam o desempenho de uma única
+chamada sem retentativas. Em C4, 70 unidades foram produzidas antes da
+consolidação do validador de caminhos e linhas, conforme a
+Seção~\ref{sec:desvios-protocolo}. Essa diferença limita a comparação com os
+demais lotes.
+
+O código foi entregue no contexto das chamadas, com uso de ferramentas
+restringido. Os resultados não medem exploração autônoma dos repositórios.
 
 O não determinismo permaneceu visível mesmo com sessões independentes e
 configurações controladas. Os intervalos de confiança preservam o agrupamento
 por repositório, mas 26 projetos ainda representam um número limitado de
 unidades independentes. O bloco complementar não executado restringe as
-conclusões ao GPT-5.6 Luna e às versões e configurações registradas.
+conclusões às configurações que solicitaram GPT-5.6 Luna e às versões dos
+produtos registradas.
 
 Por fim, a documentação de referência do RealVuln apresenta formulações
 divergentes sobre F2 e F3 como métrica principal. Para evitar uma escolha
@@ -551,3 +960,80 @@ próprios desse tipo de avaliador, como a preferência por textos mais longos ou
 mais detalhados \cite{Zheng2023LLMJudge}. Esse efeito pode favorecer os relatos
 das condições de IA, mais extensos que as mensagens SAST, e a concordância das
 notas com avaliadores humanos não foi medida neste trabalho.
+
+\section{Principais Constatações}\label{sec:constatacoes}
+
+Os resultados apresentados neste capítulo, considerados os limites de
+inferência da seção anterior, sustentam as constatações a seguir. As comparações
+qualitativas expressam as pontuações exploratórias da rubrica.
+
+\textbf{Falhas críticas foram encontradas com frequência; falhas de baixa
+severidade, quase nunca.} As condições de IA encontraram de 67,8\% a 77,5\% das
+86 vulnerabilidades críticas, acima do Bandit (44,2\%) e do Semgrep (62,8\%).
+Entre as 68 de severidade baixa, encontraram somente 3,4\% a 3,9\%, abaixo do
+Bandit (14,7\%). A diferença repetiu-se na estabilidade: no Cursor com alertas,
+59 críticas foram encontradas nas três execuções, enquanto 64 das baixas nunca
+foram encontradas. As falhas baixas do corpus são, em sua maioria, de exposição
+de informação e de configuração, como mensagens de erro detalhadas e atributos
+de \textit{cookie}. Essa lacuna não foi exclusiva da IA: somando as 14 execuções
+de todas as abordagens, 80 das 86 críticas foram encontradas ao menos uma vez,
+contra apenas 16 das 68 baixas.
+
+\textbf{A IA reduziu os alarmes falsos, mas não ampliou a cobertura na mesma
+proporção.} A precisão foi de 80,9\% a 85,1\% nas condições de IA, contra 18,6\%
+no Bandit e 25,0\% no Semgrep, que produziram 570 e 537 falsos positivos. Já o
+\textit{recall} ficou entre 27,5\% e 28,7\%, frente a 25,7\% do Semgrep; nas
+comparações pareadas, os IC95\% dessa diferença incluíram zero. Na melhor
+condição, 497 das 697 vulnerabilidades ficaram sem detecção por execução. Uma
+lista curta e majoritariamente correta, portanto, ainda omitiu a maioria das
+falhas.
+
+\textbf{IA e SAST foram fortes em tipos diferentes de vulnerabilidade.}
+Nas injeções clássicas, como injeção de SQL, de comandos e desserialização
+insegura, todas as abordagens tiveram \textit{recall} acima de 60\%, com o
+Semgrep à frente. A IA destacou-se nas falhas que dependem da lógica da
+aplicação, para as quais as regras quase não tiveram detecções: acesso a objetos
+por identificador controlado pelo usuário (52,1\% contra 0\%), travessia de
+caminho (55,4\% contra até 11,5\%), SSRF (42,7\% contra até 8,3\%) e
+autenticação em geral (22,0\% a 28,3\% contra 0,9\%). O SAST foi superior em
+padrões sintáticos bem definidos: hash fraco (até 84,6\% contra 17,9\%),
+credenciais embutidas (65,0\% no Bandit contra 25,8\%), CSRF (57,1\% no Semgrep
+contra 11,3\%) e XSS (41,5\% contra 15,8\%). Limite de tentativas de login,
+armazenamento em texto claro e exposição de informação ficaram praticamente sem
+detecção em todas as abordagens.
+
+\textbf{As abordagens se complementaram, mas combiná-las no contexto do agente
+não somou seus acertos.} A IA isolada encontrou, por execução, de 92 a 123
+vulnerabilidades ausentes dos resultados do Bandit e do Semgrep, e o SAST
+encontrou de 144 a 157 que a IA isolada não reportou. Ao receber os alertas
+SAST, porém, o agente não os incorporou: cada execução híbrida deixou fora de
+sua resposta entre 126 e 137 das 243 vulnerabilidades corretamente apontadas
+pelo SAST. Por isso, o ganho de \textit{recall} foi de 1,24 ponto no Cursor
+(IC95\%: $-3,26$ a 5,43) e de $-0,10$ ponto no Codex (IC95\%: $-3,01$ a 2,61),
+ambos compatíveis com zero, com aumento mediano de cerca de 4 mil tokens por
+execução.
+
+\textbf{A IA explicou melhor, mas localizou pior quando trabalhou sozinha.}
+Na rubrica aplicada a 300 relatos verdadeiros-positivos, os scores médios foram
+53,4 no Bandit, 75,2 no Semgrep e de 87,9 a 94,1 nas condições de IA, com
+diferenças concentradas em acionabilidade (1,30 e 3,28 contra 4,56 a 4,68),
+correção técnica e clareza. Na localização da instrução causal, as regras foram
+melhores (4,64 e 4,74) que o Cursor (4,14) e o Codex (3,62) isolados. Os alertas
+SAST no contexto aproximaram essa nota da obtida pelo SAST (4,56 e 4,60), o
+principal efeito descritivo observado nas condições híbridas.
+
+\textbf{A IA classificou bem a severidade do que encontrou, mas seus alarmes
+falsos pareceram urgentes.} Nos verdadeiros positivos, a severidade da IA
+coincidiu com a referência em 56,3\% a 60,1\% dos casos e ficou a até uma
+categoria de distância em mais de 98\%, com Kappa ponderado de 0,576 a 0,607,
+contra 0,101 no Bandit e 0,252 no Semgrep. Por outro lado, 68,2\% dos falsos
+positivos da IA foram rotulados como altos ou críticos, enquanto a maioria dos
+falsos positivos do Bandit foi rotulada como baixa. Uma fila ordenada pela
+severidade da IA tende, portanto, a colocar seus erros entre os primeiros itens.
+
+\textbf{A mesma ferramenta, com o mesmo código, não encontrou sempre as mesmas
+falhas.} No Cursor com alertas, apenas 144 vulnerabilidades (20,7\%) foram
+encontradas nas três execuções, e outras 116 apareceram em apenas uma ou duas.
+Métricas agregadas quase iguais entre repetições ocultaram essa variação na
+identidade dos casos encontrados, de modo que uma única execução não deve ser
+tratada como varredura completa.

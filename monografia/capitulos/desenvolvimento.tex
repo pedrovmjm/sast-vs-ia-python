@@ -407,7 +407,9 @@ Avaliador qualitativo & Composer 2.5 Fast via Cursor Agent; uma sessão por rela
 
 O host observado na coleta SAST utilizava Git for Windows 2.46.2, WSL 2.0.14, Docker Desktop 4.38.0 e Docker Engine 27.5.1. Como essas versões estavam abaixo das recomendações registradas e incluíam risco conhecido no Docker Desktop, o artefato preserva uma aceitação explícita de risco residual, limitada ao marco SAST e condicionada aos controles de isolamento. A exceção não foi tratada como autorização genérica para outros experimentos.
 
-\section{Desvios e Limitações Observados}\label{sec:desvios-protocolo}
+\section{Desvios Técnicos de Execução}\label{sec:desvios-protocolo}
+
+Esta seção registra as ocorrências de execução, as diferenças em relação ao protocolo e o tratamento dado aos artefatos. As consequências desses registros para as comparações são discutidas na Seção~\ref{sec:ameacas-validade-observadas}.
 
 Durante a coleta, os modelos produziram respostas que não atendiam à estrutura exigida para a avaliação automática. O retorno de texto pelo cliente não garantia uma lista JSON válida: a resposta precisava ter uma lista na raiz, objetos com os campos previstos e valores nos tipos e escalas aceitos. Quando essas exigências não eram atendidas, a tentativa era rejeitada e a chamada era repetida em uma sessão nova. Essas respostas não foram convertidas em listas vazias, pois isso confundiria falha de formato com ausência de vulnerabilidades.
 
@@ -428,10 +430,10 @@ if ($null -ne $valor -and [int]$valor -gt $quantidadeLinhas) {
 
 O trecho foi disposto em duas linhas na mensagem de erro para facilitar a leitura. A verificação garante que a posição informada existe, mas não que ela corresponde à instrução vulnerável. Essa segunda questão é examinada pela correspondência com a referência e pela rubrica de localização.
 
-As falhas de validação preservadas somaram 19 em C3, seis em C4, 13 em C5 e 14 em C6. Esses totais reúnem problemas de formato e de localização, sem discriminar sua frequência por tipo. As métricas do Capítulo~\ref{cap:avaliacao} descrevem as respostas selecionadas após a validação, e não a taxa de sucesso da primeira chamada.
+As falhas de validação preservadas somaram 19 em C3, seis em C4, 13 em C5 e 14 em C6. Esses totais reúnem problemas de formato e de localização, sem discriminar sua frequência por tipo. As tentativas rejeitadas permaneceram nos registros operacionais; apenas as respostas aceitas pela regra de seleção seguiram para a avaliação.
 
-C4 foi concluída antes da consolidação do validador de caminhos e linhas. Das 78 unidades selecionadas, 70 vieram do executor anterior e oito foram reprocessadas com a versão posterior. A configuração experimental de C4 permaneceu a mesma, mas os controles de validação não foram uniformes em todo o lote. Os registros anteriores foram preservados; essa diferença exige cautela ao comparar a estabilidade de C4 com a das demais condições.
+C4 foi concluída antes da consolidação do validador de caminhos e linhas. Das 78 unidades selecionadas, 70 vieram do executor anterior e oito foram reprocessadas com a versão posterior. A configuração experimental de C4 permaneceu a mesma, mas os controles de validação não foram uniformes em todo o lote. Os registros anteriores foram preservados e identificados nas auditorias.
 
-Três elementos do planejamento não foram executados. A fila de C3--C6 seguiu uma ordem fixa, por repetição e identificador opaco do alvo, e não a ordem aleatorizada prevista. O bloco complementar com Cursor Auto e GPT-5.6 Terra não foi realizado. O Índice de Legibilidade de Flesch, previsto como medida secundária de clareza, não foi calculado nos resultados publicados. Esses desvios não alteram as unidades avaliadas nem os critérios de pontuação, mas restringem as conclusões ao bloco Luna e impedem separar efeitos do momento da coleta da ordem dos alvos.
+Três elementos do planejamento não foram executados. A fila de C3--C6 seguiu uma ordem fixa, por repetição e identificador opaco do alvo, e não a ordem aleatorizada prevista. O bloco complementar com Cursor Auto e GPT-5.6 Terra não foi realizado. O Índice de Legibilidade de Flesch, previsto como medida secundária de clareza, não foi calculado nos resultados publicados. A grade principal foi concluída com as unidades previstas e os critérios de pontuação mantidos.
 
-A auditoria posterior das 312 respostas selecionadas não encontrou listas brutas fora do contrato nem arquivos inexistentes ou linhas informadas além de seus limites. Houve, entretanto, 56 achados com linhas ausentes, situação permitida pelo esquema: 13 em C3, 30 em C4, oito em C5 e cinco em C6. Essa ausência deve ser distinguida de uma linha incorreta e limita a precisão da localização, mesmo quando o achado pode ser associado à referência.
+A auditoria posterior das 312 respostas selecionadas não encontrou listas brutas fora do contrato nem arquivos inexistentes ou linhas informadas além de seus limites. Houve, entretanto, 56 achados com linhas ausentes, situação permitida pelo esquema: 13 em C3, 30 em C4, oito em C5 e cinco em C6. Esses valores permaneceram ausentes, sem preenchimento manual.

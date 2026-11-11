@@ -1,0 +1,41 @@
+\begin{tikzpicture}[
+  font=\footnotesize,
+  painel/.style={draw, rounded corners, align=left, text width=5.65cm,
+    inner sep=3mm, minimum height=4.2cm},
+  etapa/.style={draw, rounded corners, align=center, text width=12.5cm,
+    inner sep=3mm},
+  seta/.style={-{Stealth[length=2mm]}, thick}
+]
+\node[painel, fill=yellow!8] (sast) at (0,0) {%
+  \textbf{C1--C2: scanners em Docker}\\[2mm]
+  Rede desativada; raiz e entrada somente leitura.\\
+  Usuário sem privilégio; sem \textit{capabilities}.\\
+  Limites de CPU, memória, processos e tempo.\\
+  Escrita apenas na saída e no espaço temporário.};
+\node[painel, fill=blue!5] (cursor) at (6.6,0) {%
+  \textbf{C3 e C5: Cursor}\\[2mm]
+  Sessão nova; código no contexto da chamada.\\
+  Escrita e comandos negados pela política local.\\
+  Auditoria: nenhuma chamada de ferramenta.\\
+  \textbf{Limite:} sem sandbox nativo no Windows.};
+\node[painel, fill=blue!5] (codex) at (0,-4.7) {%
+  \textbf{C4 e C6: Codex}\\[2mm]
+  Sessão efêmera; sandbox somente leitura.\\
+  Código no contexto da chamada.\\
+  Política de aprovação \texttt{never}.\\
+  Configurações e regras externas ignoradas.};
+\node[painel, fill=violet!5] (qualitativo) at (6.6,-4.7) {%
+  \textbf{Etapa posterior: avaliador qualitativo}\\[2mm]
+  Uma sessão por relato; leitura, escrita e comandos negados.\\
+  Recebe relato, código, rubrica e referência.\\
+  Não recebe a chave das condições.};
+\node[etapa, fill=black!3] (coleta) at (3.3,-8.1) {%
+  \textbf{Coleta de detecção (C1--C6)}\\
+  Código sanitizado; em C5 e C6, também alertas SAST.\\
+  \textit{Ground truth} fora das entradas e das áreas de trabalho.};
+\node[etapa, fill=red!5] (avaliacao) at (3.3,-10.1) {%
+  \textbf{Avaliação após o fechamento da coleta}\\
+  Quantitativa: correspondência dos achados com o \textit{ground truth}.\\
+  Qualitativa: referência disponível; condição oculta durante a pontuação.};
+\draw[seta] (coleta) -- (avaliacao);
+\end{tikzpicture}

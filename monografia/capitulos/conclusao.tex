@@ -1,145 +1,74 @@
 \chapter{Conclusão}\label{cap:conclusao}
 
 Este trabalho comparou Bandit, Semgrep Community Edition, Cursor e OpenAI Codex
-na detecção de vulnerabilidades em aplicações Python, incluindo condições nas
-quais os alertas SAST foram fornecidos como contexto à análise por IA. Os
-resultados mostram maior precisão nas condições de IA, mas cobertura limitada
-em todas as condições. O fornecimento de alertas SAST não apresentou ganho
-conclusivo de detecção nas comparações pareadas. Essas conclusões se restringem
-ao RealVuln v1.0 e às configurações utilizadas na coleta.
+na detecção e na explicação de vulnerabilidades em aplicações Python, incluindo
+duas condições em que alertas SAST foram fornecidos como contexto à IA. As seis
+condições foram avaliadas nos 26 repositórios do RealVuln v1.0, com 697
+vulnerabilidades de referência, 120 armadilhas seguras e 364 unidades de
+execução. A conclusão central é que a IA errou pouco, mas deixou de encontrar
+a maior parte das vulnerabilidades: seus alertas foram corretos em mais de 80\%
+dos casos, porém nenhuma condição ultrapassou 29\% de \textit{recall}. O que a
+IA encontrou dependeu fortemente da severidade e do tipo da falha, e fornecer
+alertas SAST ao agente não estabeleceu ganho geral de detecção.
 
-\section{Síntese do Trabalho}\label{sec:sintese-trabalho}
+\section{Respostas às Questões de Pesquisa}\label{sec:respostas-qp}
 
-A investigação utilizou integralmente os 26 repositórios do benchmark,
-com 697 vulnerabilidades e 120 armadilhas de falso positivo. O experimento
-compreendeu seis condições e 364 unidades de execução: uma execução por alvo
-para Bandit e Semgrep e três repetições para cada condição de IA. O Cursor
-utilizou GPT-5.6 Luna com seleção explícita e perfil Medium, enquanto o Codex
-foi configurado para solicitar GPT-5.6 Luna. O modo Auto do Cursor não foi
-utilizado nos resultados avaliados.
+Para a QP1, a IA detectou vulnerabilidades com precisão muito superior à do SAST
+e com cobertura semelhante à do Semgrep, concentrada nas falhas críticas e
+altas e nas classes dependentes da lógica da aplicação. Para a QP2, os relatos
+corretos da IA foram mais bem pontuados em explicação e recomendação de
+correção, embora com localização inferior nos agentes isolados. Para a QP3,
+fornecer alertas SAST não melhorou de forma estabelecida a detecção, mas
+aproximou a localização dos relatos à das regras. Para a QP4, a severidade
+atribuída pela IA foi mais próxima da referência que a do SAST, enquanto a
+detecção variou entre repetições e nenhuma condição encontrou consistentemente
+a maioria das vulnerabilidades.
 
-O controlador preservou entradas verificáveis, saídas brutas, tentativas,
-metadados e achados normalizados. A avaliação quantitativa reutilizou o algoritmo
-oficial do RealVuln, com intervalos de confiança obtidos por reamostragem de
-repositórios. A avaliação qualitativa foi realizada sobre uma amostra cega de
-300 relatórios verdadeiros-positivos, com rubrica de critérios fechados, esquema
-de registro e validação estrita. Para acelerar essa etapa, a rubrica foi aplicada
-por um avaliador LLM de família distinta da usada nas condições de IA, com as
-notas congeladas antes da abertura da chave das condições. Assim, o objetivo
-de comparar a detecção foi atendido, e a comparação da qualidade dos relatórios
-foi realizada de forma exploratória.
+Quanto aos objetivos específicos, a base teórica, a seleção do RealVuln, o
+protocolo, o \textit{pipeline} de coleta e a comparação entre as abordagens
+foram concluídos. Os objetivos de avaliação foram atingidos parcialmente.
+Na parte quantitativa, foram medidos tempo e consumo de tokens, mas não o custo
+monetário, pois os contadores dos produtos não permitem convertê-los em valores
+comparáveis. Na qualitativa, foram avaliadas clareza, recomendação e
+severidade, mas não a explorabilidade, pois nenhuma vulnerabilidade foi
+confirmada por execução.
 
-\section{Resposta às Questões de Pesquisa}\label{sec:resposta-questoes-pesquisa}
+\section{Implicações para a Prática}\label{sec:implicacoes}
 
-Para a \textbf{QP1}, as condições de IA apresentaram precisão média entre
-80,9\% e 85,1\%, frente a 18,6\% no Bandit e 25,0\% no Semgrep. Entretanto,
-o maior \textit{recall} médio foi 28,7\%, obtido pelo Cursor com alertas SAST.
-O F3 variou de 18,6\% e 25,6\% nas condições SAST para 29,4\%--30,7\% nas
-condições de IA. A maior seletividade dos agentes, portanto, não representou
-cobertura ampla do conjunto vulnerável. A análise por severidade mostrou
-melhor cobertura das vulnerabilidades críticas, chegando a 77,5\% em C5,
-conforme a Seção~\ref{sec:desempenho-quantitativo}.
+Os dados sugerem que a IA e o SAST não devem ser tratados como substitutos.
+A IA mostrou-se útil para encontrar falhas críticas e de controle de acesso e
+para produzir explicações acionáveis; as regras SAST continuam relevantes
+para padrões sintáticos e para apontar a linha exata do problema. Executar as
+duas abordagens e revisar o conjunto de alertas tende a ser mais promissor
+que apenas fornecer os alertas ao agente, pois este descartou mais da metade
+dos acertos recebidos. Falhas de configuração, de exposição de informação e
+de baixa severidade exigem outros controles, como listas de verificação,
+análise de configuração e revisão manual, pois nenhuma das abordagens as
+cobriu de forma relevante. Essas implicações são inferências a partir do
+corpus e não foram testadas como fluxos de trabalho.
 
-A \textbf{QP2} recebeu resposta exploratória. Na pontuação dos 300 relatórios
-cegados, as condições SAST isoladas tiveram score médio de 53,4 (C1) e 75,2 (C2),
-e as condições de IA, de 87,9 a 94,1; a diferença concentrou-se em
-acionabilidade, correção técnica e clareza, enquanto a localização foi maior nas
-condições SAST isoladas que em C3 e C4. A clareza atingiu o teto em C3 a C6.
-A maior precisão de detecção não permite, por si, deduzir maior
-qualidade das explicações. Os resultados constam da
-Seção~\ref{sec:qualidade-relatorios}.
+\section{Síntese das Limitações}\label{sec:limitacoes-conclusao}
 
-Quanto à \textbf{QP3}, as diferenças pareadas entre C5 e C3 e entre C6 e C4
-apresentaram intervalos de confiança que incluem zero. O maior ganho pontual
-de F3 foi 1,33 ponto percentual em C5 em relação a C3, com IC95\% de
-$-3,36$ a 5,70 pontos. Não foi demonstrada vantagem geral de detecção pelo
-fornecimento dos alertas de Bandit e Semgrep, nem equivalência entre as
-condições. No recorte comum de 20 grupos, as condições híbridas obtiveram score médio
-maior que as isoladas (3,75 pontos de C5 sobre C3 e 7,81 de C6 sobre C4), sobretudo
-pela localização; essas diferenças são descritivas, como discutido na
-Seção~\ref{sec:efeito-hibrido}.
+Os controles preventivos da Seção~\ref{sec:validade-limitacoes} e os desvios
+técnicos registrados na Seção~\ref{sec:desvios-protocolo} delimitam as condições
+em que a evidência foi produzida. As ameaças à inferência são discutidas na
+Seção~\ref{sec:ameacas-validade-observadas}: as conclusões se restringem ao
+corpus, às configurações e ao procedimento avaliados, e não estabelecem
+desempenho em produção. Os contrastes quantitativos devem ser interpretados
+com sua incerteza, e as pontuações qualitativas e demais análises exploratórias
+servem à formulação de hipóteses para validação posterior.
 
-Para a \textbf{QP4}, a estabilidade variou entre as condições. C6 apresentou
-a menor variação agregada de F3, mas apenas 142 das 697 vulnerabilidades foram
-detectadas em suas três repetições; C5 apresentou o maior número de detecções
-consistentes, com 144 entradas. A baixa variação da métrica agregada não
-significa identificação repetível da maioria das falhas. Entre os verdadeiros
-positivos, a indicação de severidade das condições de IA aproximou-se mais
-da referência que a das condições SAST, com Kappa ponderado entre 0,576 e
-0,607. Esses resultados são apresentados nas
-Seções~\ref{sec:estabilidade-execucoes} e~\ref{sec:priorizacao-resultados}.
+\section{Contribuições e Trabalhos Futuros}\label{sec:trabalhos-futuros}
 
-Como caracterização operacional complementar, Bandit apresentou a menor
-mediana de duração, de 1,23 segundo. As chamadas ao Cursor tiveram medianas
-menores que as chamadas correspondentes ao Codex, e o contexto SAST elevou
-a mediana de tokens nos dois produtos. Essas medidas descrevem as tentativas
-selecionadas, sem somar retentativas ou a preparação prévia dos alertas.
-Não representam custo monetário nem o tempo total de um processo de análise
-e correção, conforme a Seção~\ref{sec:tempo-tokens-resultados}.
-
-\section{Contribuições}\label{sec:contribuicoes}
-
-A principal contribuição empírica é a comparação de seis condições sobre o
-mesmo corpus Python e com o mesmo avaliador, preservando a distinção entre
-ferramentas e repetições. Essa comparação documenta tanto a seletividade das
-condições de IA quanto a persistência de falsos negativos, além de examinar
-diretamente o efeito de fornecer alertas SAST como contexto.
-
-A contribuição técnica é o controlador experimental que integra aquisição,
-sanitização, execução, validação e preservação das tentativas. Seus registros
-permitem relacionar as configurações e entradas às saídas usadas na pontuação.
-Revisões de código e hashes contribuem para a reprodução e a verificação de
-integridade; a sustentação dos resultados está nas saídas e nas correspondências
-com o \textit{ground truth}, e não apenas no histórico de versionamento.
-
-O trabalho também entrega uma rubrica estruturada, uma amostra cega e um
-procedimento de pontuação por avaliador LLM com esquema de registro, validação
-estrita, preservação das tentativas e congelamento antes da abertura da chave,
-reutilizável em comparações futuras.
-
-\section{Limitações}\label{sec:limitacoes-conclusao}
-
-Os repositórios do RealVuln são intencionalmente vulneráveis e não representam
-a prevalência de falhas em sistemas de produção. Os resultados dependem das
-regras de correspondência, da tolerância de localização e dos rótulos da versão
-fixada. As conclusões não devem ser generalizadas para outras linguagens,
-pacotes de regras, instruções ou versões dos serviços.
-
-O código foi fornecido às interfaces de IA no contexto da chamada, com uso de
-ferramentas restringido. Portanto, o experimento não avaliou a capacidade de
-exploração autônoma de repositórios. Além disso, a CLI do Codex não expôs o
-modelo efetivamente servido, e o Cursor no Windows apresentou limitações de
-sandbox. A configuração declarada semelhante não permite comprovar igualdade
-do modelo servido nem eliminar todas as diferenças entre produtos.
-
-As três repetições por condição de IA permitem observar variação, mas não
-caracterizam toda a distribuição possível de respostas. Retentativas por
-falhas de formato e mudanças históricas no executor de C4 também limitam a
-interpretação, embora seus registros tenham sido preservados. A avaliação
-qualitativa tem cegamento parcial pelo estilo dos textos, restringe-se a verdadeiros
-positivos, comparou apenas 20 grupos no recorte comum e foi pontuada por um
-único avaliador LLM, sem calibração contra avaliadores humanos. Avaliadores
-desse tipo podem favorecer textos mais extensos, o que tende a beneficiar os
-relatos de IA frente às mensagens SAST; por isso, os escores devem ser lidos
-como evidência exploratória. A clareza apresentou efeito de teto.
-
-\section{Trabalhos Futuros}\label{sec:trabalhos-futuros}
-
-Uma continuidade natural é comparar as notas do avaliador LLM com as de
-especialistas humanos ou de avaliadores LLM de outras famílias, verificando se
-as diferenças de qualidade observadas se mantêm. Uma rubrica de clareza mais
-discriminante também reduziria o efeito de teto observado.
-
-Experimentos posteriores podem ampliar o número de repetições, incluir projetos
-de produção e outros benchmarks, avaliar navegação autônoma e comparar modelos
-e configurações adicionais em blocos separados. Desenhos híbridos alternativos
-também podem testar filtragem, priorização ou enriquecimento de alertas, em vez
-de apenas fornecê-los como contexto. A mensuração operacional deve incluir todas
-as tentativas e etapas do fluxo, bem como custos efetivamente observados.
-
-Os dados obtidos favorecem o uso das ferramentas avaliadas como apoio à revisão
-de segurança, com atenção à cobertura incompleta e à necessidade de validação
-dos achados. Neste experimento, a precisão das condições de IA não eliminou a
-maioria dos falsos negativos, e a combinação com SAST não demonstrou vantagem
-geral. A adoção prática deve considerar essas duas dimensões e a qualidade dos
-relatórios, que, entre os achados corretos, foi maior nas condições de IA.
+O trabalho contribui com uma comparação reproduzível e um controlador que preserva
+as entradas, as configurações e as respostas, disponíveis no repositório
+\textit{sast-vs-ia-python} \cite{Motta2026Repositorio}. Trabalhos futuros devem
+testar a complementaridade observada em projetos de produção, avaliar a união
+dos achados e a triagem conjunta como condições próprias, investigar instruções
+que levem o agente a preservar os alertas SAST corretos e examinar se a baixa
+detecção de falhas de configuração decorre do modelo ou da forma como o código
+é fornecido. Também é necessário confrontar as notas da rubrica com especialistas
+humanos e verificar manualmente os falsos positivos de alta severidade. A questão
+que permanece é como aumentar a cobertura preservando a precisão e a utilidade
+dos relatos, pois os produtos avaliados ainda deixaram a maior parte das
+vulnerabilidades sem identificação.
