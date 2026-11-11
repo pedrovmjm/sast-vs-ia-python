@@ -52,6 +52,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-executores-ia.p
   inventário SHA-256, licenças e reconstrução dos 26 alvos;
 - [`docs/FONTES_E_INTEGRIDADE.md`](docs/FONTES_E_INTEGRIDADE.md): proveniência,
   licenças e controles de integridade.
+- [`docs/IMAGENS-MONOGRAFIA.md`](docs/IMAGENS-MONOGRAFIA.md): imagens usadas
+  no LaTeX, arquivos de origem e seleção para publicação no GitHub.
 
 ## Estrutura essencial
 

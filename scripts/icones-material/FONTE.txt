@@ -1,0 +1,4 @@
+Ícones do Material Symbols (estilo Rounded, 24 px), do Google.
+Origem: https://fonts.google.com/icons
+Licença: Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+Usados por scripts/gerar-diagramas-excalidraw.py, que apenas altera a cor de preenchimento.

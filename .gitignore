@@ -74,6 +74,10 @@ Thumbs.db
 *.synctex(busy)
 *.toc
 *.pdf
+# PDFs vetoriais usados como figuras pelo LaTeX integram os fontes da monografia
+!/monografia/figs/graficos/*.pdf
+# Capturas locais de conferência de diagramação
+/monografia/figs/excalidraw/conferencia-pagina-*.png
 /monografia/*.brf
 /monografia/*.idx
 /monografia/*.ilg
